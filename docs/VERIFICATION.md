@@ -4,7 +4,7 @@ Branche : `feature/fantasy-companion-2026`. Base : `181bded7d09c21992bd2068a6fa3
 
 ## Résultats automatisés
 
-`npm test` : **49 tests passés, 0 échec, 0 ignoré**. Résultat brut : [test-results.txt](test-results.txt).
+`npm test` : **62 tests passés, 0 échec, 0 ignoré**. Résultat brut : [test-results.txt](test-results.txt).
 
 | Domaine | Vérification |
 |---|---|
@@ -18,7 +18,7 @@ Branche : `feature/fantasy-companion-2026`. Base : `181bded7d09c21992bd2068a6fa3
 | Collecteur | Réponses simulées, portée saison/ligue, clé absente, exécution désactivée, HTTP 403/429, erreurs API 200, erreurs réseau, quotas, corrections vides |
 | Chargement | Sous-chemin GitHub Pages, SHA-256, JSON invalide, erreurs HTTP, premier accès hors ligne, dernière version vérifiée conservée |
 | Publication locale | Versions immuables, ancien manifeste conservé, validation avant remplacement |
-| PWA | Priorité réseau, repli cache, périmètre des URL, migration v1 simulée sans suppression des caches sans rapport |
+| PWA | Cache par version, installation complète, activation coordonnée, saisies préservées, rechargement unique, erreurs réseau et périmètre des caches |
 
 `npm run validate` : réussi. Production : **not-connected, 0 match, 0 ligne, 0 poste ESPN importé**. Les 17 avertissements historiques d'arrondi sont conservés ; aucune correction inventée.
 
@@ -52,7 +52,7 @@ L'aperçu normal est laissé ouvert sur un trade historique. Aucun compte ni wat
 - Diagnostic réel API-NBA terminé le 5 octobre 2026 à 15:34:30 UTC : 4 requêtes, authentification et listes ligues/saisons validées. Les calendriers 2026 et 2025 sont refusés par l’offre gratuite (erreur `plan`, accès annoncé 2022–2024). Quotas confirmés : 100/jour et 10/minute ; dernier solde exposé après le deuxième appel : 98/jour. Aucun box score récupéré : compteurs ESPN, minutes, DNP et classifications réels restent non vérifiés. Les réponses sont dans `.local/`, jamais dans les fichiers suivis ou publiés.
 - Import d'éligibilités ESPN réelles et validation des droits de republication : **non réalisés**. Les modèles d'import restent vides.
 - Première classification de matchs et mapping des joueurs réels : restent à établir avec des sources vérifiées. La V1 exclut les types inconnus ; elle ne déduit pas la finale de Cup depuis une date ou un code stage.
-- Migration depuis une installation v1 sur un téléphone réel : non exécutée ; logique de migration couverte par tests simulés. Installation native iOS/Android et navigateurs autres que celui intégré : non testés.
+- Migration depuis une installation v1 sur un téléphone réel : non exécutée ; migration réelle dans le navigateur intégré et tests automatisés documentés dans [APP-UPDATES.md](APP-UPDATES.md). Installation native iOS/Android et navigateurs autres que celui intégré : non testés.
 - Aucun planning, compte, abonnement, clé ni permission créé ou modifié. La publication autorisée réutilise le déploiement Pages existant ; outils, tests, configurations et fichiers locaux sont exclus par `_config.yml`. Le manifeste 2026-27 reste vide et non connecté.
 
 Le guide [DATA-OPERATIONS.md](DATA-OPERATIONS.md) explique les contrôles et décisions nécessaires avant collecte et publication.

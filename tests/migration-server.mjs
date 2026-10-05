@@ -1,0 +1,14 @@
+// Local-only browser migration fixture. Original production bytes are unmodified.
+// Set .local/migration-phase.txt to v1, a or b, then navigate normally.
+import http from 'node:http';import fs from 'node:fs/promises';import path from 'node:path';import {execFileSync} from 'node:child_process';import {renderWorker} from '../tools/pages.mjs';
+const prefix='/NBA-Fantasy-Stats-Tracker/',original='181bded7d09c21992bd2068a6fa38298f015a1ab',legacy=new Map();
+for(const name of ['index.html','sw.js','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png'])legacy.set(name,execFileSync('git',['show',original+':'+name],{maxBuffer:2000000}));
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.webmanifest':'application/manifest+json','.css':'text/css','.png':'image/png'};
+const diagnostic=`<!doctype html><title>Local migration diagnostics</title><h1>Local migration diagnostics</h1><button onclick="location.reload()">Refresh diagnostics</button><pre id="result"></pre><script>Promise.all([navigator.serviceWorker.getRegistrations(),caches.keys()]).then(async([regs,keys])=>{const versions=[];for(const r of regs){const active=r.active;versions.push(await new Promise(resolve=>{if(!active)return resolve(null);const c=new MessageChannel();const timer=setTimeout(()=>resolve({scope:r.scope,version:'legacy/no version response'}),1000);c.port1.onmessage=e=>{clearTimeout(timer);resolve({scope:r.scope,version:e.data.version,waiting:!!r.waiting})};active.postMessage({type:'GET_APP_VERSION'},[c.port2]);}));}document.getElementById('result').textContent=JSON.stringify({versions,caches:keys,scoring:localStorage.getItem('nbafs.scoring')},null,2);});</script>`;
+http.createServer(async(req,res)=>{try{const url=new URL(req.url,'http://localhost');if(url.pathname==='/diagnostics'){res.writeHead(200,{'Content-Type':types['.html'],'Cache-Control':'no-store'}).end(diagnostic);return;}
+  if(!url.pathname.startsWith(prefix)){res.writeHead(404).end();return;}const relative=url.pathname.slice(prefix.length)||'index.html';
+  if(!legacy.has(relative)&&!/^assets\/[\w.-]+$/.test(relative)&&!/^data\/(?:releases\/)?[\w.-]+\.json$/.test(relative)){res.writeHead(404).end();return;}
+  const phase=(await fs.readFile('.local/migration-phase.txt','utf8')).trim();let bytes=phase==='v1'?legacy.get(relative):await fs.readFile(relative);if(!bytes){res.writeHead(404).end();return;}
+  if(relative==='sw.js'&&phase!=='v1')bytes=Buffer.from(renderWorker(bytes.toString('utf8'),'migration-'+phase));
+  res.writeHead(200,{'Content-Type':types[path.extname(relative)]||'application/octet-stream','Cache-Control':'no-store'}).end(bytes);
+}catch{res.writeHead(404).end();}}).listen(4175,'127.0.0.1',()=>console.log('Migration fixture: http://127.0.0.1:4175'+prefix));

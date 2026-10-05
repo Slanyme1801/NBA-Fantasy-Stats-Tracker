@@ -94,3 +94,35 @@ loadBoard=async function(){
 };
 function networkNotice(){let node=el('networkNotice');if(!node){node=document.createElement('div');node.id='networkNotice';node.setAttribute('role','status');document.body.prepend(node);}node.hidden=navigator.onLine&&window.CurrentLoad.state==='fresh';node.textContent=!navigator.onLine?'Offline · showing data already saved on this device. Check its collection date.':window.CurrentLoad.state==='cached'?'Last verified data · refresh failed. Check the collection date before using current form.':'Current-season data could not be loaded. Historical stats remain available.';}
 window.addEventListener('online',networkNotice);window.addEventListener('offline',networkNotice);networkNotice();
+// A one-use, tab-local snapshot protects the current view during an app update.
+// Saved scoring continues to use its original localStorage key.
+window.FantasySession={
+  capture(){return {page:activePage,playerId:CURRENT?.player_id,
+    trade:{...tradeState,left:[...tradeState.left],right:[...tradeState.right]},compare:[...compareIds],
+    controls:[...document.querySelectorAll('#view input[id],#view select[id],#view textarea[id],#navSearch')].filter(e=>!['password','file'].includes(e.type)).map(e=>({id:e.id,value:e.value,checked:e.checked})),
+    details:[...document.querySelectorAll('#view details')].map(e=>e.open),focus:document.activeElement?.id,scroll:window.scrollY};},
+  async restore(saved){
+    if(!saved||typeof saved!=='object')throw new Error('Invalid view snapshot');
+    const valid=new Set([...window.__DATASET.players.map(p=>p[0]),...currentData.players.map(p=>p.nbaId)]);
+    const ids=(list,max)=>[...new Set(Array.isArray(list)?list:[])].filter(id=>valid.has(id)).slice(0,max);
+    compareIds=ids(saved.compare,4);comparePlayers={};
+    for(const id of compareIds)comparePlayers[id]=await api('/api/player/'+id);
+    if(saved.trade){tradeState.left=ids(saved.trade.left,5);tradeState.right=ids(saved.trade.right,5).filter(id=>!tradeState.left.includes(id));
+      if(['season','7','14','30',...window.__DATASET.seasons].includes(saved.trade.period))tradeState.period=saved.trade.period;
+      tradeState.replacement=Number.isFinite(saved.trade.replacement)?saved.trade.replacement:NaN;}
+    if(saved.page==='player'&&valid.has(saved.playerId))await openPlayer(saved.playerId);
+    else go(['home','board','compare','trades','data'].includes(saved.page)?saved.page:'home');
+    const restoreControls=()=>{for(const field of saved.controls||[]){const node=typeof field.id==='string'?el(field.id):null;if(!node||!node.matches('input,select,textarea')||['password','file'].includes(node.type))continue;node.value=String(field.value??'');if(typeof field.checked==='boolean')node.checked=field.checked;}};
+    restoreControls();if(activePage==='board'){setBoardPositions();restoreControls();await loadBoard();}
+    if(activePage==='trades')await updateTrades();
+    if(activePage==='compare')loadCompareBody();
+    if(activePage==='player')renderSimilar();
+    [...document.querySelectorAll('#view details')].forEach((node,i)=>{node.open=!!saved.details?.[i];});
+    if(typeof saved.focus==='string')el(saved.focus)?.focus({preventScroll:true});
+    window.scrollTo(0,Number.isFinite(saved.scroll)?saved.scroll:0);
+  }
+};
+const beforeUpdateData=renderData;
+renderData=function(){beforeUpdateData();el('view').insertAdjacentHTML('beforeend','<section class="panel"><h3>Application updates</h3><p id="appVersionStatus" aria-live="polite">Checking application version...</p><button class="btn ghost" onclick="window.AppUpdates.check()">Check for app updates</button></section>');window.AppUpdates?.render();};
+const beforeUpdateGo=go;
+go=function(page){beforeUpdateGo(page);window.dispatchEvent(new Event('nba:view'));};

@@ -40,9 +40,9 @@ Les barèmes personnalisés sont conservés localement et signalés « Custom sc
 - `tools/collect.mjs` : collecte hors navigateur, candidat local dans `.local/`, jamais de push ni déploiement.
 - `tools/import-positions.mjs` : import ESPN séparé avec validation de chaque identité, date et source.
 - `tools/publish.mjs` : sélection d'un JSON validé **sur disque local**, remplacement atomique du manifeste, conservation du manifeste précédent et de toutes les versions.
-- `sw.js` et `assets/loader.mjs` : page et assets en priorité réseau, repli hors ligne ; données courantes validées avant mise en cache. Les JSON invalides n'écrasent pas la dernière version vérifiée. La migration depuis le cache v1 recharge une fois l'ancienne page après activation.
+- `sw.js` : cache complet distinct par version publiée, contrôles automatiques dans les onglets actifs et conservation des saisies avant rechargement. `assets/loader.mjs` conserve séparément la dernière version de données validée. Voir [les détails et preuves de migration](docs/APP-UPDATES.md).
 
-La première visite demande une connexion. « Offline app cache ready » dans Data & scoring confirme la préparation du cache. Une reprise sur version en cache conserve sa date de collecte et affiche un avertissement. Les requêtes expirent au bout de 8 secondes avant repli. Les chemins, icônes et manifeste sont relatifs au dossier du site.
+La première visite demande une connexion. « Offline app cache ready » dans Data & scoring confirme la préparation du cache. Une reprise sur version en cache conserve sa date de collecte et affiche un avertissement. Les requêtes de données expirent au bout de 8 secondes avant repli. L’installation du cache applicatif utilise un délai de 10 secondes par ressource. Les chemins, icônes et manifeste sont relatifs au dossier du site.
 
 ## Connexion future et publication
 

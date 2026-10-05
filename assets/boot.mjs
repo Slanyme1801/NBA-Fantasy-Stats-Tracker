@@ -1,5 +1,7 @@
 import * as core from './core.mjs';
 import {loadCurrent} from './loader.mjs';
+import {createAppUpdates} from './updates.mjs';
+window.AppUpdates=createAppUpdates();
 const script = src => new Promise((resolve,reject)=>{
   const element=document.createElement('script'); element.src=src; element.onload=resolve; element.onerror=reject; document.body.append(element);
 });
@@ -16,6 +18,7 @@ try {
   await script('./assets/app.js');
   await script('./assets/companion.js');
   await window.startApp();
+  await window.AppUpdates.ready();
 } catch(error) {
   const view=document.getElementById('view');
   view.innerHTML='<div class="empty"><h2>Data could not be loaded</h2><p>The first visit needs a connection. Previously cached data remains on this device.</p><button class="btn" onclick="location.reload()">Retry</button></div>';

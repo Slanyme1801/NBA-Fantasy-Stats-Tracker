@@ -472,14 +472,6 @@ async function loadMeta(){
   META = await api("/api/meta");
   SEASONS.length = 0; SEASONS.push(...META.seasons);
 }
-if("serviceWorker" in navigator && location.protocol.startsWith("http")){
-  const swUrl = new URL("sw.js", document.baseURI).href;
-  window.PWA_STATUS = 'Preparing offline access…';
-  navigator.serviceWorker.register(swUrl, {updateViaCache:"none"})
-    .then(async r=>{await r.update();await navigator.serviceWorker.ready;window.PWA_STATUS='Offline app cache ready';})
-    .catch(()=>{window.PWA_STATUS='Offline app cache unavailable in this browser';})
-    .finally(()=>window.dispatchEvent(new Event('pwa-status')));
-}
 window.startApp = async () => {
   await loadMeta();
   wireSearch(el("navSearch"), el("navResults"));
