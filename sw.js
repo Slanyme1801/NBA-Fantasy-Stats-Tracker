@@ -1,38 +1,29 @@
-/* App shell cached for instant launch; API responses cached as a fallback so a
-   player page you already opened still works without a connection. */
-const SHELL = "nbafs-shell-v1";
-const DATA = "nbafs-data-v1";
-const ASSETS = ["./", "./manifest.webmanifest", "./icon-192.png",
-                "./icon-512.png", "./apple-touch-icon.png"];
-
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(SHELL).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting()));
-});
-
-self.addEventListener("activate", (e) => {
-  e.waitUntil(caches.keys().then((keys) => Promise.all(
-    keys.filter((k) => k !== SHELL && k !== DATA).map((k) => caches.delete(k))
-  )).then(() => self.clients.claim()));
-});
-
-self.addEventListener("fetch", (e) => {
-  const { request } = e;
-  if (request.method !== "GET") return;
-  const url = new URL(request.url);
-  if (url.origin !== location.origin) return;
-
-  if (url.pathname.startsWith("/api/")) {
-    // Network first: stats must be fresh when the phone is online.
-    e.respondWith(
-      fetch(request)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(DATA).then((c) => c.put(request, copy));
-          return res;
-        })
-        .catch(() => caches.match(request))
-    );
-    return;
-  }
-  e.respondWith(caches.match(request).then((hit) => hit || fetch(request)));
+const SHELL='nbafs-shell-v2';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png','./icon-maskable-512.png','./assets/style.css','./assets/companion.css','./assets/core.mjs','./assets/loader.mjs','./assets/boot.mjs','./assets/legacy.js','./assets/adapter.js','./assets/app.js','./assets/companion.js','./data/history-v1.json'];
+self.addEventListener('install',event=>event.waitUntil(caches.open(SHELL).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',event=>event.waitUntil((async()=>{
+  const keys=await caches.keys(),legacy=keys.includes('nbafs-shell-v1');
+  await Promise.all(keys.filter(key=>key.startsWith('nbafs-')&&key!==SHELL&&key!=='nbafs-verified-v2').map(key=>caches.delete(key)));
+  await self.clients.claim();
+  // One-time v1 migration: the old cache-first page cannot listen for an update.
+  if(legacy)for(const client of await self.clients.matchAll({type:'window'}))if(client.url.startsWith(self.registration.scope))await client.navigate(client.url);
+})()));
+self.addEventListener('fetch',event=>{
+  const request=event.request,url=new URL(request.url),scope=new URL(self.registration.scope);
+  if(request.method!=='GET'||url.origin!==scope.origin||!url.pathname.startsWith(scope.pathname))return;
+  const relative=url.pathname.slice(scope.pathname.length);
+  // Only the application loader validates and retains current JSON snapshots.
+  if(relative.startsWith('data/')&&relative!=='data/history-v1.json')return;
+  if(!ASSETS.map(x=>x.replace(/^\.\//,'')).includes(relative)&&request.mode!=='navigate')return;
+  event.respondWith((async()=>{
+    const cache=await caches.open(SHELL);
+    try{
+      const response=await fetch(request,{cache:'no-cache',signal:AbortSignal.timeout(8000)});
+      if(!response.ok)throw new Error('Unsuccessful shell response');
+      await cache.put(request,response.clone());return response;
+    }catch{
+      const cached=await cache.match(request)||(request.mode==='navigate'?await cache.match(new URL('index.html',scope).href):null);
+      return cached||new Response('Offline: first visit needs a connection',{status:503,headers:{'Content-Type':'text/plain'}});
+    }
+  })());
 });

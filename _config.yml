@@ -1,0 +1,18 @@
+# Keep the existing branch-based GitHub Pages/Jekyll deployment.
+# Only application assets and validated data belong in the published site.
+exclude:
+  - .local
+  - .env
+  - .env.*
+  - .git
+  - .github
+  - .gitignore
+  - .gitattributes
+  - config
+  - docs
+  - tests
+  - tools
+  - node_modules
+  - package.json
+  - package-lock.json
+  - README.md

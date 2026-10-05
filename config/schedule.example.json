@@ -1,0 +1,1 @@
+{"enabled":false,"suggestedCadence":"daily, to be discussed","command":"npm run collect -- --config config/collector.local.json","publishAutomatically":false}

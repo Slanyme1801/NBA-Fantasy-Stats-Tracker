@@ -1,0 +1,12 @@
+{
+  "enabled": false,
+  "season": 2026,
+  "league": "standard",
+  "correctionDays": 7,
+  "maxRequestsPerRun": 90,
+  "dailyLimit": 100,
+  "intervalMs": 6100,
+  "identityMap": "config/identities.example.json",
+  "gameTypes": "config/game-types.example.json",
+  "candidate": ".local/candidate.json"
+}

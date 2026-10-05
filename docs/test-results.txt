@@ -1,0 +1,60 @@
+> test
+> node --test tests/*.test.mjs
+
+✔ ESPN formula includes FGM, attempts, free throws, steals, blocks and turnovers (0.907ms)
+✔ no rounding before aggregation or trade calculation (0.2964ms)
+✔ 2v1, 3v2 and equal-sized trades use equal slots (0.6058ms)
+✔ missing trade data is distinct from true zero and invalid replacement (0.2461ms)
+✔ production disconnected state contains no games (0.5788ms)
+✔ fixture is internally valid and actual zero performance counts as played (1.5403ms)
+✔ DNP, missing row and no player record do not become zero games (0.3235ms)
+✔ sums raw counters and computes percentages from combined attempts (0.251ms)
+✔ 7 calendar days includes lower boundary and excludes prior/future days (1.8183ms)
+✔ 14 calendar days includes lower boundary and excludes prior/future days (0.704ms)
+✔ 30 calendar days includes lower boundary and excludes prior/future days (0.5147ms)
+✔ calendar windows across month/year boundary (0.2075ms)
+✔ provider offsets are converted to UTC before calendar inclusion (0.381ms)
+✔ preseason excluded from regular-season aggregates (0.2976ms)
+✔ playoffs excluded from regular-season aggregates (0.1927ms)
+✔ play-in excluded from regular-season aggregates (0.1469ms)
+✔ cup-final excluded from regular-season aggregates (0.1025ms)
+✔ all-star excluded from regular-season aggregates (0.2782ms)
+✔ unknown excluded from regular-season aggregates (0.1638ms)
+✔ live, canceled, different season or league and future games excluded (0.3551ms)
+✔ duplicates rejected and correction replaces entire game including removed player (0.9105ms)
+✔ invalid counts, identities and reconciliations rejected (0.5351ms)
+✔ ESPN imports require exact positions, provenance, season and verified NBA IDs (0.3763ms)
+✔ similarities support positions, AVG or both and expose sample sizes (0.5035ms)
+✔ all historical data exactly matches original commit, not just counts (102.1878ms)
+✔ native fetch remains unchanged and search/profile preserve NBA IDs (20.3006ms)
+✔ all five historical seasons remain filterable and 2026-27 is empty (77.3077ms)
+✔ custom scoring persists locally, updates profiles and rejects non-finite input (17.3635ms)
+✔ API envelope errors and invalid result counts are rejected (3.0173ms)
+✔ minutes parsing and null counters never fabricate played zeros (1.5834ms)
+✔ unmapped IDs, wrong games and seasons block imports; stage never implies game type (1.6293ms)
+✔ simulated collection uses game endpoint and returns validated real-shaped rows (1.2534ms)
+✔ correction re-fetches recent games and does not double count (0.5761ms)
+✔ unknown game types require review and are never fetched for averages (0.2999ms)
+✔ coverage unavailable, empty correction and network errors preserve previous input (0.5913ms)
+✔ client requires a key without attempting network (0.2407ms)
+✔ HTTP 403 is not retried; HTTP 200 API errors are not success (31.0793ms)
+✔ 429 retries with backoff and daily/request budgets stop calls (1.4551ms)
+✔ collector CLI is disabled by default and requires a key when enabled (196.8043ms)
+✔ public shell uses relative URLs, existing assets and no global fetch replacement (5.7665ms)
+✔ Pages build excludes local data and developer files while retaining public resources (1.9321ms)
+✔ loader verifies hash and schema at a GitHub Pages subpath (32.9802ms)
+✔ network failure, malformed data, bad hash and HTTP errors retain last verified snapshot (11.6234ms)
+✔ cold offline load is explicitly unavailable with zero fabricated rows (0.6913ms)
+✔ invalid JSON schema with valid hash never replaces cached data (4.7887ms)
+✔ local publication is immutable, retains previous manifest and validates before switching (38.027ms)
+✔ PWA v1 migration removes only app caches and refreshes only its own scope (34.8687ms)
+✔ PWA shell is network-first and serves cached navigation offline at a Pages subpath (6.3056ms)
+✔ PWA does not intercept current data manifests, release errors or external origins (1.759ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 441.5535
