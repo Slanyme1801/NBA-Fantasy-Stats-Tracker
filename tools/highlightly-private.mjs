@@ -86,10 +86,14 @@ export function mergeHighlightly(previous,incoming){
     requireValue(!old||old.status!=='finished'||game.status==='finished','Finished match cannot regress to unfinished');
     requireValue(!old||old.type==='unknown'||game.type!=='unknown','Known classification cannot be removed by an absent mapping');
     requireValue(!old?.classification||!game.classification||Date.parse(game.classification.verifiedAt)>=Date.parse(old.classification.verifiedAt),'Older classification provenance');
-    requireValue(game.type==='unknown'||game.status!=='finished'||game.statsState==='available','Classified finished match must have validated box score');
-    games.set(game.id,game);replaced.add(game.id);
+    const unmappedGap=game.statsState==='missing'&&game.refreshIssue?.code==='unmapped-players'&&Number.isSafeInteger(game.refreshIssue.unmappedPlayerCount)&&game.refreshIssue.unmappedPlayerCount>0&&iso(game.refreshIssue.attemptedAt)&&!incoming.lines.some(l=>l.gameId===game.id);
+    requireValue(game.type==='unknown'||game.status!=='finished'||game.statsState==='available'||unmappedGap,'Classified finished match must have validated box score or explicit unmapped gap');
+    if(unmappedGap&&old?.statsState==='available'){
+      // Preserve the entire older verified box and its matching score, never mix it with a correction.
+      games.set(game.id,{...old,type:game.type,classification:game.classification,refreshIssue:{...game.refreshIssue,preservedPreviousBoxScore:true}});
+    }else{games.set(game.id,game);replaced.add(game.id);}
   }
-  const absentFinished=previous.games.filter(g=>g.status==='finished'&&!replaced.has(g.id)&&localMatchDay(g)>=incoming.scope.startDate&&localMatchDay(g)<=incoming.scope.endDate).map(g=>g.id);
+  const absentFinished=previous.games.filter(g=>g.status==='finished'&&!incoming.games.some(incomingGame=>incomingGame.id===g.id)&&localMatchDay(g)>=incoming.scope.startDate&&localMatchDay(g)<=incoming.scope.endDate).map(g=>g.id);
   const lines=[...previous.lines.filter(l=>!replaced.has(l.gameId)),...incoming.lines];
   const allCoverage=[...coverageOf(previous),...coverage.map(c=>({...c,preservedAbsentFinishedGameIds:absentFinished}))];
   for(const c of allCoverage){datesInRange(c.startDate,c.endDate);requireValue(iso(c.normalizedAt)&&Array.isArray(c.requests),'Invalid coverage provenance');}
@@ -97,7 +101,7 @@ export function mergeHighlightly(previous,incoming){
     scope:{startDate:allCoverage.map(c=>c.startDate).sort()[0],endDate:allCoverage.map(c=>c.endDate).sort().at(-1),timeZone:'America/New_York',completeSeason:false,mayHaveGaps:true}};
   return validatePrivate(result);
 }
-export async function runHighlightlyBatch({client,cache,previous=null,identities,types,startDate,endDate,refreshFrom=null,refreshId=null,now=()=>Date.now(),saveCheckpoint=async()=>{}}){
+export async function runHighlightlyBatch({client,cache,previous=null,identities,types,startDate,endDate,refreshFrom=null,refreshId=null,now=()=>Date.now(),saveCheckpoint=async()=>{},unmappedPolicy='error'}){
   datesInRange(startDate,endDate);
   // Reject corrupt prior state before spending any request budget.
   if(previous){validatePrivate(previous);for(const c of coverageOf(previous)){datesInRange(c.startDate,c.endDate);requireValue(iso(c.normalizedAt)&&Array.isArray(c.requests),'Invalid coverage provenance');}}
@@ -105,7 +109,8 @@ export async function runHighlightlyBatch({client,cache,previous=null,identities
   await saveCheckpoint(checkpoint);
   const load=makeCachedLoader({client,cache,now,refreshFrom,refreshId,onRequest:async request=>{checkpoint.requests.push(request);await saveCheckpoint(checkpoint);}});
   try{
-    const batch=await collectHighlightly({client,load,identities,types,startDate,endDate,now:new Date(now()).toISOString(),onGame:async id=>{checkpoint.completedGameIds.push(id);await saveCheckpoint(checkpoint);}});
+    const batch=await collectHighlightly({client,load,identities,types,startDate,endDate,unmappedPolicy,now:new Date(now()).toISOString(),onGame:async id=>{checkpoint.completedGameIds.push(id);await saveCheckpoint(checkpoint);}});
+    checkpoint.unmappedGameIds=batch.games.filter(g=>g.refreshIssue?.code==='unmapped-players').map(g=>g.id);
     batch.coverage=[{startDate,endDate,normalizedAt:batch.updatedAt,refreshId,requests:checkpoint.requests}];
     const result=mergeHighlightly(previous,batch);
     checkpoint.status='validated';await saveCheckpoint(checkpoint);return result;

@@ -114,3 +114,24 @@ test('corrupt previous snapshot and coverage are rejected before any network cal
     await assert.rejects(runHighlightlyBatch(options({previous:prior,client:async()=>{calls++;throw Error('Must not fetch');}})));assert.equal(calls,0);
   }
 });
+test('explicit daily skip policy imports no partial unmapped box but preserves a classified missing game',async()=>{
+  const ids=identities();ids.players=ids.players.filter(p=>p.providerId!==102);
+  const result=await runHighlightlyBatch(options({identities:ids,unmappedPolicy:'skip-game'}));
+  assert.equal(result.games[0].type,'regular');assert.equal(result.games[0].statsState,'missing');assert.equal(result.games[0].refreshIssue.unmappedPlayerCount,1);assert.equal(result.lines.length,0);assert.equal(result.players.length,0);
+});
+test('unmapped correction preserves the entire older verified box and score, then mapping expansion replaces it',async()=>{
+  const cache=memoryCache(),first=await runHighlightlyBatch(options({cache}));
+  const correctedBox=box();correctedBox[0].boxScores[0].player.id=999;
+  const correctedMatch=match();correctedMatch.state.score.homeTeam[0]=7;
+  correctedBox[0].boxScores[0].statistics.find(s=>s.name==='Total Points Scored').value=22;
+  correctedBox[0].boxScores[0].statistics.find(s=>s.name==='Successful Field Goals').value=8;
+  const refresh={cache,previous:first,refreshFrom:day,refreshId:'unmapped-correction',unmappedPolicy:'skip-game',client:async endpoint=>endpoint==='/matches'?envelope([correctedMatch]):correctedBox};
+  const retained=await runHighlightlyBatch(options(refresh));assert.deepEqual(retained.lines,first.lines);assert.equal(retained.games[0].finalScores[0],20);assert.equal(retained.games[0].refreshIssue.preservedPreviousBoxScore,true);
+  const expanded=identities();expanded.players.push({...player(9),providerId:999});
+  const fixed=await runHighlightlyBatch(options({...refresh,previous:retained,identities:expanded,client:async()=>{throw Error('Must reuse paid cache');}}));
+  assert.equal(fixed.games[0].finalScores[0],22);assert.equal(fixed.games[0].refreshIssue,undefined);assert.equal(fixed.lines.length,2);assert.equal(fixed.lines[0].nbaId,9);
+});
+test('skip policy never hides invalid statistics or imports malformed partial scores',async()=>{
+  const b=box();b[0].boxScores[0].player.id=999;b[0].boxScores[0].statistics[0].value=999;
+  await assert.rejects(runHighlightlyBatch(options({unmappedPolicy:'skip-game',client:async endpoint=>endpoint==='/matches'?envelope():b})),/Points/);
+});

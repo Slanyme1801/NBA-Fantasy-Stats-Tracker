@@ -55,3 +55,4 @@ test('profile labels sample averages, scoped missing-game counts and rounded min
   assert.match(html,/not a count of all missing league games/);assert.doesNotMatch(html,/League coverage:/);
   assert.match(html,/<th>MIN ≈<\/th>/);assert.match(html,/<td>≈ 30<\/td>/);
 });
+test('coverage explicitly counts unresolved identity gaps and preserved older boxes',()=>{const d=fixture();d.games[0].refreshIssue={code:'unmapped-players',unmappedPlayerCount:1,preservedPreviousBoxScore:true};const html=vm.runInContext('coverageDetails(currentData)',context(d));assert.match(html,/1 imported games await verified player identities/);assert.match(html,/1 retain an older verified box score/);});

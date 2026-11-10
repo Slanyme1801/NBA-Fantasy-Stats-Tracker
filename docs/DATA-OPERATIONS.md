@@ -138,7 +138,7 @@ Seule une projection contrôlée est écrite : identités NBA/Highlightly vérif
 
 ### Runner quotidien prêt à planifier, mais non activé
 
-`config/highlightly-daily.example.json` est désactivé. Une copie privée peut choisir trois journées terminées à New York (jusqu’à sept maximum), une réserve de dix appels et `publishLocally: true` avec le chemin de l’attestation. La révision `daily-YYYY-MM-DD` permet une reprise le même jour UTC. Les identités et classifications doivent rester vérifiées ; une date, à elle seule, ne prouve jamais la saison régulière. Les matchs inconnus sont exclus et un joueur non mappé bloque le lot sans effacer la dernière version publique.
+`config/highlightly-daily.example.json` est désactivé. Une copie privée peut choisir trois journées terminées à New York (jusqu’à sept maximum), une réserve de dix appels et `publishLocally: true` avec le chemin de l’attestation. La révision `daily-YYYY-MM-DD` permet une reprise le même jour UTC. Les identités et classifications doivent rester vérifiées ; une date, à elle seule, ne prouve jamais la saison régulière. Les matchs inconnus sont exclus. Le runner quotidien écarte intégralement le box score d’un match dont au moins une identité manque, sans publier ses autres joueurs isolément ; le collecteur manuel conserve son refus strict par défaut.
 
 ```sh
 node tools/highlightly-daily.mjs --config config/highlightly-daily.local.json
@@ -169,3 +169,12 @@ Le fichier `.github/highlightly-quota.json` réserve volontairement toute la jou
 Le dispatch manuel propose `validation_only: true` par défaut. Ce mode fonctionne même sans secret fournisseur et sans activation quotidienne : il vérifie le code et le snapshot public, ne réserve aucun quota supplémentaire, ne prépare pas de candidat privé, n’appelle pas Highlightly et ne pousse aucune donnée. Il demande seulement un build Pages du commit existant et en vérifie le résultat. Cela permet de tester réellement les permissions Pages du `GITHUB_TOKEN` avant le premier refresh. Ne décocher cette option que pour une collecte autorisée ; la réservation quotidienne reste obligatoire.
 
 La documentation REST GitHub accepte les tokens d’installation GitHub App pour `POST /pages/builds` avec `Pages: write`, ce qui correspond au mécanisme du `GITHUB_TOKEN`. L’accès effectif dépend toutefois des règles du dépôt et doit être testé par ce dispatch. Un 403/422 ou un timeout reste un échec explicite ; le workflow ne change jamais le mode Pages et ne revendique pas un déploiement réussi sans le build correspondant au commit exact.
+
+
+### Couverture quotidienne avec correspondances encore partielles
+
+Le runner quotidien utilise explicitement `unmappedPolicy: "skip-game"`. Les réponses et tous leurs compteurs sont d’abord validés. Si une identité NBA manque, **aucune ligne du box score concerné** n’est importée : un match terminé correctement classifié reste présent avec `statsState: "missing"` et un motif `unmapped-players`. Un défaut de compteur, de score ou d’identité conflictuelle continue d’arrêter le lot ; ce mode ne masque pas les réponses invalides.
+
+Lorsqu’un ancien box score complet est déjà vérifié, une correction comportant des joueurs non mappés ne l’efface pas : ses lignes et son ancien score sont conservés ensemble, avec un avertissement explicite « ancien box score conservé ». Une nouvelle classification sourcée peut encore exclure ce match des moyennes si elle change son type. Dès que les mappings sont complétés, une reprise peut utiliser le cache valide et remplacer intégralement les anciennes lignes. Aucune identité n’est déduite d’un nom ou fabriquée.
+
+Le bandeau du site compte les matchs bloqués par les identités et ceux conservant un box score plus ancien. Les matchs réguliers connus sans box score complet apparaissent également dans les lacunes de l’échantillon. Le checkpoint privé liste les matchs non résolus. La réussite quotidienne signifie donc mise à jour du calendrier et des box scores **entièrement mappés**, pas fonctionnement complet pour toute la ligue. La reconstruction depuis le snapshot public ne découvre ni de nouvelles identités ni des classifications : les prochains matchs restent `unknown` tant qu’une source vérifiée n’enrichit ces correspondances. Ces sources nécessitent encore un travail séparé.

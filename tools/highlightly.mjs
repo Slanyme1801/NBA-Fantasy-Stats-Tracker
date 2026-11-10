@@ -137,7 +137,8 @@ export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLim
     }finally{busy=false;}
   };
 }
-export async function collectHighlightly({client,identities,types,startDate,endDate,now=new Date().toISOString(),knownIds=[],load=null,onGame=async()=>{}}){
+export async function collectHighlightly({client,identities,types,startDate,endDate,now=new Date().toISOString(),knownIds=[],load=null,onGame=async()=>{},unmappedPolicy='error'}){
+  check(['error','skip-game'].includes(unmappedPolicy),'Invalid unmapped-player policy');
   const request=load|| (async(endpoint,params,validate)=>{const body=await client(endpoint,params);validate(body);return body;});
   check(identities?.provider===PROVIDER&&types?.provider===PROVIDER,'Explicit Highlightly mapping namespace required');validateIdentityMap(identities);const map=classifications(types);
   const dates=datesInRange(startDate,endDate),games=[],seen=new Set();
@@ -157,6 +158,11 @@ export async function collectHighlightly({client,identities,types,startDate,endD
   const lines=[];
   for(const game of games.filter(g=>g.status==='finished'&&g.type!=='unknown')){
     const body=await request(`/box-score/${game.id}`,{},body=>parseBoxScore(body,game),{date:localMatchDay(game),game});
+    const missing=parseBoxScore(body,game).filter(line=>!identities.players.some(p=>p.providerId===line.providerId));
+    if(missing.length&&unmappedPolicy==='skip-game'){
+      game.statsState='missing';game.refreshIssue={code:'unmapped-players',unmappedPlayerCount:missing.length,attemptedAt:now,preservedPreviousBoxScore:false};
+      continue;
+    }
     lines.push(...normalizeBoxScore(body,game,identities.players,now));game.statsState='available';await onGame(game.id);
   }
   const used=new Set(lines.map(l=>l.nbaId));

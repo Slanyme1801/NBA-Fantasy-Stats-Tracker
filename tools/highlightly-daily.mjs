@@ -14,7 +14,7 @@ export function dailyCollectionConfig(config,now=new Date()){
   const endDate=new Date(Date.parse(localDay)-86400000).toISOString().slice(0,10);
   const startDate=new Date(Date.parse(endDate)-(config.lookbackDays-1)*86400000).toISOString().slice(0,10);datesInRange(startDate,endDate);
   if(!/^\.local\/highlightly-[a-z0-9.-]+\.json$/i.test(config.candidate))throw new Error('Invalid private candidate path');
-  return {enabled:true,provider:PROVIDER,startDate,endDate,maxRequestsPerRun:90,dailyLimit:90,intervalMs:6100,identityMap:config.identityMap,gameTypes:config.gameTypes,candidate:config.candidate,refreshFrom:startDate,refreshId:`daily-${now.toISOString().slice(0,10)}`};
+  return {enabled:true,provider:PROVIDER,startDate,endDate,maxRequestsPerRun:90,dailyLimit:90,intervalMs:6100,identityMap:config.identityMap,gameTypes:config.gameTypes,candidate:config.candidate,refreshFrom:startDate,refreshId:`daily-${now.toISOString().slice(0,10)}`,unmappedPolicy:'skip-game'};
 }
 export function bootstrapPrivateSnapshot(snapshot,authorization){
   const validated=publicHighlightlySnapshot(snapshot,authorization);
