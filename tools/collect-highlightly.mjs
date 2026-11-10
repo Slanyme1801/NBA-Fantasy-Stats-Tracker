@@ -19,6 +19,6 @@ try{
   const previous=await readPrivateJSON(config.candidate).catch(e=>{if(e.code==='ENOENT')return null;throw e;});
   const result=await runHighlightlyBatch({client,cache:makeDiskCache(),previous,identities:await readJSON(config.identityMap),types:await readJSON(config.gameTypes),startDate:config.startDate,endDate:config.endDate,refreshFrom:config.refreshFrom??null,refreshId:config.refreshId??null,saveCheckpoint:value=>atomicPrivateJSON('.local/highlightly-checkpoint.json',value)});
   await atomicPrivateJSON(config.candidate,result);
-  console.log(`Private Highlightly candidate: ${result.games.length} games, ${result.lines.length} lines. Publication prohibited; no public files changed.`);
+  console.log(`Private Highlightly candidate: ${result.games.length} games, ${result.lines.length} lines. No public files changed; separate publication attestation required.`);
 }catch{console.error('Highlightly collection stopped. Check private configuration, identity mappings, classifications, quota ledger and provider access. No publication performed.');process.exitCode=1;}
 finally{if(lock){await lock.close();await fs.unlink('.local/highlightly.lock');}}

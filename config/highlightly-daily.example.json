@@ -1,0 +1,13 @@
+{
+  "enabled": false,
+  "provider": "Highlightly",
+  "lookbackDays": 3,
+  "dailyLimit": 90,
+  "maxRequestsPerRun": 90,
+  "identityMap": "config/highlightly-identities.example.json",
+  "gameTypes": "config/highlightly-game-types.example.json",
+  "candidate": ".local/highlightly-candidate.json",
+  "publishLocally": false,
+  "publicationAuthorization": "config/highlightly-publication.example.json",
+  "bootstrapFromPublished": false
+}

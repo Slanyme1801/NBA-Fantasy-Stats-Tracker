@@ -51,3 +51,7 @@ Lire [le guide de collecte](docs/DATA-OPERATIONS.md) avant toute première exéc
 Prérequis avant alimentation 2026-27 : accès aux données de cette saison et droits de republication à vérifier ; champs réels des box scores à contrôler ; règles de classification de matchs et correspondances d’identités vérifiées ; source/date de l’import manuel ESPN. Une éventuelle actualisation quotidienne reste à discuter. Les clés restent exclusivement dans le processus local, hors du dépôt et du navigateur.
 
 Résultats de validation et limites : [docs/VERIFICATION.md](docs/VERIFICATION.md).
+
+## Highlightly : publication sous attestation
+
+Le collecteur reste désactivé par défaut. La publication des statistiques normalisées exige une attestation explicite du propriétaire confirmant la permission du fournisseur pour le fichier public. Le site signale les échantillons partiels et leurs dates. Un runner quotidien (trois journées terminées, 90 appels maximum/jour UTC) est prêt à planifier ; aucun scheduler ni secret n’est installé par ce code. Voir [la procédure et les limites](docs/DATA-OPERATIONS.md#publication-highlightly-autorisée-et-fréquence).

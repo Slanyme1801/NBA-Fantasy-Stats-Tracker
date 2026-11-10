@@ -3,9 +3,11 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {validateSeason} from '../assets/core.mjs';
 import {readJSON,atomicJSON,checksum,published} from './files.mjs';
+import {publicHighlightlySnapshot} from './highlightly-public.mjs';
 // Publication here only means selecting local static JSON. It never pushes/deploys.
-export async function publishLocal(candidate,{root='.',knownIds=[]}={}) {
-  if(candidate?.provider!=='API-NBA / API-Sports'||candidate?.publicationPolicy||candidate?.games?.some(g=>g.provider==='Highlightly')||candidate?.lines?.some(r=>r.provider==='Highlightly')) throw new Error('Publication blocked: provider redistribution rights are unverified');
+export async function publishLocal(candidate,{root='.',knownIds=[],publicationAuthorization=null}={}) {
+  if(candidate?.provider==='Highlightly')candidate=publicHighlightlySnapshot(candidate,publicationAuthorization);
+  else if(candidate?.provider!=='API-NBA / API-Sports'||candidate?.publicationPolicy||candidate?.games?.some(g=>g.provider==='Highlightly')||candidate?.lines?.some(r=>r.provider==='Highlightly'))throw new Error('Publication blocked: provider redistribution rights are unverified');
   validateSeason(candidate,knownIds);
   const bytes=Buffer.from(JSON.stringify(candidate)+'\n'),sha256=checksum(bytes);
   const file=`data/releases/2026-27-${sha256.slice(0,16)}.json`;
@@ -23,7 +25,9 @@ if(process.argv[1] && import.meta.url===pathToFileURL(process.argv[1]).href){
   try {
     if(!process.argv[2])throw new Error('Usage: node tools/publish.mjs .local/candidate.json (local files only)');
     const history=await readJSON('data/history-v1.json');
-    const result=await publishLocal(await readJSON(process.argv[2]),{knownIds:history.players.map(p=>p[0])});
+    const flag=process.argv.indexOf('--authorization');
+    const publicationAuthorization=flag>=0?await readJSON(process.argv[flag+1]):null;
+    const result=await publishLocal(await readJSON(process.argv[2]),{knownIds:history.players.map(p=>p[0]),publicationAuthorization});
     console.log(`Local data manifest selected: ${result.file}. No deployment performed.`);
   }catch(error){console.error(error.message);process.exitCode=1;}
 }
