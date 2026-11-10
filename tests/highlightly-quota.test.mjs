@@ -65,3 +65,8 @@ test('timeout crossing midnight also persists an uncertain-day block',async()=>{
   const s=setup({time:midnight+86400000-1,fetcher:async()=>{s.setTime(midnight+86400000);throw Error('synthetic timeout');}});
   await assert.rejects(s.client('/box-score/1'),/no automatic retry/);assert.equal(s.saves.at(-1).blocked,true);assert.equal(s.saves.at(-1).dayUTC,'2026-11-11');assert.equal(s.calls,1);
 });
+test('season inventory permits omitted date but rejects invalid date and extra parameters',async()=>{
+  let calls=0;const client=makeHighlightlyClient({key:'SYNTHETIC',ledger:{provider:'Highlightly',requests:[]},saveLedger:async()=>{},sleep:async()=>{},fetcher:async url=>{calls++;assert.equal(url.searchParams.has('date'),false);return {ok:true,headers:new Headers(),json:async()=>({data:[],plan:{tier:'BASIC',message:'All data available with current plan.'},pagination:{totalCount:0,offset:0,limit:100}})};}});
+  const params={league:'NBA',season:2027,timezone:'America/New_York',limit:100,offset:0};await client('/matches',params);assert.equal(calls,1);
+  await assert.rejects(client('/matches',{...params,date:'invalid'}));await assert.rejects(client('/matches',{...params,unexpected:true}));assert.equal(calls,1);
+});

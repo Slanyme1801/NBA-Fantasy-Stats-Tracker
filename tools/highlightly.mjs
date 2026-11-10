@@ -96,7 +96,7 @@ export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLim
     try{
       check(endpoint==='/matches'||/^\/box-score\/[1-9]\d*$/.test(endpoint),'Unsupported Highlightly endpoint');
       if(endpoint==='/matches'){
-        check(Object.keys(params).sort().join(',')==='date,league,limit,offset,season,timezone'&&params.league==='NBA'&&params.season===2027&&params.timezone==='America/New_York'&&params.limit===100&&count(params.offset),'Invalid matches parameters');datesInRange(params.date,params.date);
+        check(['date,league,limit,offset,season,timezone','league,limit,offset,season,timezone'].includes(Object.keys(params).sort().join(','))&&params.league==='NBA'&&params.season===2027&&params.timezone==='America/New_York'&&params.limit===100&&count(params.offset),'Invalid matches parameters');if(params.date!==undefined)datesInRange(params.date,params.date);
       }else check(Object.keys(params).length===0,'Box-score parameters are prohibited');
       check(!persistenceFailed,'Highlightly quota ledger persistence failed; no further requests');
       if(last!==null)await sleep(Math.max(0,intervalMs-(readClock()-last)));

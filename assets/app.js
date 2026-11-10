@@ -3,6 +3,7 @@ const SEASONS = [];
 let META = null, CURRENT = null, sortState = {key:"season", dir:"asc"};
 const fmt = (v, d=1) => (v===null||v===undefined||Number.isNaN(v)) ? "—" : Number(v).toFixed(d);
 const el = id => document.getElementById(id);
+const identityLabel = p => String(p.identity_label || [p.position ? `Historical position: ${p.position}` : '',p.last_team ? `Historical team: ${p.last_team}` : ''].filter(Boolean).join(' · ')).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 async function api(path, opts){
   const r = await window.AppApi(path, opts);
@@ -22,7 +23,7 @@ function wireSearch(input, box, onSelect){
     items.forEach((p,i) => {
       const d = document.createElement("div");
       if(i===sel) d.className = "sel";
-      d.innerHTML = `<span>${p.full_name}</span><small>${[p.position,p.last_team].filter(Boolean).join(" · ")||""}</small>`;
+      d.innerHTML = `<span>${p.full_name}</span><small>${identityLabel(p)}</small>`;
       d.onmousedown = e => { e.preventDefault(); close(); input.value=""; select(p); };
       box.appendChild(d);
     });
@@ -109,7 +110,7 @@ function renderPlayer(){
   el("view").innerHTML = `
     <div class="player-head">
       <h2>${p.full_name}</h2>
-      <span class="sub">${[p.position, p.last_team].filter(Boolean).join(" · ") || ""}</span>
+      <span class="sub">${identityLabel(p)}</span>
     </div>
     <div class="cards">
       <div class="card hero-stat">

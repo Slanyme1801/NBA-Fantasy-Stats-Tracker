@@ -4,6 +4,17 @@
   const historicalIds=new Set(window.__DATASET.players.map(p=>p[0]));
   const eligibility=id=>data.positions.entries.find(p=>p.nbaId===id);
   const norm=s=>s.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+  const identityMetadata=person=>{
+    const id=person.player_id,verifiedPosition=eligibility(id)?.positions.join('/')||null;
+    const historicalPosition=person.position||null,historicalTeam=person.last_team||null;
+    const games=new Map(data.games.map(g=>[g.id,g]));
+    const latest=data.lines.filter(r=>r.nbaId===id&&r.participation==='played'&&games.get(r.gameId)?.status==='finished'&&games.get(r.gameId)?.statsState==='available')
+      .sort((a,b)=>games.get(b.gameId).start.localeCompare(games.get(a.gameId).start)||b.gameId-a.gameId)[0];
+    const game=latest?games.get(latest.gameId):null,team=game?(latest.teamId===game.home.id?game.home.code:game.away.code):null;
+    const positionLabel=verifiedPosition?`ESPN ${core.SEASON}: ${verifiedPosition}`:historicalPosition?`Historical position: ${historicalPosition} · ESPN not imported`:'ESPN position not imported';
+    const teamLabel=team?`Latest imported team: ${team} (${game.start.slice(0,10)} UTC)`:historicalTeam?`Historical team: ${historicalTeam}`:'Team not available';
+    return {...person,position:verifiedPosition,last_team:team||historicalTeam,historical_position:historicalPosition,historical_last_team:historicalTeam,team_as_of:game?.start||null,team_basis:team?'latest-verified-import':historicalTeam?'historical':'unavailable',identity_label:`${positionLabel} · ${teamLabel}`};
+  };
   const weights=async()=> (await (await historical('/api/scoring')).json()).scoring;
   const seasonRow=(id,w)=>{
     const a=core.aggregate(data,id,{weights:w});
@@ -29,13 +40,13 @@
         const person=data.players.find(p=>p.nbaId===id);if(!person) return historical(path,options);
         p={player_id:id,full_name:person.name,position:null,last_team:null,summary:{simple_avg:null,weighted_avg:null,total_fpts:null,total_gp:0,seasons_played:0,best_season:null},seasons:window.__DATASET.seasons.map(season=>({season,played:false,note:'No historical record'})),scoring:await weights()};
       }
-      p.seasons.push(seasonRow(id,p.scoring));p.eligibility=eligibility(id);return response(p);
+      p.seasons.push(seasonRow(id,p.scoring));p.eligibility=eligibility(id);return response(identityMetadata(p));
     }
     if(url.pathname==='/api/search') {
       const results=(await (await historical(path,options)).json()).results;
       const q=norm(url.searchParams.get('q')||'');
-      if(q)for(const p of data.players.filter(p=>!historicalIds.has(p.nbaId)&&norm(p.name).includes(q)))results.push({player_id:p.nbaId,full_name:p.name,position:eligibility(p.nbaId)?.positions.join('/'),last_team:null});
-      return response({results:results.slice(0,12)});
+      if(q)for(const p of data.players.filter(p=>!historicalIds.has(p.nbaId)&&norm(p.name).includes(q)))results.push({player_id:p.nbaId,full_name:p.name,position:null,last_team:null});
+      return response({results:results.slice(0,12).map(identityMetadata)});
     }
     if(url.pathname==='/api/leaderboard') {
       const season=url.searchParams.get('season');

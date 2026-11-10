@@ -56,3 +56,4 @@ test('profile labels sample averages, scoped missing-game counts and rounded min
   assert.match(html,/<th>MIN ≈<\/th>/);assert.match(html,/<td>≈ 30<\/td>/);
 });
 test('coverage explicitly counts unresolved identity gaps and preserved older boxes',()=>{const d=fixture();d.games[0].refreshIssue={code:'unmapped-players',unmappedPlayerCount:1,preservedPreviousBoxScore:true};const html=vm.runInContext('coverageDetails(currentData)',context(d));assert.match(html,/1 imported games await verified player identities/);assert.match(html,/1 retain an older verified box score/);});
+test('top coverage summary explicitly shows complete box scores out of imported finished games',()=>{const d=fixture();d.games=Array.from({length:22},(_,i)=>({id:i+1,status:'finished',type:'regular',statsState:i===0?'available':'missing'}));const html=vm.runInContext('statusPanel()',context(d));assert.match(html,/1 of 22 imported finished games have box scores/);});
