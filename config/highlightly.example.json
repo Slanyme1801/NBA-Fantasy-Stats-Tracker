@@ -1,0 +1,12 @@
+{
+  "enabled": false,
+  "provider": "Highlightly",
+  "startDate": null,
+  "endDate": null,
+  "maxRequestsPerRun": 20,
+  "dailyLimit": 90,
+  "intervalMs": 6100,
+  "identityMap": "config/highlightly-identities.example.json",
+  "gameTypes": "config/highlightly-game-types.example.json",
+  "candidate": ".local/highlightly-candidate.json"
+}

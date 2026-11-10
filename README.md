@@ -22,7 +22,7 @@ Ouvrir `http://127.0.0.1:4173/NBA-Fantasy-Stats-Tracker/`. Le serveur écoute un
 
 ## État des données
 
-**Les données 2026-27 restent non connectées et en attente.** Le manifeste pointe vers une version vide, `not-connected`. Aucun faux joueur ou match en production. Les écrans annuels et les trades historiques sont utilisables immédiatement. Le diagnostic réel du 5 octobre 2026 a validé l’authentification API-NBA, mais l’offre gratuite a refusé les saisons 2026 et 2025 : elle indique un accès limité à 2022–2024. Attendre les premiers matchs réguliers ne garantit donc pas l’accès. Aucun box score réel n’a encore été validé.
+**Les données 2026-27 restent non connectées et en attente.** Le manifeste pointe vers une version vide, `not-connected`. Aucun faux joueur ou match en production. Les écrans annuels et les trades historiques sont utilisables immédiatement. Le diagnostic réel du 5 octobre 2026 a validé l’authentification API-NBA, mais l’offre gratuite a refusé les saisons 2026 et 2025 : elle indique un accès limité à 2022–2024. Attendre les premiers matchs réguliers ne garantit donc pas l’accès. Aucun box score API-Sports réel n’a été validé. Un diagnostic privé Highlightly du 10 novembre 2026 a reçu un calendrier et un box score ; un adaptateur local séparé, désactivé par défaut, est préparé. Les correspondances d’identités restent à vérifier et la republication Highlightly est bloquée : ces données ne sont pas connectées au site. Voir le mode privé dans le guide de collecte.
 
 Le barème par défaut reste :
 

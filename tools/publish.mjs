@@ -5,6 +5,7 @@ import {validateSeason} from '../assets/core.mjs';
 import {readJSON,atomicJSON,checksum,published} from './files.mjs';
 // Publication here only means selecting local static JSON. It never pushes/deploys.
 export async function publishLocal(candidate,{root='.',knownIds=[]}={}) {
+  if(candidate?.provider!=='API-NBA / API-Sports'||candidate?.publicationPolicy||candidate?.games?.some(g=>g.provider==='Highlightly')||candidate?.lines?.some(r=>r.provider==='Highlightly')) throw new Error('Publication blocked: provider redistribution rights are unverified');
   validateSeason(candidate,knownIds);
   const bytes=Buffer.from(JSON.stringify(candidate)+'\n'),sha256=checksum(bytes);
   const file=`data/releases/2026-27-${sha256.slice(0,16)}.json`;
