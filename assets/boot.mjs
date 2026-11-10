@@ -1,4 +1,5 @@
 import * as core from './core.mjs';
+import * as dashboard from './dashboard.mjs';
 import {loadCurrent} from './loader.mjs';
 import {createAppUpdates} from './updates.mjs';
 window.AppUpdates=createAppUpdates();
@@ -12,11 +13,13 @@ try {
   if(history.players?.length!==1029 || history.rows?.length!==2867 || history.seasons?.length!==5) throw new Error('Historical data validation failed');
   window.__DATASET=history;
   window.FantasyCore=core;
+  window.FantasyDashboard=dashboard;
   window.CurrentLoad=await loadCurrent({knownIds:history.players.map(p=>p[0])});
   await script('./assets/legacy.js');
   await script('./assets/adapter.js');
   await script('./assets/app.js');
   await script('./assets/companion.js');
+  await script('./assets/dashboard.js');
   await window.startApp();
   await window.AppUpdates.ready();
 } catch(error) {
