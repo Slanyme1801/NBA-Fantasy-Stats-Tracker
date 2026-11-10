@@ -22,7 +22,7 @@ Ouvrir `http://127.0.0.1:4173/NBA-Fantasy-Stats-Tracker/`. Le serveur écoute un
 
 ## État des données
 
-**Les données 2026-27 restent non connectées et en attente.** Le manifeste pointe vers une version vide, `not-connected`. Aucun faux joueur ou match en production. Les écrans annuels et les trades historiques sont utilisables immédiatement. Le diagnostic réel du 5 octobre 2026 a validé l’authentification API-NBA, mais l’offre gratuite a refusé les saisons 2026 et 2025 : elle indique un accès limité à 2022–2024. Attendre les premiers matchs réguliers ne garantit donc pas l’accès. Aucun box score réel n’a encore été validé.
+**Les données 2026-27 restent non connectées et en attente.** Le manifeste pointe vers une version vide, `not-connected`. Aucun faux joueur ou match en production. Les écrans annuels et les trades historiques sont utilisables immédiatement. Le diagnostic réel du 5 octobre 2026 a validé l’authentification API-NBA, mais l’offre gratuite a refusé les saisons 2026 et 2025 : elle indique un accès limité à 2022–2024. Attendre les premiers matchs réguliers ne garantit donc pas l’accès. Aucun box score API-Sports réel n’a été validé. Un diagnostic privé Highlightly du 10 novembre 2026 a reçu un calendrier et un box score ; un adaptateur local séparé, désactivé par défaut, est préparé avec quotas UTC, cache de reprise privé et fusion de lots validés. Les 26 identités du match témoin et sa classification régulière ont été vérifiées en privé ; les autres matchs restent à couvrir. La republication Highlightly est bloquée : ces données ne sont pas connectées au site. Voir le mode privé dans le guide de collecte.
 
 Le barème par défaut reste :
 
@@ -51,3 +51,7 @@ Lire [le guide de collecte](docs/DATA-OPERATIONS.md) avant toute première exéc
 Prérequis avant alimentation 2026-27 : accès aux données de cette saison et droits de republication à vérifier ; champs réels des box scores à contrôler ; règles de classification de matchs et correspondances d’identités vérifiées ; source/date de l’import manuel ESPN. Une éventuelle actualisation quotidienne reste à discuter. Les clés restent exclusivement dans le processus local, hors du dépôt et du navigateur.
 
 Résultats de validation et limites : [docs/VERIFICATION.md](docs/VERIFICATION.md).
+
+## Highlightly : publication sous attestation
+
+Le collecteur reste désactivé par défaut. La publication des statistiques normalisées exige une attestation explicite du propriétaire confirmant la permission du fournisseur pour le fichier public. Le site signale les échantillons partiels et leurs dates. Un runner quotidien (trois journées terminées, 90 appels maximum/jour UTC) est prêt à planifier ; aucun scheduler ni secret n’est installé par ce code. Voir [la procédure et les limites](docs/DATA-OPERATIONS.md#publication-highlightly-autorisée-et-fréquence).

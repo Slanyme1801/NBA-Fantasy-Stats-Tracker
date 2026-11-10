@@ -1,0 +1,11 @@
+{
+  "provider": "Highlightly",
+  "season": "2026-27",
+  "publicationAllowed": false,
+  "publicDatasetAllowed": false,
+  "approvedBy": "repository-owner",
+  "publicScope": "normalized-fantasy-stats",
+  "confirmedAt": null,
+  "source": "",
+  "refreshSchedule": {"configured": false, "verified": false, "description": ""}
+}

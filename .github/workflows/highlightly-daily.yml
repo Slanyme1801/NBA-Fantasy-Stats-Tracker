@@ -1,0 +1,105 @@
+name: Refresh authorized Highlightly sample
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+    inputs:
+      validation_only:
+        description: 'Validate the existing public snapshot and rebuild Pages without any Highlightly API call'
+        type: boolean
+        default: true
+        required: true
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: highlightly-daily-publication
+  cancel-in-progress: false
+jobs:
+  refresh:
+    if: github.ref == 'refs/heads/main' && (vars.HIGHLIGHTLY_DAILY_ENABLED == 'true' || (github.event_name == 'workflow_dispatch' && inputs.validation_only))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check existing branch-based Pages configuration
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          gh api "repos/$REPOSITORY/pages" --jq 'select(.build_type == "legacy" and .source.branch == "main" and .source.path == "/") | .source.branch' | grep -qx main
+      - name: Check provider secret only for a data refresh
+        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        env:
+          HIGHLIGHTLY_API_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
+        run: test -n "$HIGHLIGHTLY_API_KEY" || { echo 'Required Highlightly secret is missing.'; exit 1; }
+      - name: Test code and validate current public snapshot
+        run: |
+          npm test
+          npm run validate
+      - name: Commit full UTC budget reservation before any provider call
+        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          node tools/highlightly-actions.mjs reserve
+          git add -- .github/highlightly-quota.json
+          git commit -m 'Reserve daily Highlightly request budget'
+          git push origin HEAD:main
+      - name: Reconstruct private inputs on the fresh runner
+        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        run: node tools/highlightly-actions.mjs prepare
+      - name: Refresh last three completed New York days
+        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        env:
+          HIGHLIGHTLY_API_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
+        run: node tools/highlightly-daily.mjs --config .local/highlightly-actions-config.json
+      - name: Validate and push only normalized public files
+        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        id: publish
+        run: |
+          npm run validate
+          git diff --check
+          git add -- data/manifest.json data/manifest.previous.json data/releases/
+          if git diff --cached --name-only | grep -Ev '^data/(manifest(\.previous)?\.json|releases/[a-z0-9.-]+\.json)$'; then exit 1; fi
+          git diff --cached --quiet || git commit -m 'Refresh authorized partial Highlightly sample'
+          git push origin HEAD:main
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Select exact existing or refreshed commit for Pages
+        id: target
+        run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Explicitly request existing Jekyll Pages build and verify commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          EXPECTED_COMMIT: ${{ steps.target.outputs.commit }}
+        run: |
+          gh api --method POST "repos/$REPOSITORY/pages/builds" --jq '.status'
+          for attempt in $(seq 1 40); do
+            result=$(gh api "repos/$REPOSITORY/pages/builds/latest")
+            status=$(printf '%s' "$result" | jq -r '.status')
+            commit=$(printf '%s' "$result" | jq -r '.commit')
+            if [ "$commit" = "$EXPECTED_COMMIT" ] && [ "$status" = built ]; then
+              echo 'The requested commit was built by GitHub Pages.'
+              exit 0
+            fi
+            if [ "$commit" = "$EXPECTED_COMMIT" ] && [ "$status" = errored ]; then
+              echo 'GitHub Pages build failed for the requested commit.'
+              exit 1
+            fi
+            sleep 15
+          done
+          echo 'GitHub Pages build was not verified within ten minutes.'
+          exit 1
+      - name: Report retained safety reservation
+        if: always()
+        run: |
+          echo 'The committed UTC reservation is never released or reduced, even after failure.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No raw response cache, private profile, key or private artifact is uploaded.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'A successful scheduled attempt refreshes only the verified partial sample.' >> "$GITHUB_STEP_SUMMARY"

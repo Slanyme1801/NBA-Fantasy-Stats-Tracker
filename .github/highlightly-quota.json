@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "provider": "Highlightly",
+  "dayUTC": "2026-11-10",
+  "reservedRequests": 90,
+  "runId": "0",
+  "reservedAt": "2026-11-10T00:00:00Z",
+  "status": "reserved-before-network",
+  "reason": "Conservative commissioning-day block: provider calls already made outside Actions. First scheduled collection is allowed on the next UTC day."
+}
