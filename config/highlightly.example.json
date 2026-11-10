@@ -8,5 +8,7 @@
   "intervalMs": 6100,
   "identityMap": "config/highlightly-identities.example.json",
   "gameTypes": "config/highlightly-game-types.example.json",
-  "candidate": ".local/highlightly-candidate.json"
+  "candidate": ".local/highlightly-candidate.json",
+  "refreshFrom": null,
+  "refreshId": null
 }

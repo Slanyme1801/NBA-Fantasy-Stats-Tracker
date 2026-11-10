@@ -30,15 +30,13 @@ export function normalizeMatch(raw,types){
   const scores=status==='finished'?['homeTeam','awayTeam'].map(k=>{const q=raw.state.score?.[k];check(Array.isArray(q)&&q.length>=4&&q.every(count),'Invalid final team scores');return q.reduce((a,b)=>a+b,0);}):null;
   return {id:raw.id,season:SEASON,league:'standard',start:raw.date,status,type:classification?.type||'unknown',classification:classification?{source:classification.source,verifiedAt:classification.verifiedAt}:null,home:teams[0],away:teams[1],statsState:'not-fetched',provider:PROVIDER,finalScores:scores};
 }
-export function normalizeBoxScore(body,game,players,now){
+export function parseBoxScore(body,game){
   check(Array.isArray(body)&&body.length===2,'Expected two box-score teams');
   const teamIds=new Set(),playerIds=new Set(),lines=[];
   for(const team of body){
     check([game.home.id,game.away.id].includes(team.team?.id)&&!teamIds.has(team.team.id)&&Array.isArray(team.boxScores)&&team.boxScores.length>0,'Invalid or duplicate box-score team');teamIds.add(team.team.id);
     for(const raw of team.boxScores){
       check(id(raw.player?.id)&&!playerIds.has(raw.player.id),'Invalid or duplicate player');playerIds.add(raw.player.id);
-      const person=players.find(p=>p.providerId===raw.player.id);
-      check(person,'Unmapped Highlightly player ID; verified NBA identity required');
       check(Array.isArray(raw.statistics),'Missing statistics array');
       const values=new Map();
       for(const s of raw.statistics){check(typeof s.name==='string'&&!values.has(s.name),'Duplicate statistic');values.set(s.name,s.value);}
@@ -52,18 +50,47 @@ export function normalizeBoxScore(body,game,players,now){
         check(stats.pts===2*stats.fgm+stats.fg3m+stats.ftm,'Points do not reconcile');
         if(minutes>0||COUNTERS.some(k=>stats[k]>0)){participation='played';seconds=minutes*60;}else stats=null;
       }
-      lines.push({gameId:game.id,nbaId:person.nbaId,providerId:person.providerId,teamId:team.team.id,participation,seconds,minutesPrecision:'rounded-whole-minute',stats,comment:null,updatedAt:now,provider:PROVIDER});
+      lines.push({gameId:game.id,providerId:raw.player.id,teamId:team.team.id,participation,seconds,minutesPrecision:'rounded-whole-minute',stats,comment:null,provider:PROVIDER});
     }
     const total=lines.filter(l=>l.teamId===team.team.id).reduce((n,l)=>n+(l.stats?.pts||0),0);
     check(total===game.finalScores[team.team.id===game.home.id?0:1],'Box-score points do not reconcile with final score');
   }
   return lines;
 }
+export function normalizeBoxScore(body,game,players,now){
+  return parseBoxScore(body,game).map(line=>{
+    const person=players.find(p=>p.providerId===line.providerId);
+    check(person,'Unmapped Highlightly player ID; verified NBA identity required');
+    return {...line,nbaId:person.nbaId,updatedAt:now};
+  });
+}
 export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLimit=90,intervalMs=6100,ledger,saveLedger,sleep=ms=>new Promise(r=>setTimeout(r,ms)),now=()=>Date.now()}){
   check(typeof key==='string'&&key.length>0,'HIGHLIGHTLY_API_KEY is absent. No connection attempted.');
   check(id(maxRequests)&&maxRequests<=100&&id(dailyLimit)&&dailyLimit<=100&&Number.isFinite(intervalMs)&&intervalMs>=6100,'Invalid request limits');
-  check(ledger?.provider===PROVIDER&&Array.isArray(ledger.requests)&&ledger.requests.every(t=>Number.isSafeInteger(t)&&t>=0)&&typeof saveLedger==='function','Invalid quota ledger');
-  let used=0,last=null,busy=false,remaining=Infinity;
+  const dayOf=t=>new Date(t).toISOString().slice(0,10);
+  const readClock=()=>{const t=now();check(Number.isSafeInteger(t)&&t>=0&&t<=8640000000000000,'Invalid quota clock');return t;};
+  const initial=readClock(),today=dayOf(initial);
+  check(ledger?.provider===PROVIDER&&Array.isArray(ledger.requests)&&ledger.requests.every(t=>Number.isSafeInteger(t)&&t>=0&&t<=initial)&&typeof saveLedger==='function','Invalid quota ledger');
+  const previousRequest=ledger.requests.length?Math.max(...ledger.requests):null;
+  // Old timestamp ledgers are migrated by UTC calendar day, never by a rolling window.
+  if(ledger.dayUTC!==undefined){
+    check(typeof ledger.dayUTC==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(ledger.dayUTC)&&Number.isFinite(Date.parse(`${ledger.dayUTC}T00:00:00Z`))&&dayOf(Date.parse(`${ledger.dayUTC}T00:00:00Z`))===ledger.dayUTC&&ledger.dayUTC<=today,'Invalid quota ledger day');
+    check(ledger.requests.every(t=>dayOf(t)===ledger.dayUTC),'Inconsistent quota ledger day');
+  }else check(ledger.serverLimit===undefined&&ledger.serverRemaining===undefined&&ledger.blocked===undefined,'Invalid legacy quota ledger');
+  check(ledger.serverLimit===undefined||(Number.isSafeInteger(ledger.serverLimit)&&ledger.serverLimit>=0&&ledger.serverLimit<=100),'Invalid quota ledger limit');
+  check(ledger.serverRemaining===undefined||(Number.isSafeInteger(ledger.serverRemaining)&&ledger.serverRemaining>=0&&ledger.serverRemaining<=(ledger.serverLimit??100)),'Invalid quota ledger remaining');
+  check(ledger.blocked===undefined||typeof ledger.blocked==='boolean','Invalid quota ledger block');
+  if(ledger.dayUTC!==today){
+    ledger.requests=ledger.requests.filter(t=>dayOf(t)===today);
+    ledger.dayUTC=today;delete ledger.serverLimit;delete ledger.serverRemaining;delete ledger.blocked;
+  }
+  let used=0,last=previousRequest,busy=false,persistenceFailed=false,lastClock=initial;
+  const syncDay=()=>{
+    const t=readClock();check(t>=lastClock,'Quota clock moved backwards');lastClock=t;
+    if(dayOf(t)!==ledger.dayUTC){ledger.dayUTC=dayOf(t);ledger.requests=[];delete ledger.serverLimit;delete ledger.serverRemaining;delete ledger.blocked;}
+    return t;
+  };
+  const persist=async()=>{try{await saveLedger(ledger);}catch{persistenceFailed=true;throw new Error('Highlightly quota ledger persistence failed; no further requests');}};
   return async(endpoint,params={})=>{
     check(!busy,'Concurrent requests are prohibited');busy=true;
     try{
@@ -71,48 +98,69 @@ export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLim
       if(endpoint==='/matches'){
         check(Object.keys(params).sort().join(',')==='date,league,limit,offset,season,timezone'&&params.league==='NBA'&&params.season===2027&&params.timezone==='America/New_York'&&params.limit===100&&count(params.offset),'Invalid matches parameters');datesInRange(params.date,params.date);
       }else check(Object.keys(params).length===0,'Box-score parameters are prohibited');
-      if(last!==null)await sleep(Math.max(0,intervalMs-(now()-last)));
-      ledger.requests=ledger.requests.filter(t=>t>now()-86400000);
-      check(used<maxRequests&&ledger.requests.length<dailyLimit&&remaining>0,'Highlightly request budget reached');
-      ledger.requests.push(now());used++;await saveLedger(ledger);last=now();
+      check(!persistenceFailed,'Highlightly quota ledger persistence failed; no further requests');
+      if(last!==null)await sleep(Math.max(0,intervalMs-(readClock()-last)));
+      const started=syncDay(),requestDay=ledger.dayUTC;
+      check(used<maxRequests&&!ledger.blocked&&ledger.requests.length<Math.min(dailyLimit,ledger.serverLimit??100)&&(ledger.serverRemaining??Infinity)>0,'Highlightly request budget reached');
+      ledger.requests.push(started);used++;if(ledger.serverRemaining!==undefined)ledger.serverRemaining--;
+      await persist();last=readClock();
       const url=new URL(endpoint,'https://nba.highlightly.net');for(const [k,v]of Object.entries(params))url.searchParams.set(k,String(v));
-      let response;try{response=await fetcher(url,{headers:{'x-rapidapi-key':key},redirect:'error',signal:AbortSignal.timeout(25000)});}catch{throw new Error('Highlightly network/timeout failure; no automatic retry');}
+      let response;try{response=await fetcher(url,{headers:{'x-rapidapi-key':key},redirect:'error',signal:AbortSignal.timeout(25000)});}catch{
+        if(dayOf(syncDay())!==requestDay){ledger.blocked=true;await persist();}
+        throw new Error('Highlightly network/timeout failure; no automatic retry');
+      }
+      const received=syncDay();
+      // A response spanning midnight does not identify which day's counters it describes.
+      if(ledger.dayUTC!==requestDay){ledger.blocked=true;await persist();throw new Error('Highlightly quota day changed during request; budget blocked conservatively');}
+      const headers={};
       for(const name of ['x-ratelimit-requests-limit','x-ratelimit-requests-remaining']){
         const value=response.headers?.get(name);
         if(value!==null&&value!==undefined){
-          if(!/^\d+$/.test(value)||!Number.isSafeInteger(Number(value))){remaining=0;throw new Error('Invalid Highlightly quota header');}
-          if(name.endsWith('-remaining'))remaining=Number(value);
-          else if(Number(value)===0)remaining=0;
+          if(!/^\d+$/.test(value)||!Number.isSafeInteger(Number(value))){ledger.blocked=true;await persist();throw new Error('Invalid Highlightly quota header');}
+          headers[name.endsWith('-remaining')?'remaining':'limit']=Number(value);
         }
       }
-      // Persist server-account consumption conservatively, including calls by other clients.
-      if(Number.isFinite(remaining)){
-        const limitValue=response.headers?.get('x-ratelimit-requests-limit');
-        const limit=limitValue==null?100:Number(limitValue);
-        if(remaining>limit){remaining=0;throw new Error('Inconsistent Highlightly quota headers');}
-        const consumed=Math.max(0,Math.min(100,limit)-remaining);
-        while(ledger.requests.length<consumed)ledger.requests.push(now());
-        await saveLedger(ledger);
+      const reportedLimit=headers.limit??ledger.serverLimit??100;
+      if(headers.remaining!==undefined&&headers.remaining>reportedLimit){ledger.blocked=true;await persist();throw new Error('Inconsistent Highlightly quota headers');}
+      if(headers.limit!==undefined)ledger.serverLimit=Math.min(ledger.serverLimit??100,headers.limit,100);
+      if(ledger.serverRemaining!==undefined)ledger.serverRemaining=Math.min(ledger.serverRemaining,ledger.serverLimit??100);
+      if(headers.remaining!==undefined){
+        ledger.serverRemaining=Math.min(ledger.serverRemaining??100,headers.remaining,ledger.serverLimit??100);
+        const consumed=Math.min(100,Math.max(0,reportedLimit-headers.remaining));
+        while(ledger.requests.length<consumed)ledger.requests.push(received);
       }
+      if(response.status===429)ledger.blocked=true;
+      if(Object.keys(headers).length||response.status===429)await persist();
       check(response.ok,'Highlightly HTTP request failed; no automatic retry');
       let body;try{body=await response.json();}catch{throw new Error('Invalid Highlightly JSON');}
       return endpoint==='/matches'?parseMatches(body,params.offset):body;
     }finally{busy=false;}
   };
 }
-export async function collectHighlightly({client,identities,types,startDate,endDate,now=new Date().toISOString(),knownIds=[]}){
+export async function collectHighlightly({client,identities,types,startDate,endDate,now=new Date().toISOString(),knownIds=[],load=null,onGame=async()=>{}}){
+  const request=load|| (async(endpoint,params,validate)=>{const body=await client(endpoint,params);validate(body);return body;});
   check(identities?.provider===PROVIDER&&types?.provider===PROVIDER,'Explicit Highlightly mapping namespace required');validateIdentityMap(identities);const map=classifications(types);
   const dates=datesInRange(startDate,endDate),games=[],seen=new Set();
   for(const date of dates){let offset=0,total;
-    do{const result=parseMatches(await client('/matches',{league:'NBA',season:2027,date,timezone:'America/New_York',limit:100,offset}),offset);
+    do{const params={league:'NBA',season:2027,date,timezone:'America/New_York',limit:100,offset};
+      const result=await request('/matches',params,body=>{
+        parseMatches(body,offset);
+        check(new Set(body.data.map(g=>g.id)).size===body.data.length,'Duplicate match');
+        for(const raw of body.data){const game=normalizeMatch(raw,new Map());check(localMatchDay(game)===date,'Match outside requested local date');}
+      },{date});
       check(total===undefined||total===result.pagination.totalCount,'Schedule changed during pagination');total=result.pagination.totalCount;
       for(const raw of result.data){check(!seen.has(raw.id),'Duplicate match');seen.add(raw.id);const g=normalizeMatch(raw,map);
-        const localDay=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(g.start));check(localDay===date,'Match outside requested local date');games.push(g);}
+        check(localMatchDay(g)===date,'Match outside requested local date');games.push(g);}
       offset+=result.data.length;
     }while(offset<total);
   }
   const lines=[];
-  for(const game of games.filter(g=>g.status==='finished'&&g.type!=='unknown')){lines.push(...normalizeBoxScore(await client(`/box-score/${game.id}`),game,identities.players,now));game.statsState='available';}
+  for(const game of games.filter(g=>g.status==='finished'&&g.type!=='unknown')){
+    const body=await request(`/box-score/${game.id}`,{},body=>parseBoxScore(body,game),{date:localMatchDay(game),game});
+    lines.push(...normalizeBoxScore(body,game,identities.players,now));game.statsState='available';await onGame(game.id);
+  }
   const used=new Set(lines.map(l=>l.nbaId));
   return validateSeason({...emptySeason(),provider:PROVIDER,publicationPolicy:'private-only-rights-unverified',minutesPrecision:'rounded-whole-minute',scope:{startDate,endDate,timeZone:'America/New_York',completeSeason:false},connection:'connected',updatedAt:now,coverageCheckedAt:now,players:identities.players.filter(p=>used.has(p.nbaId)),games,lines},knownIds);
 }
+
+export const localMatchDay=game=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(game.start));
