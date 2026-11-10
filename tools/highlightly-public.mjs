@@ -25,11 +25,30 @@ export function publicHighlightlySnapshot(candidate,authorization){
     scope:{startDate:candidate.scope.startDate,endDate:candidate.scope.endDate,timeZone:'America/New_York',completeSeason:false,mayHaveGaps:true},coverage:intervals,minutesPrecision:'rounded-whole-minute',
     publicationAuthorization:{provider:PROVIDER,confirmedAt:authorization.confirmedAt,scope:'normalized-fantasy-stats',basis:'Owner attestation of provider permission'},
     players:candidate.players.map(p=>pick(p,['nbaId','providerId','name','source','verifiedAt'])),
-    games:candidate.games.map(g=>({...pick(g,['id','season','league','start','status','type','statsState','provider','finalScores']),refreshIssue:g.refreshIssue?.code==='unmapped-players'?pick(g.refreshIssue,['code','unmappedPlayerCount','attemptedAt','preservedPreviousBoxScore']):undefined,classification:g.classification?pick(g.classification,['source','verifiedAt']):null,home:pick(g.home,['id','code']),away:pick(g.away,['id','code'])})),
+    games:candidate.games.map(g=>({...pick(g,['id','season','league','start','status','type','statsState','provider','finalScores','boxScoreCheckedAt']),refreshIssue:publicRefreshIssue(g.refreshIssue),classification:g.classification?pick(g.classification,['source','verifiedAt']):null,home:pick(g.home,['id','code']),away:pick(g.away,['id','code'])})),
     lines:candidate.lines.map(l=>({...pick(l,['gameId','nbaId','providerId','teamId','participation','seconds','minutesPrecision','updatedAt','provider']),stats:l.stats?pick(l.stats,['pts','fgm','fga','fg3m','fg3a','ftm','fta','reb','ast','tov','stl','blk']):null,comment:null})),
     positions:{...pick(candidate.positions,['season','source','importedAt']),entries:candidate.positions.entries.map(p=>pick(p,['nbaId','espnId','positions','source','observedAt']))}};
+  if(candidate.backfillProgress)result.backfillProgress=publicBackfillProgress(candidate.backfillProgress);
   // Only a reviewed, actually configured scheduler may be advertised as active.
   const schedule=authorization.refreshSchedule;
   if(schedule?.configured===true&&schedule.verified===true&&typeof schedule.description==='string'&&schedule.description.trim())result.refreshSchedule={configured:true,verified:true,description:schedule.description};
   return validateSeason(result);
+}
+
+// Durable checkpoints contain exactly this safe public projection, never a raw cache.
+export function publicRefreshIssue(issue){
+  if(!issue)return undefined;
+  requireValue(['unmapped-players','backfill-pending','request-budget','source-data-error'].includes(issue.code)&&date(issue.attemptedAt)&&typeof issue.preservedPreviousBoxScore==='boolean','Invalid refresh issue');
+  const result=pick(issue,['code','attemptedAt','preservedPreviousBoxScore']);
+  if(issue.code==='unmapped-players'){
+    requireValue(Number.isSafeInteger(issue.unmappedPlayerCount)&&issue.unmappedPlayerCount>0,'Invalid missing identity count');result.unmappedPlayerCount=issue.unmappedPlayerCount;
+    if(issue.identityRevision!==undefined){requireValue(/^[a-f0-9]{64}$/.test(issue.identityRevision),'Invalid identity revision');result.identityRevision=issue.identityRevision;}
+  }
+  // Free-form error messages are deliberately excluded.
+  return result;
+}
+export function publicBackfillProgress(progress){
+  const counts=['inventoryOffset','completedGamesSeen','outsideDateScopeFinished','regularGamesSeen','verifiedRegularBoxScores','verifiedBoxScores','sourceFailureGames','unmappedGames','unclassifiedGames','pendingGames'];
+  requireValue(counts.every(k=>Number.isSafeInteger(progress[k])&&progress[k]>=0)&&(progress.inventoryTotal===null||(Number.isSafeInteger(progress.inventoryTotal)&&progress.inventoryTotal>=0))&&typeof progress.inventoryComplete==='boolean'&&typeof progress.budgetExhausted==='boolean'&&date(progress.attemptedAt)&&/^\d{4}-\d\d-\d\d$/.test(progress.inventoryDayUTC),'Invalid backfill progress');
+  return pick(progress,[...counts,'inventoryTotal','inventoryComplete','inventoryDayUTC','budgetExhausted','attemptedAt']);
 }

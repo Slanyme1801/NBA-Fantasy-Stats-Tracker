@@ -24,10 +24,18 @@ export function runnerInputs(snapshot){
   const candidate=bootstrapPrivateSnapshot(snapshot,authorization);
   return {authorization,candidate,identities:{provider:'Highlightly',season:'2026-27',players:candidate.players},types:{provider:'Highlightly',season:'2026-27',games:candidate.games.filter(g=>g.type!=='unknown').map(g=>({id:g.id,type:g.type,source:g.classification.source,verifiedAt:g.classification.verifiedAt}))}};
 }
+export function resumeSnapshot(current,checkpoint){
+  if(!checkpoint)return current;
+  runnerInputs(checkpoint);
+  if(Date.parse(checkpoint.updatedAt)<Date.parse(current.updatedAt))return current;
+  for(const game of current.games.filter(g=>g.statsState==='available'))if(!checkpoint.games.some(g=>g.id===game.id&&g.statsState==='available'))throw new Error('Checkpoint would remove an already verified game');
+  return checkpoint;
+}
 export async function prepareRunner({runId,now=new Date()}){
   const reservation=await readJSON('.github/highlightly-quota.json');
   if(reservation.dayUTC!==now.toISOString().slice(0,10)||reservation.runId!==String(runId)||reservation.reservedRequests!==90)throw new Error('Current workflow must own the committed UTC reservation');
-  const {authorization,candidate,identities,types}=runnerInputs(await published());
+  const checkpoint=await readJSON('.github/highlightly-backfill.json').catch(e=>{if(e.code==='ENOENT')return null;throw e;});
+  const {authorization,candidate,identities,types}=runnerInputs(resumeSnapshot(await published(),checkpoint));
   const files={
     '.local/highlightly-publication.json':authorization,'.local/highlightly-candidate.json':candidate,
     '.local/highlightly-identities.json':identities,'.local/highlightly-game-types.json':types,

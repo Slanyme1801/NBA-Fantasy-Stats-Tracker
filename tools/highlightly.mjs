@@ -96,12 +96,12 @@ export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLim
     try{
       check(endpoint==='/matches'||/^\/box-score\/[1-9]\d*$/.test(endpoint),'Unsupported Highlightly endpoint');
       if(endpoint==='/matches'){
-        check(['date,league,limit,offset,season,timezone','league,limit,offset,season,timezone'].includes(Object.keys(params).sort().join(','))&&params.league==='NBA'&&params.season===2027&&params.timezone==='America/New_York'&&params.limit===100&&count(params.offset),'Invalid matches parameters');if(params.date!==undefined)datesInRange(params.date,params.date);
+        check(['date,league,limit,offset,season,timezone','league,limit,offset,season,timezone'].includes(Object.keys(params).sort().join(','))&&params.league==='NBA'&&params.season===2027&&params.timezone==='America/New_York'&&params.limit===100&&count(params.offset),'Invalid matches parameters');if(Object.hasOwn(params,'date'))datesInRange(params.date,params.date);
       }else check(Object.keys(params).length===0,'Box-score parameters are prohibited');
       check(!persistenceFailed,'Highlightly quota ledger persistence failed; no further requests');
       if(last!==null)await sleep(Math.max(0,intervalMs-(readClock()-last)));
       const started=syncDay(),requestDay=ledger.dayUTC;
-      check(used<maxRequests&&!ledger.blocked&&ledger.requests.length<Math.min(dailyLimit,ledger.serverLimit??100)&&(ledger.serverRemaining??Infinity)>0,'Highlightly request budget reached');
+      if(!(used<maxRequests&&!ledger.blocked&&ledger.requests.length<Math.min(dailyLimit,ledger.serverLimit??100)&&(ledger.serverRemaining??Infinity)>0)){const error=new Error('Highlightly request budget reached');error.code='HIGHLIGHTLY_BUDGET';throw error;}
       ledger.requests.push(started);used++;if(ledger.serverRemaining!==undefined)ledger.serverRemaining--;
       await persist();last=readClock();
       const url=new URL(endpoint,'https://nba.highlightly.net');for(const [k,v]of Object.entries(params))url.searchParams.set(k,String(v));

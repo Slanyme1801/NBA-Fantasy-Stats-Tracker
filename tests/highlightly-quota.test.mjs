@@ -70,3 +70,16 @@ test('season inventory permits omitted date but rejects invalid date and extra p
   const params={league:'NBA',season:2027,timezone:'America/New_York',limit:100,offset:0};await client('/matches',params);assert.equal(calls,1);
   await assert.rejects(client('/matches',{...params,date:'invalid'}));await assert.rejects(client('/matches',{...params,unexpected:true}));assert.equal(calls,1);
 });
+
+test('local quota refusal has a stable budget code without another request',async()=>{
+  for(const options of [{maxRequests:1},{dailyLimit:1}]){
+    const s=setup(options);await s.client('/box-score/1');
+    await assert.rejects(s.client('/box-score/1'),error=>error.message==='Highlightly request budget reached'&&error.code==='HIGHLIGHTLY_BUDGET');
+    assert.equal(s.calls,1);assert.equal(s.ledger.requests.length,1);
+  }
+});
+test('explicit undefined date is invalid rather than an omitted date',async()=>{
+  const s=setup();
+  await assert.rejects(s.client('/matches',{league:'NBA',season:2027,timezone:'America/New_York',limit:100,offset:0,date:undefined}));
+  assert.equal(s.calls,0);
+});

@@ -22,7 +22,9 @@ Ouvrir `http://127.0.0.1:4173/NBA-Fantasy-Stats-Tracker/`. Le serveur écoute un
 
 ## État des données
 
-**Les données 2026-27 restent non connectées et en attente.** Le manifeste pointe vers une version vide, `not-connected`. Aucun faux joueur ou match en production. Les écrans annuels et les trades historiques sont utilisables immédiatement. Le diagnostic réel du 5 octobre 2026 a validé l’authentification API-NBA, mais l’offre gratuite a refusé les saisons 2026 et 2025 : elle indique un accès limité à 2022–2024. Attendre les premiers matchs réguliers ne garantit donc pas l’accès. Aucun box score API-Sports réel n’a été validé. Un diagnostic privé Highlightly du 10 novembre 2026 a reçu un calendrier et un box score ; un adaptateur local séparé, désactivé par défaut, est préparé avec quotas UTC, cache de reprise privé et fusion de lots validés. Les 26 identités du match témoin et sa classification régulière ont été vérifiées en privé ; les autres matchs restent à couvrir. La republication Highlightly est bloquée : ces données ne sont pas connectées au site. Voir le mode privé dans le guide de collecte.
+**Les données Highlightly 2026–27 sont connectées sous autorisation du propriétaire, mais l’import reste partiel.** Le point de départ du 10 novembre contient 154 matchs réguliers recensés et 22 box scores vérifiés. Les compteurs du fichier publié font foi pour l’état actuel. Les anciennes saisons sont conservées. Les matchs manquants ne sont jamais interprétés comme des zéros.
+
+Le workflow quotidien tente une collecte à **09:00 UTC**, avec 90 requêtes maximum et une réservation durable empêchant une seconde consommation le même jour. Il inventorie la saison, contrôle jusqu’à six matchs récents puis importe les box scores manquants du plus ancien au plus récent. Chaque match vérifié est sauvegardé dans GitHub avant l’appel suivant ; les erreurs fournisseur et identités non vérifiées restent signalées. Aucun secret ni réponse brute n’est publié.
 
 Le barème par défaut reste :
 
@@ -46,12 +48,12 @@ La première visite demande une connexion. « Offline app cache ready » dans Da
 
 ## Connexion future et publication
 
-Lire [le guide de collecte](docs/DATA-OPERATIONS.md) avant toute première exécution. Les exemples de configuration et de planning restent **désactivés**. Le site utilise le déploiement GitHub Pages/Jekyll existant depuis `main`. `_config.yml` exclut outils, tests, documentation, configurations et fichiers locaux du site ; aucun nouveau workflow ni cron n’est ajouté.
+Lire [le guide de collecte](docs/DATA-OPERATIONS.md) avant toute première exécution. Les exemples de configuration et de planning restent **désactivés**. Le site utilise le déploiement GitHub Pages/Jekyll existant depuis `main`. `_config.yml` exclut outils, tests, documentation, configurations et fichiers locaux du site ; le workflow Highlightly quotidien est dans `.github/workflows/highlightly-daily.yml`.
 
-Prérequis avant alimentation 2026-27 : accès aux données de cette saison et droits de republication à vérifier ; champs réels des box scores à contrôler ; règles de classification de matchs et correspondances d’identités vérifiées ; source/date de l’import manuel ESPN. Une éventuelle actualisation quotidienne reste à discuter. Les clés restent exclusivement dans le processus local, hors du dépôt et du navigateur.
+Prérequis avant alimentation 2026-27 : accès aux données de cette saison et droits de republication à vérifier ; champs réels des box scores à contrôler ; règles de classification de matchs et correspondances d’identités vérifiées ; source/date de l’import manuel ESPN. L’actualisation quotidienne a été autorisée ; le rattrapage complet reste soumis aux quotas, à la qualité du fournisseur et aux correspondances vérifiées. Les clés restent exclusivement dans le processus local, hors du dépôt et du navigateur.
 
 Résultats de validation et limites : [docs/VERIFICATION.md](docs/VERIFICATION.md).
 
 ## Highlightly : publication sous attestation
 
-Le collecteur reste désactivé par défaut. La publication des statistiques normalisées exige une attestation explicite du propriétaire confirmant la permission du fournisseur pour le fichier public. Le site signale les échantillons partiels et leurs dates. Un runner quotidien (trois journées terminées, 90 appels maximum/jour UTC) est prêt à planifier ; aucun scheduler ni secret n’est installé par ce code. Voir [la procédure et les limites](docs/DATA-OPERATIONS.md#publication-highlightly-autorisée-et-fréquence).
+Le collecteur reste désactivé par défaut. La publication des statistiques normalisées exige une attestation explicite du propriétaire confirmant la permission du fournisseur pour le fichier public. Le site signale les échantillons partiels et leurs dates. Le runner quotidien traite désormais le retard de toute la saison, avec reprises durables ; une fenêtre de trois jours sert uniquement aux corrections récentes. Le secret reste dans GitHub Actions. Voir [la procédure et les limites](docs/DATA-OPERATIONS.md#publication-highlightly-autorisée-et-fréquence).

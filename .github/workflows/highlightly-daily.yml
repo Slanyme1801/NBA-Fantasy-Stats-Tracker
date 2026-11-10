@@ -1,4 +1,4 @@
-name: Refresh authorized Highlightly sample
+name: Backfill and refresh Highlightly season
 on:
   schedule:
     - cron: '0 9 * * *'
@@ -53,28 +53,32 @@ jobs:
           git commit -m 'Reserve daily Highlightly request budget'
           git push origin HEAD:main
       - name: Reconstruct private inputs on the fresh runner
+        id: prepare
         if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
         run: node tools/highlightly-actions.mjs prepare
-      - name: Refresh last three completed New York days
+      - name: Backfill missing season games and refresh recent corrections
         if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
         env:
           HIGHLIGHTLY_API_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
-        run: node tools/highlightly-daily.mjs --config .local/highlightly-actions-config.json
+        run: node tools/highlightly-season-runner.mjs
       - name: Validate and push only normalized public files
-        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        if: always() && steps.prepare.outcome == 'success'
         id: publish
         run: |
+          node tools/highlightly-season-runner.mjs publish
           npm run validate
           git diff --check
           git add -- data/manifest.json data/manifest.previous.json data/releases/
           if git diff --cached --name-only | grep -Ev '^data/(manifest(\.previous)?\.json|releases/[a-z0-9.-]+\.json)$'; then exit 1; fi
-          git diff --cached --quiet || git commit -m 'Refresh authorized partial Highlightly sample'
+          git diff --cached --quiet || git commit -m 'Publish verified Highlightly season progress'
           git push origin HEAD:main
           echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Select exact existing or refreshed commit for Pages
+        if: always() && (steps.publish.outcome == 'success' || (github.event_name == 'workflow_dispatch' && inputs.validation_only))
         id: target
         run: echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Explicitly request existing Jekyll Pages build and verify commit
+        if: always() && steps.target.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
@@ -102,4 +106,4 @@ jobs:
         run: |
           echo 'The committed UTC reservation is never released or reduced, even after failure.' >> "$GITHUB_STEP_SUMMARY"
           echo 'No raw response cache, private profile, key or private artifact is uploaded.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'A successful scheduled attempt refreshes only the verified partial sample.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Each verified game is checkpointed to GitHub before the next provider call. Missing identities/source errors remain visible; coverage is never called complete without verification.' >> "$GITHUB_STEP_SUMMARY"

@@ -53,7 +53,7 @@ export function makeCachedLoader({client,cache,now=()=>Date.now(),refreshFrom=nu
     await onRequest({key,endpoint,date,fetchedAt,reused:false});return body;
   };
 }
-function validatePrivate(snapshot){
+export function validatePrivate(snapshot){
   requireValue(snapshot?.provider===PROVIDER&&snapshot.publicationPolicy==='private-only-rights-unverified'&&snapshot.scope?.completeSeason===false,'Private Highlightly namespace and partial coverage required');
   datesInRange(snapshot.scope.startDate,snapshot.scope.startDate);datesInRange(snapshot.scope.endDate,snapshot.scope.endDate);
   requireValue(snapshot.scope.startDate<=snapshot.scope.endDate&&snapshot.scope.timeZone==='America/New_York','Invalid private snapshot scope');
@@ -86,9 +86,10 @@ export function mergeHighlightly(previous,incoming){
     requireValue(!old||old.status!=='finished'||game.status==='finished','Finished match cannot regress to unfinished');
     requireValue(!old||old.type==='unknown'||game.type!=='unknown','Known classification cannot be removed by an absent mapping');
     requireValue(!old?.classification||!game.classification||Date.parse(game.classification.verifiedAt)>=Date.parse(old.classification.verifiedAt),'Older classification provenance');
-    const unmappedGap=game.statsState==='missing'&&game.refreshIssue?.code==='unmapped-players'&&Number.isSafeInteger(game.refreshIssue.unmappedPlayerCount)&&game.refreshIssue.unmappedPlayerCount>0&&iso(game.refreshIssue.attemptedAt)&&!incoming.lines.some(l=>l.gameId===game.id);
-    requireValue(game.type==='unknown'||game.status!=='finished'||game.statsState==='available'||unmappedGap,'Classified finished match must have validated box score or explicit unmapped gap');
-    if(unmappedGap&&old?.statsState==='available'){
+    const issue=game.refreshIssue;
+    const explicitGap=game.statsState==='missing'&&issue&&['unmapped-players','backfill-pending','request-budget','source-data-error'].includes(issue.code)&&iso(issue.attemptedAt)&&typeof issue.preservedPreviousBoxScore==='boolean'&&(issue.code!=='unmapped-players'||(Number.isSafeInteger(issue.unmappedPlayerCount)&&issue.unmappedPlayerCount>0))&&!incoming.lines.some(l=>l.gameId===game.id);
+    requireValue(game.type==='unknown'||game.status!=='finished'||game.statsState==='available'||explicitGap,'Classified finished match must have validated box score or explicit coverage gap');
+    if(explicitGap&&old?.statsState==='available'){
       // Preserve the entire older verified box and its matching score, never mix it with a correction.
       games.set(game.id,{...old,type:game.type,classification:game.classification,refreshIssue:{...game.refreshIssue,preservedPreviousBoxScore:true}});
     }else{games.set(game.id,game);replaced.add(game.id);}
