@@ -14,7 +14,7 @@ export function workerVersion(worker,timeout=2000){
 export function createAppUpdates({win=window,doc=document,nav=navigator,storage,now=Date.now}={}){
   try{storage??=win.sessionStorage;}catch{}
   const scope=new URL('./',doc.baseURI).href,key='nbafs.update.draft:'+scope,guard='nbafs.update.reload:'+scope,touched=new WeakSet();
-  let registration,ready=false,lastAction=0,lastCheck=0,checking=false,pending=null,active=nav.serviceWorker?.controller,reloading=false,pumpTimer=null,status='Préparation de l’accès hors ligne.',version=null;
+  let registration,ready=false,lastAction=0,lastCheck=0,checking=false,pending=null,active=nav.serviceWorker?.controller,reloading=false,explicitUpdate=false,pumpTimer=null,status='Préparation de l’accès hors ligne.',version=null;
   function render(){
     const detail=doc.getElementById('appVersionStatus');if(detail)detail.textContent=status+(version?' · '+version.slice(0,16):'');
     let banner=doc.getElementById('appUpdateNotice');
@@ -30,8 +30,9 @@ export function createAppUpdates({win=window,doc=document,nav=navigator,storage,
     storage.setItem(key,snapshot);if(storage.getItem(key)!==snapshot)throw new Error('Brouillon non conservé');
   }
   async function pump(force=false){
+    if(force&&pending)explicitUpdate=true;
     if(!pending||!ready||reloading||pending.activating)return;
-    if(doc.visibilityState==='hidden'||(!force&&(editorBusy(doc.activeElement,touched)||now()-lastAction<5000))){setStatus('Mise à jour prête. Votre travail sera conservé à la fin de la saisie.');later();return;}
+    if(doc.visibilityState==='hidden'||(!explicitUpdate&&(editorBusy(doc.activeElement,touched)||now()-lastAction<5000))){setStatus('Mise à jour prête. Votre travail sera conservé à la fin de la saisie.');later();return;}
     try{if(!pending.worker&&storage?.getItem(guard)===pending.version){pending=null;setStatus('Application mise à jour.');return;}save(pending.version);}
     catch{setStatus('Mise à jour prête. Stockage du brouillon indisponible ; gardez cet onglet jusqu’à la fin de votre travail.');return;}
     if(pending.worker){const worker=pending.worker;pending={version:pending.version,activating:true};worker.postMessage({type:'ACTIVATE_APP_UPDATE',version:pending.version});setStatus('Application de la mise à jour…');return;}
@@ -51,7 +52,7 @@ export function createAppUpdates({win=window,doc=document,nav=navigator,storage,
   async function check(force=false){
     if(!registration||checking||nav.onLine===false||doc.visibilityState==='hidden'||(!force&&now()-lastCheck<30000))return;
     checking=true;lastCheck=now();
-    try{await registration.update();if(registration.waiting)await waiting(registration.waiting);else if(!pending)setStatus('Application à jour.');}
+    try{await registration.update();if(registration.waiting)await waiting(registration.waiting);else if(!pending)setStatus(registration.installing?'Téléchargement de la mise à jour…':'Application à jour.');}
     catch{if(!pending)setStatus('Vérification des mises à jour indisponible. L’application enregistrée reste utilisable.');}
     finally{checking=false;}
   }
