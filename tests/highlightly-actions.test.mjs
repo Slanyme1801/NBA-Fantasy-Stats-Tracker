@@ -1,6 +1,6 @@
 // Synthetic tests: never run hosted setup or access a real provider/private workspace.
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';
-import {reserveDailyBudget,runnerInputs,resumeSnapshot} from '../tools/highlightly-actions.mjs';import {fixture,now} from './fixtures.mjs';import {publicHighlightlySnapshot} from '../tools/highlightly-public.mjs';
+import {reserveDailyBudget,runnerInputs,resumeSnapshot} from '../tools/highlightly-actions.mjs';import {fixture,now,player} from './fixtures.mjs';import {publicHighlightlySnapshot} from '../tools/highlightly-public.mjs';
 const options={now:new Date('2026-11-20T09:00:00Z'),runId:'123'};
 const snapshot=()=>{const d=fixture();d.provider='Highlightly';d.scope={startDate:'2026-11-14',endDate:'2026-11-14',timeZone:'America/New_York',completeSeason:false};d.games.forEach(g=>g.provider='Highlightly');d.lines.forEach(l=>l.provider='Highlightly');return publicHighlightlySnapshot(d,{provider:'Highlightly',season:'2026-27',publicationAllowed:true,publicDatasetAllowed:true,approvedBy:'repository-owner',publicScope:'normalized-fantasy-stats',confirmedAt:now,source:'SYNTHETIC owner attestation'});};
 test('durable reservation blocks every second attempt on same UTC day including retry after failure',()=>{const r=reserveDailyBudget(null,options);assert.equal(r.reservedRequests,90);assert.throws(()=>reserveDailyBudget(r,options),/already reserved/);assert.throws(()=>reserveDailyBudget(r,{...options,runId:'124'}),/already reserved/);assert.equal(reserveDailyBudget(r,{...options,now:new Date('2026-11-21T09:00:00Z')}).dayUTC,'2026-11-21');});
@@ -16,3 +16,33 @@ test('durable normalized checkpoint resumes without removing already verified pu
 test('workflow publishes durable partial progress even when collection fails after prepare',async()=>{const s=await fs.readFile('.github/workflows/highlightly-daily.yml','utf8');assert.match(s,/name: Validate and push only normalized public files\n        if: always\(\) && steps.prepare.outcome == 'success'/);assert.match(s,/node tools\/highlightly-season-runner.mjs publish/);});
 
 test('verified hosted scheduling metadata uses the deployed off-hour cron without inventing activation',()=>{const d=snapshot();d.refreshSchedule={configured:true,verified:true,description:'Prior verified schedule'};assert.match(runnerInputs(d).authorization.refreshSchedule.description,/09:17 UTC/);d.refreshSchedule.verified=false;assert.equal(runnerInputs(d).authorization.refreshSchedule,undefined);});
+
+test('optional verified identity supplement preserves absent behavior and all existing mappings',()=>{
+ const current=snapshot(),before=structuredClone(current);
+ assert.deepEqual(runnerInputs(current).identities.players,current.players);
+ assert.deepEqual(runnerInputs(current,null).identities.players,current.players);
+ const additional={...player(4),name:current.players[0].name,extra:'must not be copied'};
+ const supplemental={provider:'Highlightly',season:'2026-27',players:[{...current.players[0],source:'SYNTHETIC alternate provenance'},additional]};
+ const inputs=runnerInputs(current,supplemental);
+ assert.equal(inputs.identities.players.length,4);assert.deepEqual(inputs.identities.players.slice(0,3),current.players);
+ assert.equal(inputs.identities.players[3].nbaId,4);assert.equal(inputs.identities.players[3].extra,undefined);
+ assert.deepEqual(current,before);assert.deepEqual(inputs.candidate.players,current.players);
+});
+test('verified identity supplement rejects wrong namespace, invalid provenance, duplicates and both collision directions',()=>{
+ const current=snapshot(),document={provider:'Highlightly',season:'2026-27',players:[player(4)]};
+ for(const bad of [{...document,provider:'other'},{...document,season:'2025-26'},{...document,players:[{...player(4),source:''}]},{...document,players:[player(4),player(4)]},{...document,players:[{...player(4),nbaId:1}]},{...document,players:[{...player(4),providerId:101}]}])assert.throws(()=>runnerInputs(current,bad));
+});
+test('prepare reads only the optional reviewed identity file and fails closed for non-missing read errors',async()=>{
+ const source=await fs.readFile('tools/highlightly-actions.mjs','utf8');
+ assert.ok(source.includes("readJSON('config/highlightly-identities.verified.json').catch(e=>{if(e.code==='ENOENT')return null;throw e;})"));
+ assert.ok(source.includes('runnerInputs(resumeSnapshot(await published(),checkpoint),verifiedIdentities)'));
+});
+
+test('committed identity supplement validates against the currently published identity namespace',async()=>{
+ const extra=JSON.parse(await fs.readFile('config/highlightly-identities.verified.json','utf8'));
+ const manifest=JSON.parse(await fs.readFile('data/manifest.json','utf8'));
+ const current=JSON.parse(await fs.readFile(manifest.file,'utf8'));
+ const r=runnerInputs(current,extra);
+ assert.ok(r.identities.players.length>=current.players.length);
+ for(const p of current.players)assert.ok(r.identities.players.some(x=>x.nbaId===p.nbaId&&x.providerId===p.providerId));
+});

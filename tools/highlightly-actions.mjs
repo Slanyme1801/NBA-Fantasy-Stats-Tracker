@@ -4,7 +4,7 @@ import {pathToFileURL} from 'node:url';
 import {published,readJSON,atomicJSON} from './files.mjs';
 import {atomicPrivateJSON} from './highlightly-private.mjs';
 import {bootstrapPrivateSnapshot} from './highlightly-daily.mjs';
-import {validateSeason} from '../assets/core.mjs';
+import {validateSeason,validateIdentityMap} from '../assets/core.mjs';
 export function reserveDailyBudget(previous,{now=new Date(),runId}){
   const today=now.toISOString().slice(0,10);
   if(now.getUTCHours()===23)throw new Error('Hosted runs must start before 23:00 UTC to avoid crossing the quota day');
@@ -15,14 +15,28 @@ export function reserveDailyBudget(previous,{now=new Date(),runId}){
   }
   return {version:1,provider:'Highlightly',dayUTC:today,reservedRequests:90,runId:String(runId),reservedAt:now.toISOString(),status:'reserved-before-network'};
 }
-export function runnerInputs(snapshot){
+export function runnerInputs(snapshot,verifiedIdentities=null){
   validateSeason(snapshot);
   if(snapshot.provider!=='Highlightly'||snapshot.publicationPolicy!=='authorized-public-normalized'||snapshot.publicationAuthorization?.scope!=='normalized-fantasy-stats')throw new Error('An authorized public Highlightly snapshot is required');
   const authorization={provider:'Highlightly',season:'2026-27',publicationAllowed:true,publicDatasetAllowed:true,approvedBy:'repository-owner',publicScope:'normalized-fantasy-stats',confirmedAt:snapshot.publicationAuthorization.confirmedAt,source:'Owner attestation recorded in the validated public snapshot'};
   // Carry only previously verified scheduling metadata, never infer activation from YAML presence.
   if(snapshot.refreshSchedule?.configured===true&&snapshot.refreshSchedule?.verified===true)authorization.refreshSchedule={...snapshot.refreshSchedule,description:'Daily attempt at 09:17 UTC. Verified partial dataset only; GitHub Actions may run late or skip scheduled events.'};
   const candidate=bootstrapPrivateSnapshot(snapshot,authorization);
-  return {authorization,candidate,identities:{provider:'Highlightly',season:'2026-27',players:candidate.players},types:{provider:'Highlightly',season:'2026-27',games:candidate.games.filter(g=>g.type!=='unknown').map(g=>({id:g.id,type:g.type,source:g.classification.source,verifiedAt:g.classification.verifiedAt}))}};
+  const players=[...candidate.players];
+  if(verifiedIdentities!==null){
+    if(verifiedIdentities?.provider!=='Highlightly'||verifiedIdentities?.season!=='2026-27')throw new Error('Explicit verified Highlightly identity namespace and season required');
+    validateIdentityMap(verifiedIdentities);
+    const nbaIds=new Map(players.map(p=>[p.nbaId,p.providerId])),providerIds=new Map(players.map(p=>[p.providerId,p.nbaId]));
+    for(const person of verifiedIdentities.players){
+      if((nbaIds.has(person.nbaId)&&nbaIds.get(person.nbaId)!==person.providerId)||(providerIds.has(person.providerId)&&providerIds.get(person.providerId)!==person.nbaId))throw new Error('Verified NBA/Highlightly identity collision');
+      // Existing pairs keep their original provenance. Names are never used to join identities.
+      if(nbaIds.has(person.nbaId))continue;
+      players.push(Object.fromEntries(['nbaId','providerId','name','source','verifiedAt'].map(key=>[key,person[key]])));
+      nbaIds.set(person.nbaId,person.providerId);providerIds.set(person.providerId,person.nbaId);
+    }
+  }
+  validateIdentityMap({season:'2026-27',players});
+  return {authorization,candidate,identities:{provider:'Highlightly',season:'2026-27',players},types:{provider:'Highlightly',season:'2026-27',games:candidate.games.filter(g=>g.type!=='unknown').map(g=>({id:g.id,type:g.type,source:g.classification.source,verifiedAt:g.classification.verifiedAt}))}};
 }
 export function resumeSnapshot(current,checkpoint){
   if(!checkpoint)return current;
@@ -35,7 +49,8 @@ export async function prepareRunner({runId,now=new Date()}){
   const reservation=await readJSON('.github/highlightly-quota.json');
   if(reservation.dayUTC!==now.toISOString().slice(0,10)||reservation.runId!==String(runId)||reservation.reservedRequests!==90)throw new Error('Current workflow must own the committed UTC reservation');
   const checkpoint=await readJSON('.github/highlightly-backfill.json').catch(e=>{if(e.code==='ENOENT')return null;throw e;});
-  const {authorization,candidate,identities,types}=runnerInputs(resumeSnapshot(await published(),checkpoint));
+  const verifiedIdentities=await readJSON('config/highlightly-identities.verified.json').catch(e=>{if(e.code==='ENOENT')return null;throw e;});
+  const {authorization,candidate,identities,types}=runnerInputs(resumeSnapshot(await published(),checkpoint),verifiedIdentities);
   const files={
     '.local/highlightly-publication.json':authorization,'.local/highlightly-candidate.json':candidate,
     '.local/highlightly-identities.json':identities,'.local/highlightly-game-types.json':types,

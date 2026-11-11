@@ -7,9 +7,11 @@ import {atomicPrivateJSON,readPrivateJSON,privateDirectory,makeDiskCache} from '
 import {makeHighlightlyClient} from './highlightly.mjs';
 import {runSeasonBackfill,validateInventoryState} from './highlightly-backfill.mjs';
 import {publicHighlightlySnapshot} from './highlightly-public.mjs';
+import {publicPendingBoxes} from './highlightly-pending.mjs';
 import {publishLocal} from './publish.mjs';
 
 export const CHECKPOINT='.github/highlightly-backfill.json';
+export const PENDING='.github/highlightly-pending-boxes.json';
 export const INVENTORY='.github/highlightly-inventory.json';
 const READY='.local/highlightly-checkpoint-ready.json';
 const requireValue=(ok,message)=>{if(!ok)throw new Error(message);};
@@ -21,7 +23,7 @@ export function publicInventory(state,now=new Date().toISOString()){
   validateInventoryState(projected,now);return projected;
 }
 export function persistGitCheckpoint(paths,{execute=spawnSync}={}){
-  requireValue(paths.length>0&&paths.every(p=>[CHECKPOINT,INVENTORY].includes(p)),'Unapproved durable checkpoint path');
+  requireValue(paths.length>0&&paths.every(p=>[CHECKPOINT,INVENTORY,PENDING].includes(p)),'Unapproved durable checkpoint path');
   const git=args=>{const r=execute('git',args,{encoding:'utf8',timeout:120000});if(r.status!==0)throw new Error('Durable Git checkpoint failed; stop before spending another provider call');return r;};
   git(['add','--',...paths]);
   const changed=execute('git',['diff','--cached','--quiet'],{encoding:'utf8'});
@@ -47,7 +49,8 @@ export async function runHostedBackfill({now=()=>Date.now(),clientOverride=null,
     const result=await runSeasonBackfill({client,cache:makeDiskCache(),now,
       previous:await readPrivateJSON('.local/highlightly-candidate.json'),
       identities:await readPrivateJSON('.local/highlightly-identities.json'),types:await readPrivateJSON('.local/highlightly-game-types.json'),
-      schedule:await readJSON('config/highlightly-schedule.verified.json'),inventoryState:await optional(INVENTORY),
+      schedule:await readJSON('config/highlightly-schedule.verified.json'),inventoryState:await optional(INVENTORY),pendingState:await optional(PENDING),
+      savePending:async state=>{await fs.rm(READY,{force:true});await atomicJSON(PENDING,publicPendingBoxes(state,new Date(now()).toISOString()));await persist([PENDING]);},
       saveState:async state=>{await atomicJSON(INVENTORY,publicInventory(state,new Date(now()).toISOString()));await persist([INVENTORY]);},
       saveProgress:async candidate=>{await fs.rm(READY,{force:true});await atomicPrivateJSON('.local/highlightly-candidate.json',candidate);await atomicJSON(CHECKPOINT,publicHighlightlySnapshot(candidate,authorization));await persist([CHECKPOINT]);await atomicPrivateJSON(READY,{runId:String(process.env.GITHUB_RUN_ID),dayUTC:reservation.dayUTC});}
     });

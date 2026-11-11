@@ -1,0 +1,489 @@
+{
+  "provider": "Highlightly",
+  "season": "2026-27",
+  "players": [
+    {
+      "nbaId": 1631105,
+      "providerId": 66505382,
+      "name": "Jalen Duren",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1631105/jalen-duren; https://www.nba.com/team/1610612765/pistons; https://nba.highlightly.net/box-score/1546999",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1630198,
+      "providerId": 65936597,
+      "name": "Isaiah Joe",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1630198/isaiah-joe; https://www.nba.com/team/1610612765/pistons; https://nba.highlightly.net/box-score/1546999",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1643416,
+      "providerId": 77140382,
+      "name": "Chris Cenac Jr.",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1643416/chris-cenac-jr; https://www.nba.com/team/1610612738/celtics; https://nba.highlightly.net/box-score/1547577",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1628404,
+      "providerId": 45941252,
+      "name": "Josh Hart",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1628404/josh-hart; https://www.nba.com/team/1610612752/knicks; https://nba.highlightly.net/box-score/1547577",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1641737,
+      "providerId": 76585622,
+      "name": "Adem Bona",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1641737/adem-bona; https://www.nba.com/team/1610612755/76ers; https://nba.highlightly.net/box-score/1547326",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1631126,
+      "providerId": 66498227,
+      "name": "Caleb Love",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1631126/caleb-love; https://www.nba.com/team/1610612755/76ers; https://nba.highlightly.net/box-score/1547326",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1643576,
+      "providerId": 76581122,
+      "name": "Maliq Brown",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1643576/maliq-brown; https://www.nba.com/team/1610612759/spurs; https://nba.highlightly.net/box-score/1547001",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1643551,
+      "providerId": 76620587,
+      "name": "Ja'Kobi Gillespie",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1643551/jakobi-gillespie; https://www.nba.com/team/1610612759/spurs; https://nba.highlightly.net/box-score/1547001",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1631096,
+      "providerId": 66499892,
+      "name": "Chet Holmgren",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1631096/chet-holmgren; https://www.nba.com/team/1610612760/thunder; https://nba.highlightly.net/box-score/1547327",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1631114,
+      "providerId": 68908112,
+      "name": "Jalen Williams",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1631114/jalen-williams; https://www.nba.com/team/1610612760/thunder; https://nba.highlightly.net/box-score/1547327",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1641717,
+      "providerId": 70256447,
+      "name": "Cason Wallace",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1641717/cason-wallace; https://www.nba.com/team/1610612760/thunder; https://nba.highlightly.net/box-score/1547327",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1631119,
+      "providerId": 66493412,
+      "name": "Jaylin Williams",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1631119/jaylin-williams; https://www.nba.com/team/1610612760/thunder; https://nba.highlightly.net/box-score/1547327",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1631094,
+      "providerId": 66489662,
+      "name": "Paolo Banchero",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1631094/paolo-banchero; https://www.nba.com/team/1610612753/magic; https://nba.highlightly.net/box-score/1547580",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1630217,
+      "providerId": 60995867,
+      "name": "Desmond Bane",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1630217/desmond-bane; https://www.nba.com/team/1610612753/magic; https://nba.highlightly.net/box-score/1547580",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1630591,
+      "providerId": 66483542,
+      "name": "Jalen Suggs",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1630591/jalen-suggs; https://www.nba.com/team/1610612753/magic; https://nba.highlightly.net/box-score/1547580",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1642854,
+      "providerId": 73099082,
+      "name": "Asa Newell",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1642854/asa-newell; https://www.nba.com/team/1610612737/hawks; https://nba.highlightly.net/box-score/1547578",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1630551,
+      "providerId": 66494672,
+      "name": "Justin Champagnie",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1630551/justin-champagnie; https://www.nba.com/team/1610612764/wizards; https://nba.highlightly.net/box-score/1547581",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1641736,
+      "providerId": 66483872,
+      "name": "Reece Beekman",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1641736/reece-beekman; https://www.nba.com/team/1610612764/wizards; https://nba.highlightly.net/box-score/1547581",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1642881,
+      "providerId": 78225902,
+      "name": "Bogoljub Markovic",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1642881/bogoljub-markovic; https://www.nba.com/team/1610612749/bucks; https://nba.highlightly.net/box-score/1547583",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1629018,
+      "providerId": 64168712,
+      "name": "Gary Trent Jr.",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1629018/gary-trent-jr; https://www.nba.com/team/1610612749/bucks; https://nba.highlightly.net/box-score/1547583",
+      "verifiedAt": "2026-11-11T11:11:47.943232Z"
+    },
+    {
+      "nbaId": 1629630,
+      "providerId": 64199387,
+      "name": "Ja Morant",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1629630/ja-morant; https://www.nba.com/team/1610612757/blazers; https://nba.highlightly.net/box-score/1547588",
+      "verifiedAt": "2026-11-11T11:13:27.542931Z"
+    },
+    {
+      "nbaId": 1629057,
+      "providerId": 60994232,
+      "name": "Robert Williams III",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1629057/robert-williams-iii; https://www.nba.com/team/1610612757/blazers; https://nba.highlightly.net/box-score/1547588",
+      "verifiedAt": "2026-11-11T11:13:27.542950Z"
+    },
+    {
+      "nbaId": 1630249,
+      "providerId": 68684462,
+      "name": "Vit Krejci",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1630249/vit-krejci; https://www.nba.com/team/1610612757/blazers; https://nba.highlightly.net/box-score/1547588",
+      "verifiedAt": "2026-11-11T11:13:27.542956Z"
+    },
+    {
+      "nbaId": 1630692,
+      "providerId": 64177097,
+      "name": "Jordan Goodwin",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1630692/jordan-goodwin; https://www.nba.com/team/1610612756/suns; https://nba.highlightly.net/box-score/1547881",
+      "verifiedAt": "2026-11-11T11:13:27.542959Z"
+    },
+    {
+      "nbaId": 1630543,
+      "providerId": 66483617,
+      "name": "Isaiah Jackson",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1630543/isaiah-jackson; https://www.nba.com/team/1610612746/clippers; https://nba.highlightly.net/box-score/1547989",
+      "verifiedAt": "2026-11-11T11:13:27.542962Z"
+    },
+    {
+      "nbaId": 1627734,
+      "providerId": 47340197,
+      "name": "Domantas Sabonis",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1627734/domantas-sabonis; https://www.nba.com/team/1610612758/kings; https://nba.highlightly.net/box-score/1547991",
+      "verifiedAt": "2026-11-11T11:13:27.542965Z"
+    },
+    {
+      "nbaId": 1642363,
+      "providerId": 70536827,
+      "name": "Nique Clifford",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1642363/nique-clifford; https://www.nba.com/thunder/news/nique-clifford-261108; https://nba.highlightly.net/box-score/1547991",
+      "verifiedAt": "2026-11-11T11:13:27.542968Z"
+    },
+    {
+      "nbaId": 1630241,
+      "providerId": 61002422,
+      "name": "Sam Merrill",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1630241/sam-merrill; https://www.nba.com/team/1610612739/cavaliers; https://nba.highlightly.net/box-score/1548103",
+      "verifiedAt": "2026-11-11T11:13:27.542971Z"
+    },
+    {
+      "nbaId": 1642281,
+      "providerId": 70257272,
+      "name": "Jaylon Tyson",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1642281/jaylon-tyson; https://www.nba.com/team/1610612739/cavaliers; https://nba.highlightly.net/box-score/1548103",
+      "verifiedAt": "2026-11-11T11:13:27.542973Z"
+    },
+    {
+      "nbaId": 1642400,
+      "providerId": 66477077,
+      "name": "Tristan Enaruna",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1642400/tristan-enaruna; https://www.nba.com/cavaliers/news/releases-riley-minix-signing-261107; https://nba.highlightly.net/box-score/1548103",
+      "verifiedAt": "2026-11-11T11:13:27.542976Z"
+    },
+    {
+      "nbaId": 1642948,
+      "providerId": 66505502,
+      "name": "Ryan Nembhard",
+      "source": "NBA identity/team + provider observation: https://www.nba.com/player/1642948/ryan-nembhard; https://www.nba.com/team/1610612743/nuggets; https://nba.highlightly.net/box-score/1547880",
+      "verifiedAt": "2026-11-11T11:13:27.542979Z"
+    },
+    {
+      "nbaId": 1630162,
+      "providerId": 68915087,
+      "name": "Anthony Edwards",
+      "source": "Official NBA profile name + current team MIN: https://www.nba.com/player/1630162; corroborates provider game 1547580 team 41 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1642856,
+      "providerId": 77635712,
+      "name": "Egor Demin",
+      "source": "Official NBA profile name + current team BKN: https://www.nba.com/player/1642856; corroborates provider game 1547075 team 49 on 2026-10-21",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1642879,
+      "providerId": 78638597,
+      "name": "Ben Saraf",
+      "source": "Official NBA profile name + current team BKN: https://www.nba.com/player/1642879; corroborates provider game 1547075 team 49 on 2026-10-21",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1631217,
+      "providerId": 66499802,
+      "name": "Moussa Diabate",
+      "source": "Official NBA profile name + current team CHA: https://www.nba.com/player/1631217; corroborates provider game 1547578 team 33 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1641706,
+      "providerId": 66500372,
+      "name": "Brandon Miller",
+      "source": "Official NBA profile name + current team CHA: https://www.nba.com/player/1641706; corroborates provider game 1547578 team 33 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 203471,
+      "providerId": 45495752,
+      "name": "Dennis Schroder",
+      "source": "Official NBA profile name + current team CHA: https://www.nba.com/player/203471; corroborates provider game 1547578 team 33 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 202695,
+      "providerId": 97817,
+      "name": "Kawhi Leonard",
+      "source": "Official NBA profile name + current team TOR: https://www.nba.com/player/202695; corroborates provider game 1547581 team 34 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1630567,
+      "providerId": 66498077,
+      "name": "Scottie Barnes",
+      "source": "Official NBA profile name + current team TOR: https://www.nba.com/player/1630567; corroborates provider game 1547581 team 34 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1630193,
+      "providerId": 65936927,
+      "name": "Immanuel Quickley",
+      "source": "Official NBA profile name + current team TOR: https://www.nba.com/player/1630193; corroborates provider game 1547581 team 34 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1642867,
+      "providerId": 76400072,
+      "name": "Collin Murray-Boyles",
+      "source": "Official NBA profile name + current team TOR: https://www.nba.com/player/1642867; corroborates provider game 1547581 team 34 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1626181,
+      "providerId": 38933807,
+      "name": "Norman Powell",
+      "source": "Official NBA profile name + current team CHI: https://www.nba.com/player/1626181; corroborates provider game 1547583 team 27 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1628380,
+      "providerId": 61000817,
+      "name": "Zach Collins",
+      "source": "Official NBA profile name + current team CHI: https://www.nba.com/player/1628380; corroborates provider game 1547583 team 27 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1643637,
+      "providerId": 73471217,
+      "name": "Jaylin Sellers",
+      "source": "Official NBA profile name + current team CHI: https://www.nba.com/player/1643637; corroborates provider game 1547583 team 27 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1643517,
+      "providerId": 72730442,
+      "name": "Dailyn Swain",
+      "source": "Official NBA profile name + current team CHI: https://www.nba.com/player/1643517; corroborates provider game 1547583 team 27 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1630590,
+      "providerId": 66477842,
+      "name": "Scotty Pippen Jr.",
+      "source": "Official NBA profile name + current team MEM: https://www.nba.com/player/1630590; corroborates provider game 1547077 team 42 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1643510,
+      "providerId": 78479852,
+      "name": "Karim Lopez",
+      "source": "Official NBA profile name + current team MEM: https://www.nba.com/player/1643510; corroborates provider game 1547077 team 42 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1642942,
+      "providerId": 70260077,
+      "name": "Jahmai Mashack",
+      "source": "Official NBA profile name + current team MEM: https://www.nba.com/player/1642942; corroborates provider game 1547077 team 42 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1628374,
+      "providerId": 60996107,
+      "name": "Lauri Markkanen",
+      "source": "Official NBA profile name + current team UTAH: https://www.nba.com/player/1628374; corroborates provider game 1547077 team 45 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1628991,
+      "providerId": 64170482,
+      "name": "Jaren Jackson Jr.",
+      "source": "Official NBA profile name + current team UTAH: https://www.nba.com/player/1628991; corroborates provider game 1547077 team 45 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1631127,
+      "providerId": 66505337,
+      "name": "Harrison Ingram",
+      "source": "Official NBA profile name + current team UTAH: https://www.nba.com/player/1631127; corroborates provider game 1547077 team 45 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1642274,
+      "providerId": 75924902,
+      "name": "Yves Missi",
+      "source": "Official NBA profile name + current team NO: https://www.nba.com/player/1642274; corroborates provider game 1547078 team 64 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1630169,
+      "providerId": 65955962,
+      "name": "Tyrese Haliburton",
+      "source": "Official NBA profile name + current team IND: https://www.nba.com/player/1630169; corroborates provider game 1547579 team 36 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1641767,
+      "providerId": 66497207,
+      "name": "Ben Sheppard",
+      "source": "Official NBA profile name + current team IND: https://www.nba.com/player/1641767; corroborates provider game 1547078 team 36 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1641738,
+      "providerId": 66477347,
+      "name": "Kobe Brown",
+      "source": "Official NBA profile name + current team IND: https://www.nba.com/player/1641738; corroborates provider game 1547579 team 36 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1643547,
+      "providerId": 79188002,
+      "name": "Sergio de Larrea",
+      "source": "Official NBA profile name + current team DAL: https://www.nba.com/player/1643547; corroborates provider game 1547579 team 40 on 2026-10-23",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1643024,
+      "providerId": 70545647,
+      "name": "Chris Manon",
+      "source": "Official NBA profile name + current team LAL: https://www.nba.com/player/1643024; corroborates provider game 1547080 team 4 on 2026-10-22",
+      "verifiedAt": "2026-11-11T11:11:50.776Z"
+    },
+    {
+      "nbaId": 1630191,
+      "providerId": 66493217,
+      "name": "Isaiah Stewart",
+      "source": "Official NBA profile name + current team MEM: https://www.nba.com/player/1630191; corroborates provider game 1547991 team 42 on 2026-10-26",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1641751,
+      "providerId": 66505052,
+      "name": "Arthur Kaluma",
+      "source": "Official NBA profile name + current team LAL: https://www.nba.com/player/1641751; corroborates provider game 1547985 team 4 on 2026-10-25",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1643758,
+      "providerId": 76716317,
+      "name": "AK Okereke",
+      "source": "NBA identity https://www.nba.com/player/1643758; LAL tenure at 2026-10-24 corroborated by official signing/waiver notice: https://www.nba.com/lakers/news/los-angeles-lakers-sign-center-lawson-lovering-to-two-way-contract",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1642910,
+      "providerId": 68896712,
+      "name": "John Tonje",
+      "source": "Official NBA profile name + current team POR: https://www.nba.com/player/1642910; corroborates provider game 1547588 team 31 on 2026-10-24",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1641715,
+      "providerId": 76584947,
+      "name": "Cam Whitmore",
+      "source": "Official NBA profile name + current team DEN: https://www.nba.com/player/1641715; corroborates provider game 1547880 team 3 on 2026-10-25",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1643538,
+      "providerId": 73059527,
+      "name": "Joshua Jefferson",
+      "source": "Official NBA profile name + current team BKN: https://www.nba.com/player/1643538; corroborates provider game 1547986 team 49 on 2026-10-25",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1643022,
+      "providerId": 70257017,
+      "name": "Jaden Akins",
+      "source": "Official NBA profile name + current team NY: https://www.nba.com/player/1643022; corroborates provider game 1547987 team 26 on 2026-10-25",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1642389,
+      "providerId": 68895752,
+      "name": "Zyon Pullin",
+      "source": "Official NBA profile name + current team MIN: https://www.nba.com/player/1642389; corroborates provider game 1548103 team 41 on 2026-10-26",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1641989,
+      "providerId": 65962802,
+      "name": "Elijah Harkless",
+      "source": "Official NBA profile name + current team DET: https://www.nba.com/player/1641989; corroborates provider game 1547990 team 25 on 2026-10-25",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1643721,
+      "providerId": 76588322,
+      "name": "Carson Cooper",
+      "source": "NBA identity https://www.nba.com/player/1643721; MEM tenure at 2026-10-26 corroborated by official signing/waiver notice: https://www.nba.com/grizzlies/news/grizzlies-sign-richie-saunders-to-two-way-contract",
+      "verifiedAt": "2026-11-11T11:13:33.014Z"
+    },
+    {
+      "nbaId": 1643640,
+      "providerId": 76594982,
+      "name": "Ernest Udeh Jr.",
+      "source": "Official NBA profile name + team CLE: https://www.nba.com/player/1643640; corroborates provider game 1548774 team 35 on 2026-10-30",
+      "verifiedAt": "2026-11-11T11:16:12.530Z"
+    },
+    {
+      "nbaId": 1643589,
+      "providerId": 72581882,
+      "name": "Tyler Nickel",
+      "source": "Official NBA profile name + team NY: https://www.nba.com/player/1643589; corroborates provider game 1549056 team 26 on 2026-10-30",
+      "verifiedAt": "2026-11-11T11:16:12.530Z"
+    }
+  ]
+}

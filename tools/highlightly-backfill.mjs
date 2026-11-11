@@ -4,6 +4,9 @@ import {SEASON,emptySeason,validateIdentityMap,validateSeason} from '../assets/c
 import {PROVIDER,parseMatches,normalizeMatch,parseBoxScore,normalizeBoxScore,localMatchDay,datesInRange} from './highlightly.mjs';
 import {makeCachedLoader,mergeHighlightly,validatePrivate} from './highlightly-private.mjs';
 import {verifiedSchedule} from './highlightly-schedule.mjs';
+import {emptyPending,publicPendingBoxes,normalizePendingBox,pendingBody} from './highlightly-pending.mjs';
+import {checkOfficialParticipation} from './highlightly-participation-reference.mjs';
+import {sourceErrorCode} from './highlightly-source-errors.mjs';
 import {classifications} from './provider.mjs';
 import {missingIdentityObservations,checkOfficialReference} from './highlightly-reference.mjs';
 const requireValue=(ok,message)=>{if(!ok)throw new Error(message);};
@@ -30,7 +33,7 @@ export function seedSeasonInventory(pages,{now=new Date().toISOString()}={}){
   }
   validateInventoryState(state,now);return state;
 }
-export async function runSeasonBackfill({client,cache,previous=null,identities,schedule,types=null,seasonStart=null,inventoryState=null,saveState=async()=>{},saveProgress=async()=>{},now=()=>Date.now(),maxCorrectionGames=6,correctionDays=3,maxSourceRetriesPerRun=3}){
+export async function runSeasonBackfill({client,cache,previous=null,identities,schedule,types=null,seasonStart=null,inventoryState=null,pendingState=null,savePending=async()=>{},saveState=async()=>{},saveProgress=async()=>{},now=()=>Date.now(),maxCorrectionGames=6,correctionDays=3,maxSourceRetriesPerRun=3}){
   const timestamp=new Date(now()).toISOString(),dayUTC=timestamp.slice(0,10);
   requireValue(Number.isInteger(maxCorrectionGames)&&maxCorrectionGames>=0&&maxCorrectionGames<=10&&Number.isInteger(correctionDays)&&correctionDays>=1&&correctionDays<=7&&Number.isInteger(maxSourceRetriesPerRun)&&maxSourceRetriesPerRun>=0&&maxSourceRetriesPerRun<=10,'Invalid correction budget');
   seasonStart=seasonStart||schedule?.seasonStart;
@@ -44,6 +47,8 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
   const typeDocument=types||{provider:PROVIDER,season:SEASON,games:(previous?.games||[]).filter(g=>g.type!=='unknown').map(g=>({id:g.id,type:g.type,source:g.classification.source,verifiedAt:g.classification.verifiedAt}))};
   requireValue(typeDocument.provider===PROVIDER,'Explicit Highlightly classification namespace required');
   const explicitTypes=classifications(typeDocument),classify=verifiedSchedule(schedule),identityRevision=digest(identities.players.map(p=>[p.providerId,p.nbaId]).sort((a,b)=>a[0]-b[0]));
+  const pending=publicPendingBoxes(pendingState||emptyPending(),timestamp);
+  const savePendingState=async()=>savePending(publicPendingBoxes(pending,new Date(now()).toISOString()));
   if(inventoryState)validateInventoryState(inventoryState,timestamp);
   let state=inventoryState?.dayUTC===dayUTC?structuredClone(inventoryState):{version:1,provider:PROVIDER,season:SEASON,dayUTC,offset:0,total:null,seenIds:[],games:[],complete:false};
   const receipts=[],load=makeCachedLoader({client,cache,now,refreshFrom:'2026-07-01',refreshId:`inventory-${dayUTC}`,onRequest:async r=>receipts.push(r)});
@@ -64,8 +69,11 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
     next.offset+=page.data.length;next.complete=next.offset===next.total;validateInventoryState(next,timestamp);await saveState(next);state=next;
   }
   const oldGames=new Map((previous?.games||[]).map(g=>[g.id,g]));
-  const outsideDateScopeFinished=state.games.filter(g=>localMatchDay(g)<seasonStart.date).length;
-  const inventory=state.games.filter(g=>localMatchDay(g)>=seasonStart.date).map(raw=>{
+  const staleCompleted=pending.games.filter(entry=>oldGames.get(entry.game.id)?.statsState==='available'&&!oldGames.get(entry.game.id)?.refreshIssue&&Number.isFinite(Date.parse(oldGames.get(entry.game.id)?.boxScoreCheckedAt))&&Date.parse(oldGames.get(entry.game.id).boxScoreCheckedAt)>=Date.parse(entry.fetchedAt));
+  if(staleCompleted.length){pending.games=pending.games.filter(entry=>!staleCompleted.includes(entry));await savePendingState();}
+  const observedGames=[...state.games,...pending.games.filter(entry=>!state.games.some(g=>g.id===entry.game.id)).map(entry=>entry.game)];
+  const outsideDateScopeFinished=observedGames.filter(g=>localMatchDay(g)<seasonStart.date).length;
+  const inventory=observedGames.filter(g=>localMatchDay(g)>=seasonStart.date).map(raw=>{
     const explicit=explicitTypes.get(raw.id)||classify({id:raw.id,date:raw.start,homeTeam:{id:raw.home.id,abbreviation:raw.home.code},awayTeam:{id:raw.away.id,abbreviation:raw.away.code}}),old=oldGames.get(raw.id);
     requireValue(!old||(old.home.id===raw.home.id&&old.away.id===raw.away.id),'Game team identity collision');
     let type=explicit?.type||old?.type||'unknown',classification=explicit?{source:explicit.source,verifiedAt:explicit.verifiedAt}:old?.classification||null;
@@ -77,7 +85,7 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
   const blockedSourceToday=g=>oldGames.get(g.id)?.refreshIssue?.code==='source-data-error'&&oldGames.get(g.id).refreshIssue.attemptedAt?.slice(0,10)===dayUTC;
   const eligible=inventory.filter(g=>g.type!=='unknown');
   const corrections=eligible.filter(g=>oldGames.get(g.id)?.statsState==='available'&&localMatchDay(g)>=cutoff&&!attemptedToday(g)&&!blockedSameIdentity(g)&&!blockedSourceToday(g)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id).slice(0,maxCorrectionGames);
-  const backlog=eligible.filter(g=>(oldGames.get(g.id)?.statsState!=='available'||['unmapped-players','source-data-error'].includes(oldGames.get(g.id)?.refreshIssue?.code))&&!blockedSameIdentity(g)&&!blockedSourceToday(g)&&!corrections.some(c=>c.id===g.id)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id);
+  const backlog=eligible.filter(g=>(oldGames.get(g.id)?.statsState!=='available'||pending.games.some(entry=>entry.game.id===g.id)||['unmapped-players','source-data-error'].includes(oldGames.get(g.id)?.refreshIssue?.code))&&!blockedSameIdentity(g)&&!blockedSourceToday(g)&&!corrections.some(c=>c.id===g.id)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id);
   const sourceRetries=eligible.filter(g=>oldGames.get(g.id)?.refreshIssue?.code==='source-data-error'&&!blockedSourceToday(g)).sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id).slice(0,maxSourceRetriesPerRun);
   const queue=[...corrections,...backlog,...sourceRetries],incoming=new Map(),lines=[];
   for(const game of inventory){const old=oldGames.get(game.id);
@@ -96,11 +104,12 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
   };
   await saveProgress(snapshot());
   for(const game of queue){
-    if(budgetExhausted)break;
+    const savedBox=pending.games.find(entry=>entry.game.id===game.id);
+    if(budgetExhausted&&!savedBox)continue;
     const correction=corrections.some(g=>g.id===game.id),revision=correction?`correction-${dayUTC}`:oldGames.get(game.id)?.refreshIssue?.code==='source-data-error'?`source-retry-${dayUTC}`:null;
     const boxLoad=makeCachedLoader({client,cache,now,refreshFrom:revision?'2026-07-01':null,refreshId:revision,onRequest:async r=>receipts.push(r)});
     let body,observations=[],sourceReference=null;
-    try{body=await boxLoad(`/box-score/${game.id}`,{},body=>{
+    try{body=savedBox?pendingBody(savedBox,game):await boxLoad(`/box-score/${game.id}`,{},body=>{
       observations=missingIdentityObservations(body,game,identities,timestamp);
       sourceReference=checkOfficialReference(body,game,identities,timestamp);
       try{return parseBoxScore(body,game);}catch(error){
@@ -108,20 +117,34 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
         const failure=new Error(allowed.includes(error.message)?error.message:'Malformed box-score structure');failure.code='HIGHLIGHTLY_SOURCE_DATA';throw failure;
       }
     },{date:localMatchDay(game)});}catch(error){
-      if(budgetError(error)){budgetExhausted=true;break;}
+      if(budgetError(error)){budgetExhausted=true;continue;}
       if(error.code!=='HIGHLIGHTLY_SOURCE_DATA')throw error;
       const old=oldGames.get(game.id),preserved=old?.statsState==='available';
-      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',refreshIssue:{code:'source-data-error',identityObservations:observations,...(sourceReference?{officialReference:sourceReference}:{}),reason:error.message,attemptedAt:timestamp,retryAfterUTC:new Date(Date.parse(dayUTC)+86400000).toISOString().slice(0,10),preservedPreviousBoxScore:preserved}});
+      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',refreshIssue:{code:'source-data-error',sourceErrorCode:sourceErrorCode(error.message),identityObservations:observations,...(sourceReference?{officialReference:sourceReference}:{}),reason:error.message,attemptedAt:timestamp,retryAfterUTC:new Date(Date.parse(dayUTC)+86400000).toISOString().slice(0,10),preservedPreviousBoxScore:preserved}});
       await saveProgress(snapshot());continue;
     }
+    if(savedBox)receipts.push({endpoint:`/box-score/${game.id}`,date:localMatchDay(game),fetchedAt:savedBox.fetchedAt,reused:true,normalizedPending:true});
     const rawLines=parseBoxScore(body,game),missing=rawLines.filter(l=>!identities.players.some(p=>p.providerId===l.providerId));
-    const checkedAt=receipts.at(-1)?.fetchedAt||timestamp;
+    const checkedAt=savedBox?.fetchedAt||receipts.at(-1)?.fetchedAt||timestamp;
     observations=missingIdentityObservations(body,game,identities,checkedAt);
+    const participationReference=checkOfficialParticipation(rawLines,game,timestamp);
+    if(participationReference){
+      const old=oldGames.get(game.id),preserved=old?.statsState==='available';
+      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:'source-data-error',sourceErrorCode:'official-participation-conflict',attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityObservations:observations,participationReference}});
+      await saveProgress(snapshot());
+      if(savedBox){pending.games=pending.games.filter(entry=>entry.game.id!==game.id);await savePendingState();}
+      continue;
+    }
     const officialReference=checkOfficialReference(body,game,identities,timestamp);
+    if(missing.length&&officialReference?.status!=='mismatch'&&!savedBox){
+      pending.games.push(normalizePendingBox(body,game,checkedAt));await savePendingState();
+    }
     if(officialReference&&officialReference.status!=='verified'){
       const old=oldGames.get(game.id),preserved=old?.statsState==='available',identityBlocked=officialReference.status==='unverifiable'&&missing.length>0;
-      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:identityBlocked?'unmapped-players':'source-data-error',...(identityBlocked?{unmappedPlayerCount:missing.length,identityRevision}:{}),attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityObservations:observations,officialReference}});
-      await saveProgress(snapshot());continue;
+      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:identityBlocked?'unmapped-players':'source-data-error',...(identityBlocked?{unmappedPlayerCount:missing.length,identityRevision}:{sourceErrorCode:`official-reference-${officialReference.status}`}),attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityObservations:observations,officialReference}});
+      await saveProgress(snapshot());
+      if(savedBox&&officialReference.status==='mismatch'){pending.games=pending.games.filter(entry=>entry.game.id!==game.id);await savePendingState();}
+      continue;
     }
     if(missing.length){
       const old=oldGames.get(game.id),preserved=old?.statsState==='available';
@@ -132,7 +155,8 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
       lines.push(...normalized);incoming.set(game.id,{...game,statsState:'available',boxScoreCheckedAt:checkedAt});
     }
     await saveProgress(snapshot());
+    if(!missing.length&&savedBox){pending.games=pending.games.filter(entry=>entry.game.id!==game.id);await savePendingState();}
   }
   if(budgetExhausted)for(const [id,g]of incoming)if(g.refreshIssue?.code==='backfill-pending')incoming.set(id,{...g,refreshIssue:{...g.refreshIssue,code:'request-budget'}});
-  const result=snapshot();await saveProgress(result);return {snapshot:result,inventoryState:state};
+  const result=snapshot();await saveProgress(result);return {snapshot:result,inventoryState:state,pendingState:publicPendingBoxes(pending,new Date(now()).toISOString())};
 }

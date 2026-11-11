@@ -1,5 +1,7 @@
 // Deliberate projection of normalized data. Never publish raw responses or local state.
 import {validateSeason,SEASON} from '../assets/core.mjs';
+import {COOPER_DEBUT_REFERENCE} from './highlightly-participation-reference.mjs';
+import {SOURCE_ERROR_CODES} from './highlightly-source-errors.mjs';
 import {PROVIDER,datesInRange} from './highlightly.mjs';
 const requireValue=(ok,message)=>{if(!ok)throw new Error(message);};
 const date=value=>typeof value==='string'&&/^\d{4}-\d\d-\d\dT.*(?:Z|[+-]\d\d:\d\d)$/.test(value)&&Number.isFinite(Date.parse(value));
@@ -44,7 +46,9 @@ export function publicRefreshIssue(issue){
     requireValue(Number.isSafeInteger(issue.unmappedPlayerCount)&&issue.unmappedPlayerCount>0,'Invalid missing identity count');result.unmappedPlayerCount=issue.unmappedPlayerCount;
     if(issue.identityRevision!==undefined){requireValue(/^[a-f0-9]{64}$/.test(issue.identityRevision),'Invalid identity revision');result.identityRevision=issue.identityRevision;}
   }
+  if(issue.sourceErrorCode!==undefined){requireValue(issue.code==='source-data-error'&&SOURCE_ERROR_CODES.has(issue.sourceErrorCode),'Invalid source error code');result.sourceErrorCode=issue.sourceErrorCode;}
   if(issue.identityObservations!==undefined)result.identityObservations=publicIdentityObservations(issue.identityObservations);
+  if(issue.participationReference!==undefined)result.participationReference=publicParticipationReference(issue.participationReference);
   if(issue.officialReference!==undefined)result.officialReference=publicOfficialReference(issue.officialReference);
   // Free-form error messages are deliberately excluded.
   return result;
@@ -65,4 +69,10 @@ export function publicOfficialReference(r){
   const expected=new Map([['1626157:stl',0],['1628404:stl',3],['203903:fgm',0],['203903:fga',0]]),seen=new Set();
   const checks=r.checks.map(c=>{const key=`${c.nbaId}:${c.stat}`;requireValue(expected.has(key)&&expected.get(key)===c.expected&&!seen.has(key),'Invalid official comparison');seen.add(key);requireValue([1626157,1628404,203903].includes(c.nbaId)&&(c.providerId===null||(Number.isSafeInteger(c.providerId)&&c.providerId>0))&&['stl','fgm','fga'].includes(c.stat)&&Number.isSafeInteger(c.expected)&&c.expected>=0&&(c.observed===null||(Number.isSafeInteger(c.observed)&&c.observed>=0))&&['verified','mismatch','unverifiable'].includes(c.status),'Invalid official comparison');return pick(c,['nbaId','providerId','stat','expected','observed','status']);});
   return {...pick(r,['gameId','nbaGameId','source','verifiedAt','checkedAt','status']),checks};
+}
+
+export function publicParticipationReference(r){
+  requireValue(r&&Object.entries(COOPER_DEBUT_REFERENCE).every(([key,value])=>r[key]===value)&&Number.isSafeInteger(r.gameId)&&r.gameId>0&&Number.isSafeInteger(r.observedTeamId)&&r.observedTeamId>0&&r.observedParticipation==='played'&&date(r.checkedAt),'Invalid official participation reference');
+  datesInRange(r.gameDateET,r.gameDateET);requireValue(r.gameDateET<COOPER_DEBUT_REFERENCE.firstAppearanceET,'Invalid participation conflict date');
+  return pick(r,[...Object.keys(COOPER_DEBUT_REFERENCE),'gameId','gameDateET','observedTeamId','observedParticipation','checkedAt']);
 }
