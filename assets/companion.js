@@ -48,7 +48,7 @@ openPlayer=async function(id){
   const player=await api(playerPath(id));if(generation!==routeGeneration)return;CURRENT=player;sortState={key:'season',dir:'asc'};renderPlayer();window.scrollTo(0,0);
 };
 renderPlayer=function(){
-  previousPlayer();const head=el('view').querySelector('.player-head');head.insertAdjacentHTML('afterbegin',`${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span>`);
+  previousPlayer();const head=el('view').querySelector('.player-head');head.innerHTML=`<div class="profile-identity">${head.innerHTML}</div>`;head.insertAdjacentHTML('afterbegin',`<div class="profile-portrait">${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span></div>`);
   const p=CURRENT.eligibility;head.insertAdjacentHTML('afterend',`<div class="eligibility"><b>ESPN 2026–27:</b> ${p?esc(p.positions.join(' / ')):'Non importé'}</div><div id="currentProfile"></div>`);renderCurrentProfile();
 };
 function aggregateTable(a){

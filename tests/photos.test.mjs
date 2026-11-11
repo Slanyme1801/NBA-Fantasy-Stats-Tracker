@@ -29,3 +29,12 @@ test('transparent PNGs are flagged without inventing rights certification',async
  assert.equal(cutouts.length,10);assert.match(api.credits(),/10 images sont des PNG/);assert.match(api.credits(),/usage non commercial uniquement/);assert.match(api.credits(),/droits photographiques originaux non audités/);
  for(const p of cutouts){const bytes=await fs.readFile(new URL('../'+p.path,import.meta.url));assert.equal(bytes.subarray(1,4).toString(),'PNG');assert.match(api.portrait(p.nbaId),/photo-transparent/);}
 });
+
+test('profile portraits have one centered responsive slot for every image format',async()=>{
+ const css=await fs.readFile(new URL('../assets/dashboard.css',import.meta.url),'utf8');
+ const js=await fs.readFile(new URL('../assets/companion.js',import.meta.url),'utf8');
+ assert.match(js,/class="profile-portrait"/);assert.match(js,/class="profile-identity"/);
+ assert.match(css,/\.player-head\{align-items:center/);
+ assert.match(css,/object-fit:contain;object-position:center/);
+ assert.match(css,/@media\(max-width:420px\)/);
+});

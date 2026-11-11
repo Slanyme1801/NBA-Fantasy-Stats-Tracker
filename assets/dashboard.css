@@ -47,3 +47,14 @@
 @media(max-width:760px){.spotlight-photo{width:70px;height:90px}.profile-photo{width:70px;height:90px}.dashboard-spotlight-info{flex-basis:55%}}
 
 .player-photo.photo-transparent{background:transparent;border-radius:0;object-fit:contain}
+
+/* A consistent portrait slot, independent of image ratio or transparency. */
+.player-head{align-items:center;flex-wrap:nowrap;gap:24px;margin:20px 0 12px}
+.profile-identity{min-width:0;display:flex;flex-direction:column;gap:8px}
+.profile-identity .sub{line-height:1.5;overflow-wrap:anywhere}
+.profile-portrait{width:160px;height:180px;flex:0 0 160px;display:grid;place-items:center;padding:10px;box-sizing:border-box;background:linear-gradient(145deg,var(--bg-2),transparent);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.profile-portrait .profile-photo{display:block;width:100%;height:100%;max-width:100%;max-height:160px;object-fit:contain;object-position:center}
+.profile-portrait .profile-photo[hidden]{display:none}
+.profile-portrait .avatar{width:72px;height:72px;font-size:24px}
+@media(max-width:760px){.player-head{gap:16px;margin-top:16px}.profile-portrait{width:112px;height:136px;flex-basis:112px;padding:8px}.profile-portrait .profile-photo{max-height:120px}.profile-identity h2{font-size:25px}}
+@media(max-width:420px){.player-head{flex-direction:column;text-align:center;gap:12px}.profile-portrait{flex-basis:auto}.profile-identity{width:100%}}
