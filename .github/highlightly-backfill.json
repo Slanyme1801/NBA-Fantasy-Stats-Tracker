@@ -454,6 +454,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:14:34.612Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:14:40.681Z"
         }
       ]
     }
@@ -7686,10 +7689,43 @@
         125,
         111
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:14:40.681Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 4,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1549054,
+            "teamId": 2,
+            "providerId": 77140382,
+            "name": "Chris Cenac Jr.",
+            "fetchedAt": "2026-11-11T11:14:40.681Z"
+          },
+          {
+            "gameId": 1549054,
+            "teamId": 27,
+            "providerId": 38933807,
+            "name": "Norman Powell",
+            "fetchedAt": "2026-11-11T11:14:40.681Z"
+          },
+          {
+            "gameId": 1549054,
+            "teamId": 27,
+            "providerId": 61000817,
+            "name": "Zach Collins",
+            "fetchedAt": "2026-11-11T11:14:40.681Z"
+          },
+          {
+            "gameId": 1549054,
+            "teamId": 27,
+            "providerId": 73471217,
+            "name": "Jaylin Sellers",
+            "fetchedAt": "2026-11-11T11:14:40.681Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=2",
@@ -25472,7 +25508,7 @@
     "verifiedRegularBoxScores": 24,
     "verifiedBoxScores": 24,
     "sourceFailureGames": 1,
-    "unmappedGames": 69,
+    "unmappedGames": 70,
     "unclassifiedGames": 0,
     "pendingGames": 136,
     "inventoryTotal": 405,
