@@ -316,6 +316,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:09:53.443Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:09:59.462Z"
         }
       ]
     }
@@ -4788,10 +4791,36 @@
         125,
         117
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:09:59.462Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 3,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547587,
+            "teamId": 4,
+            "providerId": 66505052,
+            "name": "Arthur Kaluma",
+            "fetchedAt": "2026-11-11T11:09:59.462Z"
+          },
+          {
+            "gameId": 1547587,
+            "teamId": 4,
+            "providerId": 76716317,
+            "name": "AK Okereke",
+            "fetchedAt": "2026-11-11T11:09:59.462Z"
+          },
+          {
+            "gameId": 1547587,
+            "teamId": 30,
+            "providerId": 66483617,
+            "name": "Isaiah Jackson",
+            "fetchedAt": "2026-11-11T11:09:59.462Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -23376,7 +23405,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 24,
+    "unmappedGames": 25,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
