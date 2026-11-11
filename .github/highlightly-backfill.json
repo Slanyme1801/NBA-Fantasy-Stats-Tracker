@@ -286,6 +286,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:08:46.284Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:08:52.459Z"
         }
       ]
     }
@@ -4045,10 +4048,50 @@
         96,
         84
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:08:52.459Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 5,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547327,
+            "teamId": 38,
+            "providerId": 66499892,
+            "name": "Chet Holmgren",
+            "fetchedAt": "2026-11-11T11:08:52.459Z"
+          },
+          {
+            "gameId": 1547327,
+            "teamId": 38,
+            "providerId": 68908112,
+            "name": "Jalen Williams",
+            "fetchedAt": "2026-11-11T11:08:52.459Z"
+          },
+          {
+            "gameId": 1547327,
+            "teamId": 38,
+            "providerId": 70256447,
+            "name": "Cason Wallace",
+            "fetchedAt": "2026-11-11T11:08:52.459Z"
+          },
+          {
+            "gameId": 1547327,
+            "teamId": 38,
+            "providerId": 66493412,
+            "name": "Jaylin Williams",
+            "fetchedAt": "2026-11-11T11:08:52.459Z"
+          },
+          {
+            "gameId": 1547327,
+            "teamId": 3,
+            "providerId": 66505502,
+            "name": "Ryan Nembhard",
+            "fetchedAt": "2026-11-11T11:08:52.459Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -22402,7 +22445,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 0,
-    "unmappedGames": 15,
+    "unmappedGames": 16,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
