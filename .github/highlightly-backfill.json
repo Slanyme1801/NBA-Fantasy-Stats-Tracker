@@ -445,6 +445,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:14:16.385Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:14:22.358Z"
         }
       ]
     }
@@ -7492,10 +7495,29 @@
         132,
         120
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:14:22.358Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 2,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1548775,
+            "teamId": 32,
+            "providerId": 47340197,
+            "name": "Domantas Sabonis",
+            "fetchedAt": "2026-11-11T11:14:22.358Z"
+          },
+          {
+            "gameId": 1548775,
+            "teamId": 32,
+            "providerId": 70536827,
+            "name": "Nique Clifford",
+            "fetchedAt": "2026-11-11T11:14:22.358Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=2",
@@ -25371,7 +25393,7 @@
     "verifiedRegularBoxScores": 24,
     "verifiedBoxScores": 24,
     "sourceFailureGames": 1,
-    "unmappedGames": 66,
+    "unmappedGames": 67,
     "unclassifiedGames": 0,
     "pendingGames": 136,
     "inventoryTotal": 405,
