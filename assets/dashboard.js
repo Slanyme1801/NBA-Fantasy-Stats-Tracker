@@ -35,7 +35,7 @@
     el('dashboardNext').onclick=()=>{paused=true;show(index+1);};
     root.onmouseenter=()=>{hovered=true;clear();};root.onmouseleave=()=>{hovered=false;schedule();};
     // Keyboard interaction pauses until the visitor explicitly presses Play.
-    root.onfocusin=()=>{paused=true;clear();pause.textContent='Play slideshow';pause.setAttribute('aria-pressed','true');};
+    root.onfocusin=event=>{if(event?.target===pause)return;paused=true;clear();pause.textContent='Play slideshow';pause.setAttribute('aria-pressed','true');};
     const reduced=()=>{if(motion.matches){paused=true;clear();pause.textContent='Play slideshow';pause.setAttribute('aria-pressed','true');}};
     motion?.addEventListener?.('change',reduced);
     stopCarousel=()=>{clear();motion?.removeEventListener?.('change',reduced);};

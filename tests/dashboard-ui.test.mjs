@@ -74,6 +74,9 @@ test('carousel advances one player, wraps, pauses, resets on period change and l
  h.node('dashboardPause').onclick();assert.ok(tick);
  h.node('dashboardCarousel').onmouseenter();assert.equal(tick,null);
  h.node('dashboardCarousel').onmouseleave();assert.ok(tick);
+ h.node('dashboardCarousel').onfocusin({target:h.node('dashboardPause')});assert.ok(tick);
+ h.node('dashboardPause').onclick();assert.equal(tick,null);
+ h.node('dashboardPause').onclick();assert.ok(tick);
  h.node('dashboardCarousel').onfocusin();assert.equal(tick,null);
  h.buttons.get('14').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
  h.node('dashboardPrevious').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'10 / 10');
