@@ -42,7 +42,7 @@ test('profile portraits have one centered responsive slot for every image format
 test('catalogue only presents current-club or civilian photos after the club audit',()=>{
  assert.equal(Object.keys(manifest.players).length,manifest.scope.coveredCount);
  for(const p of Object.values(manifest.players)){assert.ok(['current-club','civilian-no-club-uniform'].includes(p.clubAudit?.status));assert.equal(p.clubAudit.date,'2026-11-11');}
- assert.equal(manifest.players['203081'].clubAudit.status,'civilian-no-club-uniform');
+ assert.equal(manifest.players['203081'].clubAudit.currentTeam,'blazers');
  assert.equal(manifest.players['1629029'].clubAudit.currentTeam,'lakers');
  assert.equal(createPlayerPhotos(manifest).portrait(1628392),'');
  assert.ok(!createPlayerPhotos(manifest).credits().includes('maillots peuvent être anciens'));
