@@ -4208,9 +4208,67 @@
         103
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "source-data-error",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "identityObservations": [
+          {
+            "gameId": 1547577,
+            "teamId": 2,
+            "providerId": 77140382,
+            "name": "Chris Cenac Jr.",
+            "fetchedAt": "2026-11-11T11:06:12.921Z"
+          },
+          {
+            "gameId": 1547577,
+            "teamId": 26,
+            "providerId": 45941252,
+            "name": "Josh Hart",
+            "fetchedAt": "2026-11-11T11:06:12.921Z"
+          }
+        ],
+        "officialReference": {
+          "gameId": 1547577,
+          "nbaGameId": "0022600008",
+          "source": "https://www.nba.com/game/0022600008/box-score",
+          "verifiedAt": "2026-11-11T04:43:30.341019+00:00",
+          "checkedAt": "2026-11-11T11:06:12.921Z",
+          "status": "unverifiable",
+          "checks": [
+            {
+              "nbaId": 1626157,
+              "providerId": 47043992,
+              "stat": "stl",
+              "expected": 0,
+              "observed": 0,
+              "status": "verified"
+            },
+            {
+              "nbaId": 1628404,
+              "providerId": null,
+              "stat": "stl",
+              "expected": 3,
+              "observed": null,
+              "status": "unverifiable"
+            },
+            {
+              "nbaId": 203903,
+              "providerId": 37927457,
+              "stat": "fgm",
+              "expected": 0,
+              "observed": 0,
+              "status": "verified"
+            },
+            {
+              "nbaId": 203903,
+              "providerId": 37927457,
+              "stat": "fga",
+              "expected": 0,
+              "observed": 0,
+              "status": "verified"
+            }
+          ]
+        }
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -22501,7 +22559,7 @@
     "regularGamesSeen": 160,
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
-    "sourceFailureGames": 0,
+    "sourceFailureGames": 1,
     "unmappedGames": 17,
     "unclassifiedGames": 0,
     "pendingGames": 138,
