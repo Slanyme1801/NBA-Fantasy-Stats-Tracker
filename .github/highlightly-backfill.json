@@ -241,6 +241,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:07:14.523Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:07:20.566Z"
         }
       ]
     }
@@ -3061,10 +3064,36 @@
         121,
         113
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:07:20.566Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 3,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1546999,
+            "teamId": 25,
+            "providerId": 66505382,
+            "name": "Jalen Duren",
+            "fetchedAt": "2026-11-11T11:07:20.566Z"
+          },
+          {
+            "gameId": 1546999,
+            "teamId": 25,
+            "providerId": 65936597,
+            "name": "Isaiah Joe",
+            "fetchedAt": "2026-11-11T11:07:20.566Z"
+          },
+          {
+            "gameId": 1546999,
+            "teamId": 2,
+            "providerId": 77140382,
+            "name": "Chris Cenac Jr.",
+            "fetchedAt": "2026-11-11T11:07:20.566Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -21883,7 +21912,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 0,
-    "unmappedGames": 0,
+    "unmappedGames": 1,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
