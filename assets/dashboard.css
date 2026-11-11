@@ -60,6 +60,6 @@
 @media(max-width:420px){.player-head{flex-direction:column;text-align:center;gap:12px}.profile-portrait{flex-basis:auto}.profile-identity{width:100%}}
 
 .spotlight-portrait{width:112px;height:140px;flex:0 0 112px;display:grid;place-items:end center;background:transparent;border:0}
-.spotlight-portrait .spotlight-photo{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;background:transparent;border-radius:0}
+.spotlight-portrait .spotlight-photo{display:block;width:100%;height:140px;min-height:0;max-height:140px;object-fit:contain;object-position:center bottom;background:transparent;border-radius:0}
 .spotlight-portrait .spotlight-photo[hidden]{display:none}
-@media(max-width:760px){.spotlight-portrait{width:80px;height:104px;flex-basis:80px}.dashboard-spotlight-info{flex-basis:calc(100% - 150px)}}
+@media(max-width:760px){.spotlight-portrait{width:80px;height:104px;flex-basis:80px}.spotlight-portrait .spotlight-photo{height:104px;max-height:104px}.dashboard-spotlight-info{flex-basis:calc(100% - 150px)}}
