@@ -58,3 +58,8 @@
 .profile-portrait .avatar{width:72px;height:72px;font-size:24px}
 @media(max-width:760px){.player-head{gap:16px;margin-top:16px}.profile-portrait{width:112px;height:136px;flex-basis:112px;padding:8px}.profile-portrait .profile-photo{max-height:120px}.profile-identity h2{font-size:25px}}
 @media(max-width:420px){.player-head{flex-direction:column;text-align:center;gap:12px}.profile-portrait{flex-basis:auto}.profile-identity{width:100%}}
+
+.spotlight-portrait{width:112px;height:140px;flex:0 0 112px;display:grid;place-items:end center;background:transparent;border:0}
+.spotlight-portrait .spotlight-photo{display:block;width:100%;height:100%;object-fit:contain;object-position:center bottom;background:transparent;border-radius:0}
+.spotlight-portrait .spotlight-photo[hidden]{display:none}
+@media(max-width:760px){.spotlight-portrait{width:80px;height:104px;flex-basis:80px}.dashboard-spotlight-info{flex-basis:calc(100% - 150px)}}

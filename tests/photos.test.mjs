@@ -55,3 +55,8 @@ test('portraits keep invisible framing and search results set their own readable
  assert.match(style,/overflow-y:auto;color:var\(--ink\)/);
  assert.match(style,/\.results small\{color:var\(--ink-dim\)\}/);
 });
+
+test('carousel reserves identical transparent slots and aligns different ratios at the bottom',async()=>{
+ const css=await fs.readFile(new URL('../assets/dashboard.css',import.meta.url),'utf8'),js=await fs.readFile(new URL('../assets/dashboard.js',import.meta.url),'utf8');
+ assert.match(js,/class="spotlight-portrait"/);assert.match(css,/object-position:center bottom;background:transparent/);assert.match(css,/width:80px;height:104px;flex-basis:80px/);
+});

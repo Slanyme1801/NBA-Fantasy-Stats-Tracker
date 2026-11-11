@@ -2,6 +2,7 @@ import * as core from './core.mjs';
 import * as dashboard from './dashboard.mjs';
 import {loadPlayerPhotos} from './photos.mjs';
 import {loadCurrent} from './loader.mjs';
+import {createSessionPersistence} from './session.mjs';
 import {createAppUpdates} from './updates.mjs';
 window.AppUpdates=createAppUpdates();
 const script = src => new Promise((resolve,reject)=>{
@@ -23,6 +24,7 @@ try {
   await script('./assets/dashboard.js');
   window.PlayerPhotos=await loadPlayerPhotos();
   await window.startApp();
+  await createSessionPersistence().ready();
   await window.AppUpdates.ready();
 } catch(error) {
   const view=document.getElementById('view');
