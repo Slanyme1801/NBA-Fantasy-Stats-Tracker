@@ -48,7 +48,7 @@
     return `<div class="dashboard-match"><h4>Dernier match disponible dans cette période</h4><p>${esc(match.date.slice(0,10))} (UTC) · ${match.home?'à domicile contre':'à l’extérieur contre'} ${esc(match.opponent)} · statistiques de ce match, pas une moyenne</p><dl class="dashboard-statline">${cells.map(([label,value])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl><p class="small muted">Tirs et lancers : réussis / tentés. Minutes approximatives selon la source. Les matchs non importés ne sont pas inclus.</p></div>`;
   }
   const originalBoard=renderBoard,originalLoadBoard=loadBoard;
-  renderBoard=function(){originalBoard();el('fSeason').closest('label').insertAdjacentHTML('afterend',`<label>Période actuelle<select id="fDashboardPeriod"><option value="season">Full échantillon importé</option>${Object.entries(labels).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></label>`);el('fDashboardPeriod').onchange=()=>{el('fSeason').value=C.SEASON;setBoardPositions();loadBoard();};};
+  renderBoard=function(){originalBoard();el('fSeason').closest('label').insertAdjacentHTML('afterend',`<label>Période actuelle<select id="fDashboardPeriod"><option value="season">Échantillon importé complet</option>${Object.entries(labels).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></label>`);el('fDashboardPeriod').onchange=()=>{el('fSeason').value=C.SEASON;setBoardPositions();loadBoard();};};
   loadBoard=async function(){
     const period=el('fDashboardPeriod')?.value;
     const periodActive=!!period&&period!=='season'&&el('fSeason').value===C.SEASON;
