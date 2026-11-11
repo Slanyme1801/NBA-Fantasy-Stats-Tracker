@@ -394,6 +394,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:12:32.218Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:12:38.500Z"
         }
       ]
     }
@@ -6523,10 +6526,29 @@
         125,
         124
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:12:38.500Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 2,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1548230,
+            "teamId": 2,
+            "providerId": 77140382,
+            "name": "Chris Cenac Jr.",
+            "fetchedAt": "2026-11-11T11:12:38.500Z"
+          },
+          {
+            "gameId": 1548230,
+            "teamId": 49,
+            "providerId": 77635712,
+            "name": "Egor Demin",
+            "fetchedAt": "2026-11-11T11:12:38.500Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=2",
@@ -24305,7 +24327,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 50,
+    "unmappedGames": 51,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
