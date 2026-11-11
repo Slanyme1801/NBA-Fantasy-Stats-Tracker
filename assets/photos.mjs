@@ -13,5 +13,5 @@ export function createPlayerPhotos(manifest={}){
  };
 }
 export async function loadPlayerPhotos(){
- try{const r=await fetch(new URL('../data/player-photos.json',import.meta.url),{signal:AbortSignal.timeout(5000)});if(!r.ok)return createPlayerPhotos();return createPlayerPhotos(await r.json());}catch{return createPlayerPhotos();}
+ try{const url=new URL('../data/player-photos.json',import.meta.url);url.searchParams.set('refresh',String(Date.now()));const r=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(5000)});if(!r.ok)return createPlayerPhotos();return createPlayerPhotos(await r.json());}catch{return createPlayerPhotos();}
 }
