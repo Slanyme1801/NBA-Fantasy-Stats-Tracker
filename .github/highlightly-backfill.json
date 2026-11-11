@@ -247,6 +247,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:07:26.848Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:07:32.834Z"
         }
       ]
     }
@@ -3181,10 +3184,57 @@
         104,
         116
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:07:32.834Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 6,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547001,
+            "teamId": 37,
+            "providerId": 76581122,
+            "name": "Maliq Brown",
+            "fetchedAt": "2026-11-11T11:07:32.834Z"
+          },
+          {
+            "gameId": 1547001,
+            "teamId": 37,
+            "providerId": 76620587,
+            "name": "Ja'Kobi Gillespie",
+            "fetchedAt": "2026-11-11T11:07:32.834Z"
+          },
+          {
+            "gameId": 1547001,
+            "teamId": 38,
+            "providerId": 66499892,
+            "name": "Chet Holmgren",
+            "fetchedAt": "2026-11-11T11:07:32.834Z"
+          },
+          {
+            "gameId": 1547001,
+            "teamId": 38,
+            "providerId": 68908112,
+            "name": "Jalen Williams",
+            "fetchedAt": "2026-11-11T11:07:32.834Z"
+          },
+          {
+            "gameId": 1547001,
+            "teamId": 38,
+            "providerId": 70256447,
+            "name": "Cason Wallace",
+            "fetchedAt": "2026-11-11T11:07:32.834Z"
+          },
+          {
+            "gameId": 1547001,
+            "teamId": 38,
+            "providerId": 66493412,
+            "name": "Jaylin Williams",
+            "fetchedAt": "2026-11-11T11:07:32.834Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -21941,7 +21991,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 0,
-    "unmappedGames": 2,
+    "unmappedGames": 3,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
