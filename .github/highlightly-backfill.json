@@ -361,6 +361,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:11:25.076Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:11:31.171Z"
         }
       ]
     }
@@ -5779,10 +5782,43 @@
         93,
         106
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:11:31.171Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 4,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547990,
+            "teamId": 71,
+            "providerId": 76585622,
+            "name": "Adem Bona",
+            "fetchedAt": "2026-11-11T11:11:31.171Z"
+          },
+          {
+            "gameId": 1547990,
+            "teamId": 71,
+            "providerId": 66498227,
+            "name": "Caleb Love",
+            "fetchedAt": "2026-11-11T11:11:31.171Z"
+          },
+          {
+            "gameId": 1547990,
+            "teamId": 25,
+            "providerId": 65936597,
+            "name": "Isaiah Joe",
+            "fetchedAt": "2026-11-11T11:11:31.171Z"
+          },
+          {
+            "gameId": 1547990,
+            "teamId": 25,
+            "providerId": 65962802,
+            "name": "Elijah Harkless",
+            "fetchedAt": "2026-11-11T11:11:31.171Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -23902,7 +23938,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 39,
+    "unmappedGames": 40,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
