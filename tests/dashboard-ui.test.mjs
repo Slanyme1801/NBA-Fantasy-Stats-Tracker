@@ -11,7 +11,7 @@ function harness(){
  const d=fixture(),today=new Date().toISOString();d.games=[game(1,today)];d.players=Array.from({length:12},(_,i)=>player(i+1));d.lines=d.players.map(p=>line(1,p.nbaId));
  const nodes=new Map(),buttons=new Map();let opened=null,defaultLoads=0;
  function node(id){if(!nodes.has(id))nodes.set(id,{value:'',html:'',attrs:{},setAttribute(k,v){this.attrs[k]=v;},get innerHTML(){return this.html;},set innerHTML(v){this.html=v;},querySelector:selector=>node(selector==='option[value="season_fpts"]'?'averageOption':'hero'),querySelectorAll:()=>[],closest:()=>node('label'),insertAdjacentHTML(_where,html){this.html+=html;}});return nodes.get(id);}
- for(const period of ['night','7','14','30'])buttons.set(period,{dataset:{period},setAttribute(k,v){this[k]=v;}});
+ for(const period of ['available','7','14','30'])buttons.set(period,{dataset:{period},setAttribute(k,v){this[k]=v;}});
  const context={window:{FantasyDashboard:dashboard,CurrentLoad:{state:'fresh'},FantasySession:{capture:()=>({page:'home'}),restore:async s=>context.go(s.page)},scrollTo(){}},currentData:d,META:{scoring:core.DEFAULT_SCORING},C:core,esc:s=>String(s).replaceAll('<','&lt;'),fmt:n=>Number(n).toFixed(1),scoreLabel:()=> 'ESPN default',displayDate:s=>s||'Not recorded',el:node,document:{querySelectorAll:()=>[...buttons.values()]},renderHome(){},renderBoard(){node('fSeason').value='';node('fSort').value='weighted_avg';node('fGp').value='0';node('fDashboardPeriod').value='season';},loadBoard:async()=>defaultLoads++,boardRequest:0,setBoardPositions(){},openPlayer:id=>opened=id};
  context.go=p=>{context.page=p;if(p==='home')context.renderHome();else if(p==='board')context.renderBoard();};
  vm.runInNewContext(source,context);return {context,node,buttons,get defaultLoads(){return defaultLoads;},get opened(){return opened;}};
@@ -21,7 +21,7 @@ test('home emits top 10, sample/date warnings, accessible period buttons and ran
  assert.match(h.node('hero').html,/role="group"/);assert.match(h.node('dashboardBody').html,/aria-roledescription="carrousel"/);
  assert.equal((h.node('dashboardBody').html.match(/class="dashboard-player"/g)||[]).length,10);
  assert.doesNotMatch(h.node('dashboardBody').html,/dashboard-warning|Données au :|feuilles de statistiques/);
- for(const period of ['7','14','30','night']){
+ for(const period of ['7','14','30','available']){
  h.buttons.get(period).onclick();assert.equal(h.buttons.get(period)['aria-pressed'],true);
  h.node('dashboardRankings').onclick();assert.equal(h.context.page,'board');assert.equal(h.node('fDashboardPeriod').value,period);assert.equal(h.node('fSeason').value,core.SEASON);assert.equal(h.node('fSort').value,'season_fpts');assert.equal(h.node('averageOption').textContent,'Moyenne fantasy sur la période');
  assert.match(h.node('boardTable').html,/Synthetic Test/);assert.equal((h.node('boardTable').html.match(/data-player=/g)||[]).length,12);
@@ -44,7 +44,7 @@ test('offline shell includes every dashboard asset and motion has opt-out',async
 });
 
 test('direct period selection normalizes historical AVG labels on every ranking load',async()=>{
- for(const period of ['night','7','14','30'])for(const oldSort of ['weighted_avg','simple_avg']){
+ for(const period of ['available','7','14','30'])for(const oldSort of ['weighted_avg','simple_avg']){
   const h=harness();h.context.go('board');h.node('fSort').value=oldSort;
   h.node('fDashboardPeriod').value=period;h.node('fDashboardPeriod').onchange();
   assert.equal(h.node('fSort').value,'season_fpts');assert.equal(h.node('averageOption').textContent,'Moyenne fantasy sur la période');
@@ -97,4 +97,12 @@ test('requested home copy remains exact and mobile shortcut stays explicit',asyn
  assert.ok(app.includes('<h1>Te fait pas SCAM narvalo</h1>'));
  assert.ok(app.includes('<p>Viens cons les stats à jour et historiques des boys pour vérifier ton trade avant de te faire scam.</p>'));
  const h=harness();h.context.renderHome();assert.match(h.node('dashboardSlide').html,/Comparer ce joueur/);assert.match(h.node('dashboardSlide').html,/#dashboardComplete/);
+});
+
+test('home defaults to latest available night and migrates obsolete saved night selection',async()=>{
+ const h=harness();h.context.renderHome();assert.equal(h.buttons.get('available')['aria-pressed'],true);
+ assert.match(h.node('dashboardBody').html,/Dernière soirée disponible/);assert.doesNotMatch(h.node('hero').html,/Dernière soirée importée|data-period="night"/);
+ h.node('dashboardRankings').onclick();assert.equal(h.node('fDashboardPeriod').value,'available');
+ await h.context.window.FantasySession.restore({page:'home',dashboardPeriod:'night'});assert.equal(h.buttons.get('available')['aria-pressed'],true);
+ h.context.currentData.lines=[];h.context.renderHome();assert.match(h.node('dashboardBody').html,/Aucune performance disponible/);assert.doesNotMatch(h.node('dashboardBody').html,/dashboardCarousel/);
 });
