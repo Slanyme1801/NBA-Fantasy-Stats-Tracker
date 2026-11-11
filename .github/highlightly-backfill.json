@@ -256,6 +256,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:07:45.128Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:07:51.294Z"
         }
       ]
     }
@@ -3396,10 +3399,22 @@
         106,
         131
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:07:51.294Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 1,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547074,
+            "teamId": 41,
+            "providerId": 68915087,
+            "name": "Anthony Edwards",
+            "fetchedAt": "2026-11-11T11:07:51.294Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -22063,7 +22078,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 0,
-    "unmappedGames": 5,
+    "unmappedGames": 6,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
