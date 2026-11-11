@@ -349,6 +349,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:11:00.985Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:11:06.715Z"
         }
       ]
     }
@@ -5483,10 +5486,43 @@
         109,
         136
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:11:06.715Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 4,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547986,
+            "teamId": 49,
+            "providerId": 77635712,
+            "name": "Egor Demin",
+            "fetchedAt": "2026-11-11T11:11:06.715Z"
+          },
+          {
+            "gameId": 1547986,
+            "teamId": 49,
+            "providerId": 73059527,
+            "name": "Joshua Jefferson",
+            "fetchedAt": "2026-11-11T11:11:06.715Z"
+          },
+          {
+            "gameId": 1547986,
+            "teamId": 49,
+            "providerId": 78638597,
+            "name": "Ben Saraf",
+            "fetchedAt": "2026-11-11T11:11:06.715Z"
+          },
+          {
+            "gameId": 1547986,
+            "teamId": 36,
+            "providerId": 65955962,
+            "name": "Tyrese Haliburton",
+            "fetchedAt": "2026-11-11T11:11:06.715Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -23730,7 +23766,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 35,
+    "unmappedGames": 36,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
