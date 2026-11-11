@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash,randomUUID} from 'node:crypto';
 import {PROVIDER,datesInRange,localMatchDay,collectHighlightly} from './highlightly.mjs';
-import {validateSeason,validateIdentityMap,SEASON} from '../assets/core.mjs';
+import {validateSeason,validateIdentityMap,validateProviderRegistry,migrateHighlightlySeason,SEASON} from '../assets/core.mjs';
 const requireValue=(ok,message)=>{if(!ok)throw new Error(message);};
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const iso=value=>typeof value==='string'&&Number.isFinite(Date.parse(value));
@@ -65,20 +65,24 @@ function coverageOf(snapshot){
   return [{startDate:snapshot.scope.startDate,endDate:snapshot.scope.endDate,normalizedAt:snapshot.updatedAt,requests:[],legacyProvenance:true}];
 }
 export function mergeHighlightly(previous,incoming){
+  incoming=migrateHighlightlySeason(incoming);
+  if(previous)previous=migrateHighlightlySeason(previous);
   validatePrivate(incoming);
   const coverage=coverageOf(incoming);
   for(const c of coverage){datesInRange(c.startDate,c.endDate);requireValue(iso(c.normalizedAt)&&Array.isArray(c.requests),'Invalid coverage provenance');}
   if(!previous)return {...incoming,coverage};
   validatePrivate(previous);requireValue(previous.season===incoming.season&&incoming.season===SEASON,'Different season');
   requireValue(Date.parse(incoming.updatedAt)>=Date.parse(previous.updatedAt),'Older batch cannot replace newer snapshot');
-  const players=new Map(previous.players.map(p=>[p.nbaId,p])),providerIds=new Map(previous.players.map(p=>[p.providerId,p.nbaId]));
+  const players=new Map(previous.players.map(p=>[p.providerId,p])),nbaIds=new Map(previous.players.filter(p=>p.nbaId!=null).map(p=>[p.nbaId,p.providerId]));
   for(const p of incoming.players){
-    const old=players.get(p.nbaId);
-    requireValue((!old||old.providerId===p.providerId)&&(!providerIds.has(p.providerId)||providerIds.get(p.providerId)===p.nbaId),'NBA/Highlightly identity collision');
-    requireValue(!old||Date.parse(p.verifiedAt)>=Date.parse(old.verifiedAt),'Older identity provenance');
-    players.set(p.nbaId,p);providerIds.set(p.providerId,p.nbaId);
+    const old=players.get(p.providerId);
+    requireValue((old?.nbaId==null||p.nbaId==null||old.nbaId===p.nbaId)&&(p.nbaId==null||!nbaIds.has(p.nbaId)||nbaIds.get(p.nbaId)===p.providerId),'NBA/Highlightly identity collision');
+    if(old?.nbaId!=null&&p.nbaId==null)continue;
+    // Verified identities may enrich provider-only entries regardless of observation age.
+    requireValue(!old||old.nbaId==null&&p.nbaId!=null||Date.parse(p.verifiedAt)>=Date.parse(old.verifiedAt),'Older identity provenance');
+    players.set(p.providerId,p);if(p.nbaId!=null)nbaIds.set(p.nbaId,p.providerId);
   }
-  validateIdentityMap({season:SEASON,players:[...players.values()]});
+  validateProviderRegistry({provider:PROVIDER,season:SEASON,players:[...players.values()]});
   const games=new Map(previous.games.map(g=>[g.id,g])),replaced=new Set();
   for(const game of incoming.games){
     const old=games.get(game.id);
@@ -95,7 +99,7 @@ export function mergeHighlightly(previous,incoming){
     }else{games.set(game.id,game);replaced.add(game.id);}
   }
   const absentFinished=previous.games.filter(g=>g.status==='finished'&&!incoming.games.some(incomingGame=>incomingGame.id===g.id)&&localMatchDay(g)>=incoming.scope.startDate&&localMatchDay(g)<=incoming.scope.endDate).map(g=>g.id);
-  const lines=[...previous.lines.filter(l=>!replaced.has(l.gameId)),...incoming.lines];
+  const lines=[...previous.lines.filter(l=>!replaced.has(l.gameId)),...incoming.lines].map(line=>({...line,playerKey:`highlightly:${line.providerId}`,nbaId:players.get(line.providerId)?.nbaId??null}));
   const allCoverage=[...coverageOf(previous),...coverage.map(c=>({...c,preservedAbsentFinishedGameIds:absentFinished}))];
   for(const c of allCoverage){datesInRange(c.startDate,c.endDate);requireValue(iso(c.normalizedAt)&&Array.isArray(c.requests),'Invalid coverage provenance');}
   const result={...incoming,positions:previous.positions,players:[...players.values()],games:[...games.values()].sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id),lines,coverage:allCoverage,

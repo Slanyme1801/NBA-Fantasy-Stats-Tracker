@@ -24,7 +24,7 @@ Ouvrir `http://127.0.0.1:4173/NBA-Fantasy-Stats-Tracker/`. Le serveur écoute un
 
 **Les données Highlightly 2026–27 sont connectées sous autorisation du propriétaire, mais l’import reste partiel.** Le point de départ du 10 novembre contient 154 matchs réguliers recensés et 22 box scores vérifiés. Les compteurs du fichier publié font foi pour l’état actuel. Les anciennes saisons sont conservées. Les matchs manquants ne sont jamais interprétés comme des zéros.
 
-Le workflow quotidien tente une collecte à **09:17 UTC**, avec 90 requêtes maximum et une réservation durable empêchant une seconde consommation le même jour. Il inventorie la saison, contrôle jusqu’à six matchs récents puis importe les box scores manquants du plus ancien au plus récent. Chaque match vérifié est sauvegardé dans GitHub avant l’appel suivant ; les erreurs fournisseur et identités non vérifiées restent signalées. Aucun secret ni réponse brute n’est publié.
+Le workflow quotidien tente une collecte à **09:17 UTC**, avec 90 requêtes maximum et une réservation durable empêchant une seconde consommation le même jour. Il inventorie la saison, contrôle jusqu’à six matchs récents puis importe les box scores manquants du plus ancien au plus récent. Chaque match vérifié est sauvegardé dans GitHub avant l’appel suivant ; les erreurs fournisseur restent signalées. Une liaison NBA manquante ne bloque plus les statistiques : la fiche de saison reste utilisable et l’historique est rapproché séparément, sans jointure par nom. Aucun secret ni réponse brute n’est publié.
 
 Le barème par défaut reste :
 
@@ -50,7 +50,7 @@ La première visite demande une connexion. « Offline app cache ready » dans Da
 
 Lire [le guide de collecte](docs/DATA-OPERATIONS.md) avant toute première exécution. Les exemples de configuration et de planning restent **désactivés**. Le site utilise le déploiement GitHub Pages/Jekyll existant depuis `main`. `_config.yml` exclut outils, tests, documentation, configurations et fichiers locaux du site ; le workflow Highlightly quotidien est dans `.github/workflows/highlightly-daily.yml`.
 
-Prérequis avant alimentation 2026-27 : accès aux données de cette saison et droits de republication à vérifier ; champs réels des box scores à contrôler ; règles de classification de matchs et correspondances d’identités vérifiées ; source/date de l’import manuel ESPN. L’actualisation quotidienne a été autorisée ; le rattrapage complet reste soumis aux quotas, à la qualité du fournisseur et aux correspondances vérifiées. Les clés restent exclusivement dans le processus local, hors du dépôt et du navigateur.
+Prérequis avant alimentation 2026-27 : accès aux données de cette saison et droits de republication à vérifier ; champs réels des box scores à contrôler ; règles de classification de matchs et correspondances d’identités vérifiées ; source/date de l’import manuel ESPN. L’actualisation quotidienne a été autorisée ; le rattrapage complet reste soumis aux quotas, à la qualité du fournisseur et aux classifications de matchs vérifiées. Les correspondances NBA sont facultatives pour importer les compteurs, mais obligatoires pour relier l’historique. Les clés restent exclusivement dans le processus local, hors du dépôt et du navigateur.
 
 Résultats de validation et limites : [docs/VERIFICATION.md](docs/VERIFICATION.md).
 

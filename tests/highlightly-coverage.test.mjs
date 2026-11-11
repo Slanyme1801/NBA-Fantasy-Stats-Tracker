@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {playerKeyFor} from '../assets/core.mjs';
 
 const source=readFileSync(new URL('../assets/companion.js',import.meta.url),'utf8');
 function fixture(){return {
@@ -13,7 +14,7 @@ function fixture(){return {
   lines:[{nbaId:3,gameId:1,teamId:1,seconds:1800,stats:{}},{nbaId:4,gameId:1,seconds:null,stats:{}}],positions:{entries:[],importedAt:null}
 };}
 function context(d=fixture()){
-  const c=vm.createContext({window:{CurrentLoad:{data:d,state:'fresh'},FantasyCore:{bounds:()=>({start:null,end:'2026-11-10'}),scoringName:()=> 'Test scoring'},__DATASET:{seasons:['2025-26']}},META:{scoring:{}},fmt:String});
+  const c=vm.createContext({window:{CurrentLoad:{data:d,state:'fresh'},PlayerIdentity:{matches:(row,id)=>row.nbaId===id},FantasyCore:{playerKeyFor,bounds:()=>({start:null,end:'2026-11-10'}),scoringName:()=> 'Test scoring'},__DATASET:{seasons:['2025-26']}},META:{scoring:{}},fmt:String});
   vm.runInContext(source.split("let activePage=")[0],c);return c;
 }
 test('banner states partial sample and counts actual imported games and players',()=>{
@@ -55,5 +56,15 @@ test('profile labels sample averages, scoped missing-game counts and rounded min
   assert.match(html,/not a count of all missing league games/);assert.doesNotMatch(html,/League coverage:/);
   assert.match(html,/<th>MIN ≈<\/th>/);assert.match(html,/<td>≈ 30<\/td>/);
 });
-test('coverage explicitly counts unresolved identity gaps and preserved older boxes',()=>{const d=fixture();d.games[0].refreshIssue={code:'unmapped-players',unmappedPlayerCount:1,preservedPreviousBoxScore:true};const html=vm.runInContext('coverageDetails(currentData)',context(d));assert.match(html,/1 imported games await verified player identities/);assert.match(html,/1 retain an older verified box score/);});
+test('coverage distinguishes previously deferred box scores from NBA identity links',()=>{const d=fixture();d.games[0].refreshIssue={code:'unmapped-players',unmappedPlayerCount:1,preservedPreviousBoxScore:true};const html=vm.runInContext('coverageDetails(currentData)',context(d));assert.match(html,/1 previously deferred box scores await import by provider ID/);assert.match(html,/1 retain an older verified box score/);assert.match(html,/NBA identity link is not required/);assert.doesNotMatch(html,/await verified player identities/);});
 test('top coverage summary explicitly shows complete box scores out of imported finished games',()=>{const d=fixture();d.games=Array.from({length:22},(_,i)=>({id:i+1,status:'finished',type:'regular',statsState:i===0?'available':'missing'}));const html=vm.runInContext('statusPanel()',context(d));assert.match(html,/1 of 22 imported finished games have box scores/);});
+
+test('pending NBA links count provider records separately without implying missing stats or games',()=>{
+  const d=fixture();d.lines=[{providerId:101,nbaId:null},{providerId:101,nbaId:null},{providerId:102,nbaId:42},{nbaId:43}];
+  const html=vm.runInContext('coverageDetails(currentData)',context(d));
+  assert.match(html,/1 imported games · 3 players with imported lines · 4 player game records/);
+  assert.match(html,/2 provider player game records have an NBA historical link pending; available stats are included/);
+  assert.match(html,/This does not change game coverage/);assert.doesNotMatch(html,/previously deferred/);
+  d.lines=d.lines.map((r,i)=>({...r,nbaId:i+100}));
+  assert.doesNotMatch(vm.runInContext('coverageDetails(currentData)',context(d)),/historical link pending/);
+});

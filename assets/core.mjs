@@ -47,12 +47,43 @@ export function validateIdentityMap(document) {
   }
   return document;
 }
+// Provider keys remain stable when a verified NBA mapping is added later.
+export function playerKeyFor(person) {
+  if(validId(person?.providerId))return `highlightly:${person.providerId}`;
+  return validId(person?.nbaId)?`nba:${person.nbaId}`:null;
+}
+export function playerIdFor(person) { return validId(person?.nbaId)?person.nbaId:playerKeyFor(person); }
+export function findPlayer(data,identifier) {
+  if(!(typeof identifier==='number'&&validId(identifier))&&!(typeof identifier==='string'&&/^(?:highlightly|nba):[1-9]\d*$/.test(identifier)&&validId(Number(identifier.split(':')[1]))))return null;
+  return data.players.find(p=>typeof identifier==='number'?p.nbaId===identifier:playerKeyFor(p)===identifier)||null;
+}
+export function validateProviderRegistry(document) {
+  requireValue(document?.provider==='Highlightly'&&document.season===SEASON&&Array.isArray(document.players),'Invalid provider registry namespace');
+  const providerIds=new Set(),nbaIds=new Set();
+  for(const p of document.players){
+    requireValue(validId(p.providerId)&&p.playerKey===playerKeyFor(p)&&!providerIds.has(p.providerId),'Duplicate or invalid provider player key');
+    requireValue(p.nbaId==null||(validId(p.nbaId)&&!nbaIds.has(p.nbaId)),'Duplicate or invalid verified NBA identity');
+    requireValue(safeText(p.name)&&safeText(p.source)&&validDate(p.verifiedAt),'Provider registry requires label and provenance');
+    if(p.aliases!==undefined)requireValue(Array.isArray(p.aliases)&&p.aliases.every(safeText),'Invalid player aliases');
+    providerIds.add(p.providerId);if(p.nbaId!=null)nbaIds.add(p.nbaId);
+  }
+  // All actual NBA correspondences still satisfy the strict mapping contract.
+  validateIdentityMap({season:SEASON,players:document.players.filter(p=>p.nbaId!=null)});
+  return document;
+}
+export function migrateHighlightlySeason(data) {
+  validateSeason(data);requireValue(data.provider==='Highlightly','Expected Highlightly snapshot');
+  const players=data.players.map(p=>({...p,playerKey:playerKeyFor(p),nbaId:p.nbaId??null}));
+  const registry=new Map(players.map(p=>[p.providerId,p]));
+  return validateSeason({...data,schemaVersion:2,players,lines:data.lines.map(r=>({...r,playerKey:playerKeyFor(registry.get(r.providerId)),nbaId:registry.get(r.providerId).nbaId}))});
+}
 export function validateSeason(data, historicalIds = []) {
-  requireValue(data?.schemaVersion === 1 && data.season === SEASON, 'Unsupported season/schema');
+  requireValue([1,2].includes(data?.schemaVersion) && data.season === SEASON && (data.schemaVersion===1||data.provider==='Highlightly'), 'Unsupported season/schema');
   requireValue(['not-connected','connected'].includes(data.connection), 'Invalid connection state');
   requireValue(Array.isArray(data.players) && Array.isArray(data.games) && Array.isArray(data.lines), 'Missing data arrays');
-  validateIdentityMap({season:SEASON,players:data.players});
-  const players = new Map(data.players.map(p => [p.nbaId,p]));
+  if(data.schemaVersion===2)validateProviderRegistry({provider:data.provider,season:SEASON,players:data.players});
+  else validateIdentityMap({season:SEASON,players:data.players});
+  const players = new Map(data.players.map(p => [data.schemaVersion===2?p.playerKey:p.nbaId,p]));
   const games = new Map();
   for (const g of data.games) {
     requireValue(validId(g.id) && !games.has(g.id), 'Duplicate/invalid game ID');
@@ -65,8 +96,9 @@ export function validateSeason(data, historicalIds = []) {
   }
   const keys = new Set();
   for (const r of data.lines) {
-    const g = games.get(r.gameId), p = players.get(r.nbaId), key = `${r.gameId}:${r.nbaId}`;
-    requireValue(g && p && r.providerId === p.providerId, 'Unmapped line identity');
+    const identity=data.schemaVersion===2?r.playerKey:r.nbaId;
+    const g = games.get(r.gameId), p = players.get(identity), key = `${r.gameId}:${identity}`;
+    requireValue(g && p && r.providerId === p.providerId && (data.schemaVersion!==2||((r.nbaId??null)===(p.nbaId??null)&&r.playerKey===playerKeyFor(p))), 'Unmapped line identity');
     requireValue(!keys.has(key), 'Duplicate game/player line'); keys.add(key);
     requireValue([g.home.id,g.away.id].includes(r.teamId), 'Line team does not belong to game');
     requireValue(['played','dnp','missing'].includes(r.participation), 'Invalid participation');
@@ -82,7 +114,7 @@ export function validateSeason(data, historicalIds = []) {
   }
   if (data.connection === 'not-connected') requireValue(!data.games.length && !data.lines.length && !data.players.length && data.updatedAt === null, 'Disconnected data must be empty');
   else requireValue(validDate(data.updatedAt) && validDate(data.coverageCheckedAt), 'Connected data needs collection and coverage timestamps');
-  validatePositions(data.positions,new Set([...historicalIds,...players.keys()]));
+  validatePositions(data.positions,new Set([...historicalIds,...data.players.map(p=>p.nbaId).filter(validId)]));
   return data;
 }
 export function bounds(days = null, asOf = new Date()) {
@@ -101,7 +133,11 @@ export function aggregate(data,nbaId,{days=null,asOf=new Date(),weights=DEFAULT_
     const day=new Date(g.start).toISOString().slice(0,10);
     return day <= period.end && (!period.start || day >= period.start);
   };
-  const lines = data.lines.filter(r => r.nbaId === nbaId && inPeriod(games.get(r.gameId)));
+  const person=findPlayer(data,nbaId),seen=new Set();
+  const lines = data.lines.filter(r => {
+    const matches=person?(data.provider==='Highlightly'?r.providerId===person.providerId:r.nbaId===person.nbaId):validId(nbaId)&&r.nbaId===nbaId;
+    if(!matches||!inPeriod(games.get(r.gameId))||seen.has(r.gameId))return false;seen.add(r.gameId);return true;
+  });
   const played = lines.filter(r => r.participation === 'played');
   const totals = Object.fromEntries(COUNTERS.map(k => [k,played.reduce((sum,r) => sum+r.stats[k],0)]));
   const gp = played.length;
@@ -119,21 +155,21 @@ export function similarPlayers(data,nbaId,{mode='both',tolerance=5,minGames=3,li
   requireValue(['positions','fpts','both'].includes(mode), 'Invalid similarity mode');
   requireValue(Number.isFinite(tolerance) && tolerance >= 0 && Number.isInteger(minGames) && minGames >= 1, 'Invalid similarity filters');
   const base = aggregate(data,nbaId,period), eligibility = new Map(data.positions.entries.map(p=>[p.nbaId,p]));
-  const own = eligibility.get(nbaId)?.positions || [];
+  const person=findPlayer(data,nbaId),own = eligibility.get(person?.nbaId??nbaId)?.positions || [];
   if (!base.gp || (mode !== 'fpts' && !own.length)) return {base,results:[],reason:!base.gp ? 'No complete games for this period.' : 'Verified ESPN eligibility is missing for this player.'};
   if (base.gp < minGames) return {base,results:[],reason:`Reference player has fewer than ${minGames} complete games.`};
-  const results = data.players.filter(p=>p.nbaId!==nbaId).map(p=>{
-    const stats=aggregate(data,p.nbaId,period), pos=eligibility.get(p.nbaId);
+  const results = data.players.filter(p=>person?playerKeyFor(p)!==playerKeyFor(person):playerIdFor(p)!==nbaId).map(p=>{
+    const stats=aggregate(data,playerIdFor(p),period), pos=eligibility.get(p.nbaId);
     return {...p,stats,eligibility:pos,compatible:pos?.positions.some(x=>own.includes(x)) || false,gap:stats.gp ? Math.abs(stats.fptsPerGame-base.fptsPerGame):Infinity};
   }).filter(p=>p.stats.gp>=minGames && (mode==='fpts'||p.compatible) && (mode==='positions'||p.gap<=tolerance))
-    .sort((a,b)=>a.gap-b.gap || b.stats.gp-a.stats.gp || a.nbaId-b.nbaId).slice(0,limit);
+    .sort((a,b)=>a.gap-b.gap || b.stats.gp-a.stats.gp || String(playerIdFor(a)).localeCompare(String(playerIdFor(b)))).slice(0,limit);
   return {base,results,reason:results.length ? null : 'No player meets these filters and sample size.'};
 }
 // Replace an entire fetched game's lines, including deletions in provider corrections.
 export function replaceGameLines(existing,gameId,incoming) {
   requireValue(incoming.every(r=>r.gameId===gameId), 'Wrong game in replacement');
   const keys=new Set();
-  for(const r of incoming){requireValue(!keys.has(r.nbaId),'Duplicate player in provider response');keys.add(r.nbaId);}
+  for(const r of incoming){requireValue(!keys.has(r.playerKey??r.nbaId),'Duplicate player in provider response');keys.add(r.playerKey??r.nbaId);}
   return [...existing.filter(r=>r.gameId!==gameId),...incoming];
 }
 

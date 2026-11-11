@@ -1,17 +1,15 @@
 // Bounded season inventory + verified whole-game backfill. No raw data in durable progress.
-import {createHash} from 'node:crypto';
-import {SEASON,emptySeason,validateIdentityMap,validateSeason} from '../assets/core.mjs';
-import {PROVIDER,parseMatches,normalizeMatch,parseBoxScore,normalizeBoxScore,localMatchDay,datesInRange} from './highlightly.mjs';
+import {SEASON,emptySeason,validateIdentityMap,validateSeason,migrateHighlightlySeason,playerKeyFor,validateProviderRegistry} from '../assets/core.mjs';
+import {PROVIDER,parseMatches,normalizeMatch,parseBoxScore,normalizeBoxScore,providerPlayers,localMatchDay,datesInRange} from './highlightly.mjs';
 import {makeCachedLoader,mergeHighlightly,validatePrivate} from './highlightly-private.mjs';
 import {verifiedSchedule} from './highlightly-schedule.mjs';
-import {emptyPending,publicPendingBoxes,normalizePendingBox,pendingBody} from './highlightly-pending.mjs';
+import {emptyPending,publicPendingBoxes,pendingBody} from './highlightly-pending.mjs';
 import {checkOfficialParticipation} from './highlightly-participation-reference.mjs';
 import {sourceErrorCode} from './highlightly-source-errors.mjs';
 import {classifications} from './provider.mjs';
 import {missingIdentityObservations,checkOfficialReference} from './highlightly-reference.mjs';
 const requireValue=(ok,message)=>{if(!ok)throw new Error(message);};
 const count=n=>Number.isSafeInteger(n)&&n>=0;
-const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const budgetError=error=>error?.code==='HIGHLIGHTLY_BUDGET';
 function intervals(start,end,now,requests){
   const result=[];for(let first=Date.parse(start);first<=Date.parse(end);first+=31*86400000){result.push({startDate:new Date(first).toISOString().slice(0,10),endDate:new Date(Math.min(first+30*86400000,Date.parse(end))).toISOString().slice(0,10),normalizedAt:now,requests});}return result;
@@ -41,12 +39,18 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
   datesInRange(seasonStart.date,seasonStart.date);requireValue(seasonStart.date<=dayUTC,'Official season has not started');
   // Keep every previously verified game, even outside the current backfill window.
   // Season-start evidence limits new work; it must not silently delete older data.
-  if(previous)validatePrivate(previous);
+  if(previous){validatePrivate(previous);previous=migrateHighlightlySeason(previous);}
   requireValue(identities?.provider===PROVIDER,'Explicit Highlightly identity namespace required');validateIdentityMap(identities);
-  for(const p of identities.players){const same=previous?.players.find(old=>old.nbaId===p.nbaId||old.providerId===p.providerId);requireValue(!same||(same.nbaId===p.nbaId&&same.providerId===p.providerId),'NBA/Highlightly identity collision');}
+  const registry=new Map((previous?.players||[]).map(p=>[p.providerId,p]));
+  for(const p of identities.players){
+    const same=registry.get(p.providerId),nbaMatch=[...registry.values()].find(old=>old.nbaId===p.nbaId);
+    requireValue((!same||same.nbaId==null||same.nbaId===p.nbaId)&&(!nbaMatch||nbaMatch.providerId===p.providerId),'NBA/Highlightly identity collision');
+    registry.set(p.providerId,{...same,...p,playerKey:playerKeyFor(p)});
+  }
+  validateProviderRegistry({provider:PROVIDER,season:SEASON,players:[...registry.values()]});
   const typeDocument=types||{provider:PROVIDER,season:SEASON,games:(previous?.games||[]).filter(g=>g.type!=='unknown').map(g=>({id:g.id,type:g.type,source:g.classification.source,verifiedAt:g.classification.verifiedAt}))};
   requireValue(typeDocument.provider===PROVIDER,'Explicit Highlightly classification namespace required');
-  const explicitTypes=classifications(typeDocument),classify=verifiedSchedule(schedule),identityRevision=digest(identities.players.map(p=>[p.providerId,p.nbaId]).sort((a,b)=>a[0]-b[0]));
+  const explicitTypes=classifications(typeDocument),classify=verifiedSchedule(schedule);
   const pending=publicPendingBoxes(pendingState||emptyPending(),timestamp);
   const savePendingState=async()=>savePending(publicPendingBoxes(pending,new Date(now()).toISOString()));
   if(inventoryState)validateInventoryState(inventoryState,timestamp);
@@ -81,23 +85,22 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
     return {...raw,type,classification};
   });
   const cutoff=new Date(now()-correctionDays*86400000).toISOString().slice(0,10),attemptedToday=g=>oldGames.get(g.id)?.boxScoreCheckedAt?.slice(0,10)===dayUTC;
-  const blockedSameIdentity=g=>oldGames.get(g.id)?.refreshIssue?.code==='unmapped-players'&&oldGames.get(g.id).refreshIssue.identityRevision===identityRevision;
   const blockedSourceToday=g=>oldGames.get(g.id)?.refreshIssue?.code==='source-data-error'&&oldGames.get(g.id).refreshIssue.attemptedAt?.slice(0,10)===dayUTC;
   const eligible=inventory.filter(g=>g.type!=='unknown');
-  const corrections=eligible.filter(g=>oldGames.get(g.id)?.statsState==='available'&&localMatchDay(g)>=cutoff&&!attemptedToday(g)&&!blockedSameIdentity(g)&&!blockedSourceToday(g)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id).slice(0,maxCorrectionGames);
-  const backlog=eligible.filter(g=>(oldGames.get(g.id)?.statsState!=='available'||pending.games.some(entry=>entry.game.id===g.id)||['unmapped-players','source-data-error'].includes(oldGames.get(g.id)?.refreshIssue?.code))&&!blockedSameIdentity(g)&&!blockedSourceToday(g)&&!corrections.some(c=>c.id===g.id)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id);
+  const corrections=eligible.filter(g=>oldGames.get(g.id)?.statsState==='available'&&localMatchDay(g)>=cutoff&&!attemptedToday(g)&&!blockedSourceToday(g)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id).slice(0,maxCorrectionGames);
+  const backlog=eligible.filter(g=>(oldGames.get(g.id)?.statsState!=='available'||pending.games.some(entry=>entry.game.id===g.id)||['unmapped-players','source-data-error'].includes(oldGames.get(g.id)?.refreshIssue?.code))&&!blockedSourceToday(g)&&!corrections.some(c=>c.id===g.id)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id);
   const sourceRetries=eligible.filter(g=>oldGames.get(g.id)?.refreshIssue?.code==='source-data-error'&&!blockedSourceToday(g)).sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id).slice(0,maxSourceRetriesPerRun);
   const queue=[...corrections,...backlog,...sourceRetries],incoming=new Map(),lines=[];
   for(const game of inventory){const old=oldGames.get(game.id);
     if(old?.statsState==='available'){incoming.set(game.id,{...old,type:game.type,classification:game.classification});lines.push(...previous.lines.filter(l=>l.gameId===game.id));}
-    else if(blockedSameIdentity(game)||old?.refreshIssue?.code==='source-data-error'){incoming.set(game.id,{...game,statsState:'missing',refreshIssue:old.refreshIssue,boxScoreCheckedAt:old.boxScoreCheckedAt});}
+    else if(old?.refreshIssue?.code==='source-data-error'){incoming.set(game.id,{...game,statsState:'missing',refreshIssue:old.refreshIssue,boxScoreCheckedAt:old.boxScoreCheckedAt});}
     else incoming.set(game.id,game.type==='unknown'?game:{...game,statsState:'missing',refreshIssue:{code:'backfill-pending',attemptedAt:timestamp,preservedPreviousBoxScore:false}});
   }
   const start=seasonStart.date;
   const end=[start,inventory.length?inventory.map(localMatchDay).sort().at(-1):previous?.scope.endDate||dayUTC].sort().at(-1);
   const snapshot=()=>{
-    const used=new Set(lines.map(l=>l.nbaId));const allPeople=new Map([...(previous?.players||[]).map(p=>[p.nbaId,p]),...identities.players.map(p=>[p.nbaId,p])]);
-    const batch={...emptySeason(),provider:PROVIDER,publicationPolicy:'private-only-rights-unverified',minutesPrecision:'rounded-whole-minute',connection:'connected',updatedAt:timestamp,coverageCheckedAt:timestamp,scope:{startDate:start,endDate:end,timeZone:'America/New_York',completeSeason:false},coverage:intervals(start,end,timestamp,receipts),players:[...allPeople.values()].filter(p=>used.has(p.nbaId)),games:[...incoming.values()],lines};
+    const projectedLines=lines.map(line=>({...line,playerKey:playerKeyFor(registry.get(line.providerId)),nbaId:registry.get(line.providerId)?.nbaId??null}));
+    const batch={...emptySeason(),schemaVersion:2,provider:PROVIDER,publicationPolicy:'private-only-rights-unverified',minutesPrecision:'rounded-whole-minute',connection:'connected',updatedAt:timestamp,coverageCheckedAt:timestamp,scope:{startDate:start,endDate:end,timeZone:'America/New_York',completeSeason:false},coverage:intervals(start,end,timestamp,receipts),players:[...registry.values()],games:[...incoming.values()],lines:projectedLines};
     const merged=mergeHighlightly(previous,batch);
     merged.backfillProgress={inventoryComplete:state.complete,inventoryOffset:state.offset,inventoryTotal:state.total,inventoryDayUTC:state.dayUTC,completedGamesSeen:inventory.length,outsideDateScopeFinished,regularGamesSeen:inventory.filter(g=>g.type==='regular').length,verifiedRegularBoxScores:merged.games.filter(g=>g.type==='regular'&&g.statsState==='available').length,verifiedBoxScores:merged.games.filter(g=>g.statsState==='available').length,sourceFailureGames:merged.games.filter(g=>g.refreshIssue?.code==='source-data-error').length,unmappedGames:merged.games.filter(g=>g.refreshIssue?.code==='unmapped-players').length,unclassifiedGames:merged.games.filter(g=>g.type==='unknown').length,pendingGames:merged.games.filter(g=>g.status==='finished'&&g.type!=='unknown'&&g.statsState!=='available').length,budgetExhausted,attemptedAt:timestamp};
     return validatePrivate(merged);
@@ -124,38 +127,31 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
       await saveProgress(snapshot());continue;
     }
     if(savedBox)receipts.push({endpoint:`/box-score/${game.id}`,date:localMatchDay(game),fetchedAt:savedBox.fetchedAt,reused:true,normalizedPending:true});
-    const rawLines=parseBoxScore(body,game),missing=rawLines.filter(l=>!identities.players.some(p=>p.providerId===l.providerId));
+    const rawLines=parseBoxScore(body,game);
     const checkedAt=savedBox?.fetchedAt||receipts.at(-1)?.fetchedAt||timestamp;
     observations=missingIdentityObservations(body,game,identities,checkedAt);
     const participationReference=checkOfficialParticipation(rawLines,game,timestamp);
     if(participationReference){
       const old=oldGames.get(game.id),preserved=old?.statsState==='available';
-      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:'source-data-error',sourceErrorCode:'official-participation-conflict',attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityObservations:observations,participationReference}});
+      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:'source-data-error',sourceErrorCode:participationReference.reviewKind==='documented-roster-event'?'official-participation-review':'official-participation-conflict',attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityObservations:observations,participationReference}});
       await saveProgress(snapshot());
       if(savedBox){pending.games=pending.games.filter(entry=>entry.game.id!==game.id);await savePendingState();}
       continue;
     }
     const officialReference=checkOfficialReference(body,game,identities,timestamp);
-    if(missing.length&&officialReference?.status!=='mismatch'&&!savedBox){
-      pending.games.push(normalizePendingBox(body,game,checkedAt));await savePendingState();
-    }
     if(officialReference&&officialReference.status!=='verified'){
-      const old=oldGames.get(game.id),preserved=old?.statsState==='available',identityBlocked=officialReference.status==='unverifiable'&&missing.length>0;
-      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:identityBlocked?'unmapped-players':'source-data-error',...(identityBlocked?{unmappedPlayerCount:missing.length,identityRevision}:{sourceErrorCode:`official-reference-${officialReference.status}`}),attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityObservations:observations,officialReference}});
+      const old=oldGames.get(game.id),preserved=old?.statsState==='available';
+      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:'source-data-error',sourceErrorCode:`official-reference-${officialReference.status}`,attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityObservations:observations,officialReference}});
       await saveProgress(snapshot());
       if(savedBox&&officialReference.status==='mismatch'){pending.games=pending.games.filter(entry=>entry.game.id!==game.id);await savePendingState();}
       continue;
     }
-    if(missing.length){
-      const old=oldGames.get(game.id),preserved=old?.statsState==='available';
-      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:'unmapped-players',identityObservations:observations,unmappedPlayerCount:missing.length,attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityRevision}});
-    }else{
-      const normalized=normalizeBoxScore(body,game,identities.players,timestamp);
-      for(let i=lines.length-1;i>=0;i--)if(lines[i].gameId===game.id)lines.splice(i,1);
-      lines.push(...normalized);incoming.set(game.id,{...game,statsState:'available',boxScoreCheckedAt:checkedAt});
-    }
+    for(const p of providerPlayers(body,game,[...registry.values()],checkedAt))registry.set(p.providerId,p);
+    const normalized=normalizeBoxScore(body,game,[...registry.values()],timestamp);
+    for(let i=lines.length-1;i>=0;i--)if(lines[i].gameId===game.id)lines.splice(i,1);
+    lines.push(...normalized);incoming.set(game.id,{...game,statsState:'available',boxScoreCheckedAt:checkedAt});
     await saveProgress(snapshot());
-    if(!missing.length&&savedBox){pending.games=pending.games.filter(entry=>entry.game.id!==game.id);await savePendingState();}
+    if(savedBox){pending.games=pending.games.filter(entry=>entry.game.id!==game.id);await savePendingState();}
   }
   if(budgetExhausted)for(const [id,g]of incoming)if(g.refreshIssue?.code==='backfill-pending')incoming.set(id,{...g,refreshIssue:{...g.refreshIssue,code:'request-budget'}});
   const result=snapshot();await saveProgress(result);return {snapshot:result,inventoryState:state,pendingState:publicPendingBoxes(pending,new Date(now()).toISOString())};

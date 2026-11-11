@@ -1,5 +1,6 @@
 // Deliberate projection of normalized data. Never publish raw responses or local state.
-import {validateSeason,SEASON} from '../assets/core.mjs';
+import {validateSeason,SEASON,migrateHighlightlySeason} from '../assets/core.mjs';
+import {DOCUMENTED_PARTICIPATION_REVIEWS} from './highlightly-participation-reviews.mjs';
 import {COOPER_DEBUT_REFERENCE} from './highlightly-participation-reference.mjs';
 import {SOURCE_ERROR_CODES} from './highlightly-source-errors.mjs';
 import {PROVIDER,datesInRange} from './highlightly.mjs';
@@ -12,6 +13,7 @@ export function authorizeHighlightlyPublication(authorization){
 }
 export function publicHighlightlySnapshot(candidate,authorization){
   authorizeHighlightlyPublication(authorization);validateSeason(candidate);
+  candidate=migrateHighlightlySeason(candidate);
   requireValue(candidate.provider===PROVIDER&&candidate.scope?.completeSeason===false&&candidate.games.every(g=>g.provider===PROVIDER)&&candidate.lines.every(l=>l.provider===PROVIDER),'Publication blocked: mixed namespace or unsupported coverage');
   datesInRange(candidate.scope.startDate,candidate.scope.startDate);datesInRange(candidate.scope.endDate,candidate.scope.endDate);
   requireValue(candidate.scope.startDate<=candidate.scope.endDate&&candidate.scope.timeZone==='America/New_York','Invalid publication scope');
@@ -23,12 +25,12 @@ export function publicHighlightlySnapshot(candidate,authorization){
     return {startDate:c.startDate,endDate:c.endDate,normalizedAt:c.normalizedAt,requests:fetched.map(fetchedAt=>({fetchedAt}))};
   });
   // Reject arbitrary caller data rather than spreading the private snapshot into a release.
-  const result={schemaVersion:1,season:SEASON,provider:PROVIDER,publicationPolicy:'authorized-public-normalized',connection:candidate.connection,updatedAt:candidate.updatedAt,coverageCheckedAt:candidate.coverageCheckedAt,
+  const result={schemaVersion:2,season:SEASON,provider:PROVIDER,publicationPolicy:'authorized-public-normalized',connection:candidate.connection,updatedAt:candidate.updatedAt,coverageCheckedAt:candidate.coverageCheckedAt,
     scope:{startDate:candidate.scope.startDate,endDate:candidate.scope.endDate,timeZone:'America/New_York',completeSeason:false,mayHaveGaps:true},coverage:intervals,minutesPrecision:'rounded-whole-minute',
     publicationAuthorization:{provider:PROVIDER,confirmedAt:authorization.confirmedAt,scope:'normalized-fantasy-stats',basis:'Owner attestation of provider permission'},
-    players:candidate.players.map(p=>pick(p,['nbaId','providerId','name','source','verifiedAt'])),
+    players:candidate.players.map(p=>pick(p,['playerKey','nbaId','providerId','name','aliases','source','verifiedAt'])),
     games:candidate.games.map(g=>({...pick(g,['id','season','league','start','status','type','statsState','provider','finalScores','boxScoreCheckedAt']),refreshIssue:publicRefreshIssue(g.refreshIssue),classification:g.classification?pick(g.classification,['source','verifiedAt']):null,home:pick(g.home,['id','code']),away:pick(g.away,['id','code'])})),
-    lines:candidate.lines.map(l=>({...pick(l,['gameId','nbaId','providerId','teamId','participation','seconds','minutesPrecision','updatedAt','provider']),stats:l.stats?pick(l.stats,['pts','fgm','fga','fg3m','fg3a','ftm','fta','reb','ast','tov','stl','blk']):null,comment:null})),
+    lines:candidate.lines.map(l=>({...pick(l,['gameId','playerKey','nbaId','providerId','teamId','participation','seconds','minutesPrecision','updatedAt','provider']),stats:l.stats?pick(l.stats,['pts','fgm','fga','fg3m','fg3a','ftm','fta','reb','ast','tov','stl','blk']):null,comment:null})),
     positions:{...pick(candidate.positions,['season','source','importedAt']),entries:candidate.positions.entries.map(p=>pick(p,['nbaId','espnId','positions','source','observedAt']))}};
   if(candidate.backfillProgress)result.backfillProgress=publicBackfillProgress(candidate.backfillProgress);
   // Only a reviewed, actually configured scheduler may be advertised as active.
@@ -72,6 +74,12 @@ export function publicOfficialReference(r){
 }
 
 export function publicParticipationReference(r){
+  if(r?.reviewKind==='documented-roster-event'){
+    const evidence=DOCUMENTED_PARTICIPATION_REVIEWS.find(e=>e.gameId===r.gameId&&e.providerId===r.providerId);
+    requireValue(evidence&&Object.entries(evidence).every(([key,value])=>r[key]===value)&&Number.isSafeInteger(r.observedTeamId)&&r.observedTeamId>0&&r.observedParticipation==='played'&&date(r.checkedAt),'Invalid documented participation review');
+    datesInRange(r.observedDateET,r.observedDateET);
+    return pick(r,[...Object.keys(evidence),'observedTeamId','observedDateET','observedParticipation','checkedAt']);
+  }
   requireValue(r&&Object.entries(COOPER_DEBUT_REFERENCE).every(([key,value])=>r[key]===value)&&Number.isSafeInteger(r.gameId)&&r.gameId>0&&Number.isSafeInteger(r.observedTeamId)&&r.observedTeamId>0&&r.observedParticipation==='played'&&date(r.checkedAt),'Invalid official participation reference');
   datesInRange(r.gameDateET,r.gameDateET);requireValue(r.gameDateET<COOPER_DEBUT_REFERENCE.firstAppearanceET,'Invalid participation conflict date');
   return pick(r,[...Object.keys(COOPER_DEBUT_REFERENCE),'gameId','gameDateET','observedTeamId','observedParticipation','checkedAt']);

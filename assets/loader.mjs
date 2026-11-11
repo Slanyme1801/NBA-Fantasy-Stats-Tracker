@@ -1,5 +1,6 @@
 import {emptySeason,validateSeason} from './core.mjs';
-const CACHE = 'nbafs-verified-v2';
+// Never overwrite schema-1 fallback data used by an older installed app.
+const CACHE = 'nbafs-verified-v3', LEGACY_CACHE = 'nbafs-verified-v2';
 export async function loadCurrent({fetcher=fetch,cacheStorage=globalThis.caches,base=document.baseURI,knownIds=[]}={}) {
   const key=new URL('data/last-verified',base).href;
   let cache;
@@ -19,10 +20,13 @@ export async function loadCurrent({fetcher=fetch,cacheStorage=globalThis.caches,
     try { await cache?.put(key,new Response(JSON.stringify(data),{headers:{'Content-Type':'application/json'}})); } catch {}
     return {data,state:'fresh',error:null};
   } catch(error) {
-    try {
-      const response=await cache?.match(key);
-      if(response) return {data:validateSeason(await response.json(),knownIds),state:'cached',error:String(error.message)};
-    } catch {}
+    for(const name of [CACHE,LEGACY_CACHE]) {
+      try {
+        const stored=name===CACHE?cache:await cacheStorage?.open(LEGACY_CACHE);
+        const response=await stored?.match(key);
+        if(response) return {data:validateSeason(await response.json(),knownIds),state:'cached',error:String(error.message)};
+      } catch {}
+    }
     return {data:emptySeason(),state:'unavailable',error:String(error.message)};
   }
 }

@@ -20,7 +20,7 @@ test('resume after quota interruption reuses schedule and successful box score, 
   assert.deepEqual(resumed,['/box-score/2']);assert.equal(result.games.length,2);assert.equal(result.lines.length,4);
 });
 test('missing identity does not cause another paid download after mapping is repaired',async()=>{
-  const cache=memoryCache();await assert.rejects(runHighlightlyBatch(options({cache,identities:{...identities(),players:[]}})),/Unmapped/);
+  const cache=memoryCache();const observed=await runHighlightlyBatch(options({cache,identities:{...identities(),players:[]}}));assert.equal(observed.lines[0].nbaId,null);assert.equal(observed.lines.length,2);
   const result=await runHighlightlyBatch(options({cache,client:async()=>{throw Error('No fetch expected');}}));assert.equal(result.lines.length,2);
 });
 test('disk cache survives client restart and writes are private; invalid JSON fails closed',async()=>{
@@ -114,19 +114,19 @@ test('corrupt previous snapshot and coverage are rejected before any network cal
     await assert.rejects(runHighlightlyBatch(options({previous:prior,client:async()=>{calls++;throw Error('Must not fetch');}})));assert.equal(calls,0);
   }
 });
-test('explicit daily skip policy imports no partial unmapped box but preserves a classified missing game',async()=>{
+test('legacy skip policy no longer blocks valid provider-primary whole boxes',async()=>{
   const ids=identities();ids.players=ids.players.filter(p=>p.providerId!==102);
   const result=await runHighlightlyBatch(options({identities:ids,unmappedPolicy:'skip-game'}));
-  assert.equal(result.games[0].type,'regular');assert.equal(result.games[0].statsState,'missing');assert.equal(result.games[0].refreshIssue.unmappedPlayerCount,1);assert.equal(result.lines.length,0);assert.equal(result.players.length,0);
+  assert.equal(result.games[0].type,'regular');assert.equal(result.games[0].statsState,'available');assert.equal(result.games[0].refreshIssue,undefined);assert.equal(result.lines.length,2);assert.equal(result.players.length,2);assert.equal(result.lines.find(l=>l.providerId===102).nbaId,null);
 });
-test('unmapped correction preserves the entire older verified box and score, then mapping expansion replaces it',async()=>{
+test('unmapped correction replaces entire valid provider box and mapping expansion only enriches identity',async()=>{
   const cache=memoryCache(),first=await runHighlightlyBatch(options({cache}));
   const correctedBox=box();correctedBox[0].boxScores[0].player.id=999;
   const correctedMatch=match();correctedMatch.state.score.homeTeam[0]=7;
   correctedBox[0].boxScores[0].statistics.find(s=>s.name==='Total Points Scored').value=22;
   correctedBox[0].boxScores[0].statistics.find(s=>s.name==='Successful Field Goals').value=8;
   const refresh={cache,previous:first,refreshFrom:day,refreshId:'unmapped-correction',unmappedPolicy:'skip-game',client:async endpoint=>endpoint==='/matches'?envelope([correctedMatch]):correctedBox};
-  const retained=await runHighlightlyBatch(options(refresh));assert.deepEqual(retained.lines,first.lines);assert.equal(retained.games[0].finalScores[0],20);assert.equal(retained.games[0].refreshIssue.preservedPreviousBoxScore,true);
+  const retained=await runHighlightlyBatch(options(refresh));assert.equal(retained.lines.length,2);assert.equal(retained.lines[0].playerKey,'highlightly:999');assert.equal(retained.lines[0].nbaId,null);assert.equal(retained.games[0].finalScores[0],22);assert.equal(retained.games[0].refreshIssue,undefined);
   const expanded=identities();expanded.players.push({...player(9),providerId:999});
   const fixed=await runHighlightlyBatch(options({...refresh,previous:retained,identities:expanded,client:async()=>{throw Error('Must reuse paid cache');}}));
   assert.equal(fixed.games[0].finalScores[0],22);assert.equal(fixed.games[0].refreshIssue,undefined);assert.equal(fixed.lines.length,2);assert.equal(fixed.lines[0].nbaId,9);
@@ -134,4 +134,25 @@ test('unmapped correction preserves the entire older verified box and score, the
 test('skip policy never hides invalid statistics or imports malformed partial scores',async()=>{
   const b=box();b[0].boxScores[0].player.id=999;b[0].boxScores[0].statistics[0].value=999;
   await assert.rejects(runHighlightlyBatch(options({unmappedPolicy:'skip-game',client:async endpoint=>endpoint==='/matches'?envelope():b})),/Points/);
+});
+
+test('schema1 migration and later NBA mapping enrich every retained line without stats download',async()=>{
+ const observed=await runHighlightlyBatch(options({identities:{...identities(),players:[]}}));
+ const empty=structuredClone(observed);empty.games=[];empty.lines=[];empty.players=identities().players.map(p=>({...p,playerKey:`highlightly:${p.providerId}`}));
+ const enriched=mergeHighlightly(observed,empty);assert.equal(enriched.schemaVersion,2);assert.deepEqual(enriched.lines.map(l=>l.nbaId),[1,2]);assert.deepEqual(enriched.lines.map(l=>l.stats),observed.lines.map(l=>l.stats));
+ assert.equal(aggregate(enriched,1,{asOf:now}).totalFpts,aggregate(enriched,'highlightly:101',{asOf:now}).totalFpts);
+ const legacy=structuredClone(enriched);legacy.schemaVersion=1;for(const p of legacy.players)delete p.playerKey;for(const l of legacy.lines)delete l.playerKey;
+ const migrated=mergeHighlightly(null,legacy);assert.equal(migrated.schemaVersion,2);assert.equal(migrated.lines[0].playerKey,'highlightly:101');assert.equal(legacy.schemaVersion,1);
+ const conflict=structuredClone(empty);conflict.players[0].nbaId=2;assert.throws(()=>mergeHighlightly(enriched,conflict),/Duplicate|collision/);
+});
+test('provider-only refresh cannot erase a previously verified NBA mapping or double count lines',async()=>{
+ const first=await runHighlightlyBatch(options());const incoming=await runHighlightlyBatch(options({identities:{...identities(),players:[]}}));
+ const merged=mergeHighlightly(first,incoming);assert.deepEqual(merged.players.map(p=>p.nbaId),[1,2]);assert.deepEqual(merged.lines.map(l=>l.nbaId),[1,2]);assert.equal(merged.lines.length,2);assert.equal(aggregate(merged,'highlightly:101',{asOf:now}).gp,1);
+ const collision=structuredClone(incoming);collision.players[0]={...collision.players[0],nbaId:2};collision.lines[0].nbaId=2;assert.throws(()=>mergeHighlightly(first,collision),/collision/);
+});
+test('official source conflict preserves older whole verified game while marking the refresh failure',async()=>{
+ const prior=await runHighlightlyBatch(options());prior.games[0].id=1547577;prior.lines.forEach(l=>l.gameId=1547577);
+ const input=match(1547577);const mapping={...types(),games:[{id:1547577,type:'regular',source:'SYNTHETIC verified game',verifiedAt:now}]};
+ const result=await runHighlightlyBatch(options({previous:prior,types:mapping,client:async endpoint=>endpoint==='/matches'?envelope([input]):box()}));
+ assert.deepEqual(result.lines,prior.lines);assert.equal(result.games[0].statsState,'available');assert.equal(result.games[0].refreshIssue.code,'source-data-error');assert.equal(result.games[0].refreshIssue.preservedPreviousBoxScore,true);assert.equal(result.games[0].refreshIssue.sourceErrorCode,'official-reference-unverifiable');
 });

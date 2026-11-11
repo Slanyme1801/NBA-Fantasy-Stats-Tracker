@@ -2,7 +2,22 @@
 
 Ces commandes préparent ou modifient uniquement des fichiers locaux. Elles ne créent aucun secret et ne déclenchent ni push ni déploiement. Ne jamais placer de clé dans le HTML, dans `assets/`, dans `data/`, dans une URL ou dans Git.
 
-## Statut et portée
+## Mode hébergé actuel : import par identifiant fournisseur
+
+Depuis la simplification du 11 novembre, les statistiques Highlightly sont collectées par `playerKey: "highlightly:<providerId>"`. L’ID NBA est facultatif pour la saison courante ; il ne sert qu’au rapprochement avec l’archive et aux métadonnées vérifiées. Un nom n’est jamais utilisé comme clé ni comme preuve suffisante de fusion. Les sections API-Sports et les premières étapes Highlightly ci-dessous décrivent l’historique technique ; leurs anciennes exigences de mapping complet ne s’appliquent plus au rattrapage hébergé actuel.
+
+- Une requête `/box-score/<match>` ramène les deux équipes. Les compteurs sont stockés une fois par match et identifiant fournisseur ; calculs fantasy, classements, fenêtres et trades sont locaux, sans appel par joueur.
+- Les nouveaux snapshots utilisent le schéma 2, avec clé fournisseur stable et `nbaId` facultatif. Le lecteur accepte encore les anciennes releases de schéma 1. Les archives historiques et leurs routes NBA restent inchangées.
+- Une fiche non rapprochée affiche sa saison courante et indique l’absence de liaison historique. Après ajout d’une correspondance vérifiée, la même clé fournisseur rejoint l’historique sans recopier les performances ni doubler le joueur. Le nom observé est un libellé ; les collisions entre IDs NBA et fournisseur restent interdites.
+- Une ligne vide reste `missing`, avec `stats: null`, et ne compte pas dans les matchs joués. Elle ne bloque pas les performances valides des autres joueurs. Un effectif actuel ou une équipe historique ne suffit pas à invalider l’identité d’un joueur dans un ancien match.
+- Les garde-fous utiles restent inchangés : deux équipes attendues, compteurs complets et cohérents, score final réconcilié, doublons refusés, classification de saison vérifiée, anomalies officielles ciblées, correction atomique d’un match entier et conservation de la version antérieure en cas d’erreur.
+- Les 12 couples match/joueur déjà documentés par une coupure ou une intention annoncée de coupure restent soumis à une revue ciblée seulement si la ligne annonce une participation jouée (`official-participation-review`). Les intentions ne sont pas présentées comme des transactions définitives. Une ligne vide passe ; aucun autre match du joueur n’est interdit par cette liste et aucun DNP n’est inventé.
+- La couverture des statistiques et le rapprochement historique sont deux états distincts. Un match peut être collecté alors qu’un joueur n’a pas encore d’ID NBA ; cela ne prétend pas que la saison entière est couverte ou que son historique est connu.
+- Le quota demeure 90 appels maximum par jour UTC, avec 10 de marge sur l’offre 100. Aucune relance réelle ni réinitialisation de quota n’est nécessaire pour déployer le nouveau code. Les box scores déjà stockés peuvent être enrichis en identités sans requête fournisseur.
+
+Le premier lot réel du 11 novembre a dépensé 5 appels de calendrier, 6 corrections et 79 nouveaux box scores. Sur ces 79, 3 furent publiés, 75 rejetés par l’ancienne condition de mapping et 1 par un contrôle source. Ces 75 diagnostics contiennent 273 occurrences de 77 identifiants non rapprochés, pas les compteurs permettant de reconstruire les box scores. La nouvelle règle supprime ce blocage pour les prochaines collectes, sans prétendre récupérer rétroactivement des réponses qui n’ont pas été sauvegardées durablement.
+
+## Historique : statut API-Sports et portée initiale
 
 L'adaptateur suit la documentation API-Sports consultée le 5 octobre 2026 : [guide API-NBA](https://www.api-football.com/news/post/how-to-get-started-with-api-nba-the-complete-beginners-guide) et [guide de saison 2026–27](https://www.api-football.com/news/post/2026-2027-nba-season-guide-to-using-data-with-api-sports).
 
@@ -134,7 +149,7 @@ node tools/publish.mjs .local/highlightly-candidate.json --authorization config/
 npm run validate
 ```
 
-Seule une projection contrôlée est écrite : identités NBA/Highlightly vérifiées, matchs, compteurs fantasy, provenance des identités/types et couverture partielle. Les champs inconnus, corps de réponses, clés de cache, checkpoints et commentaires privés ne sont pas recopiés. Les minutes restent marquées approximatives. Le site affiche le nombre réel de matchs/joueurs importés, les périodes demandées, les dates sources distinctes de la normalisation et le fait que les moyennes concernent uniquement cet échantillon.
+Seule une projection contrôlée est écrite : identifiants fournisseur, libellés observés, correspondances NBA vérifiées lorsqu’elles existent, matchs, compteurs fantasy, provenance des identités/types et couverture partielle. Les champs inconnus, corps de réponses, clés de cache, checkpoints et commentaires privés ne sont pas recopiés. Les minutes restent marquées approximatives. Le site affiche le nombre réel de matchs/joueurs importés, les périodes demandées, les dates sources distinctes de la normalisation et le fait que les moyennes concernent uniquement cet échantillon.
 
 ### Runner quotidien prêt à planifier, mais non activé
 
@@ -171,21 +186,16 @@ Le dispatch manuel propose `validation_only: true` par défaut. Ce mode fonction
 La documentation REST GitHub accepte les tokens d’installation GitHub App pour `POST /pages/builds` avec `Pages: write`, ce qui correspond au mécanisme du `GITHUB_TOKEN`. L’accès effectif dépend toutefois des règles du dépôt et doit être testé par ce dispatch. Un 403/422 ou un timeout reste un échec explicite ; le workflow ne change jamais le mode Pages et ne revendique pas un déploiement réussi sans le build correspondant au commit exact.
 
 
-### Couverture quotidienne avec correspondances encore partielles
+### Ancienne règle de mapping intégral, remplacée le 11 novembre
 
-Le runner quotidien utilise explicitement `unmappedPolicy: "skip-game"`. Les réponses et tous leurs compteurs sont d’abord validés. Si une identité NBA manque, **aucune ligne du box score concerné** n’est importée : un match terminé correctement classifié reste présent avec `statsState: "missing"` et un motif `unmapped-players`. Un défaut de compteur, de score ou d’identité conflictuelle continue d’arrêter le lot ; ce mode ne masque pas les réponses invalides.
-
-Lorsqu’un ancien box score complet est déjà vérifié, une correction comportant des joueurs non mappés ne l’efface pas : ses lignes et son ancien score sont conservés ensemble, avec un avertissement explicite « ancien box score conservé ». Une nouvelle classification sourcée peut encore exclure ce match des moyennes si elle change son type. Dès que les mappings sont complétés, une reprise peut utiliser le cache valide et remplacer intégralement les anciennes lignes. Aucune identité n’est déduite d’un nom ou fabriquée.
-
-Le bandeau du site compte les matchs bloqués par les identités et ceux conservant un box score plus ancien. Les matchs réguliers connus sans box score complet apparaissent également dans les lacunes de l’échantillon. Le checkpoint privé liste les matchs non résolus. La réussite quotidienne signifie donc mise à jour du calendrier et des box scores **entièrement mappés**, pas fonctionnement complet pour toute la ligue. La reconstruction depuis le snapshot public ne découvre ni de nouvelles identités ni des classifications : les prochains matchs restent `unknown` tant qu’une source vérifiée n’enrichit ces correspondances. Ces sources nécessitent encore un travail séparé.
-
+La première version refusait tout un box score dès qu’un identifiant NBA manquait, y compris sur une ligne sans statistiques. Ce choix protégeait la liaison à l’archive mais empêchait inutilement la collecte et les calculs courants. Le mode fournisseur décrit en tête du document remplace cette règle. Les anciens diagnostics `unmapped-players` restent lisibles comme traces d’import antérieur ; les matchs concernés sont candidats au rattrapage, sans attendre un changement de table d’identités.
 
 ## Rattrapage saison avec reprise durable (10 novembre 2026)
 
 Ce mode remplace la collecte hébergée limitée aux trois dernières journées. Le runner `tools/highlightly-season-runner.mjs` réutilise le workflow quotidien existant, sans second cron ni augmentation du quota.
 
 - Réservation de 90 appels inscrite et poussée avant tout appel fournisseur. Une seconde exécution ou un retry le même jour UTC échoue sans réseau ; la réservation ne diminue jamais après une panne. Le 10 novembre reste bloqué pour tenir compte des appels manuels déjà effectués. Aucun appel manuel concurrent n’est autorisé par ce mécanisme.
-- Inventaire paginé de toute la saison, vérification des identités et de chaque box score, corrections récentes limitées à six matchs, puis retard du plus ancien au plus récent. Trois nouvelles tentatives de données fournisseur invalides au maximum en fin de file. Les identités non mappées attendent un changement de table plutôt que de dépenser à nouveau chaque jour.
+- Inventaire paginé de toute la saison, vérification des identités et de chaque box score, corrections récentes limitées à six matchs, puis retard du plus ancien au plus récent. Trois nouvelles tentatives de données fournisseur invalides au maximum en fin de file. Une absence de liaison NBA ne bloque plus un box score valide ; seules les anomalies de données font l’objet des reprises bornées.
 - Après chaque page et chaque match vérifié, le runner pousse un checkpoint **normalisé** dans `.github/highlightly-inventory.json` / `.github/highlightly-backfill.json`. Ces fichiers sont publics dans GitHub, mais exclus du site par Jekyll. Ils ne contiennent ni réponse brute, ni clé, ni cache privé. La projection applique des listes de champs autorisés. Les anciennes releases immuables restent intactes.
 - L’appel suivant n’a lieu qu’après succès du push. Un push incertain ou refusé arrête le runner sans retry automatique, y compris dans l’étape de publication finale. Un arrêt entre la réponse fournisseur et la confirmation du checkpoint peut nécessiter de relire ce seul match plus tard ; aucune sauvegarde non confirmée n’est présentée comme durable.
 - Un échec réseau ultérieur conserve tous les checkpoints confirmés. La publication finale peut reprendre le dernier checkpoint poussé de la même exécution, même après une interruption réseau. Les box scores déjà validés ne sont pas supprimés par une lacune de calendrier, une identité inconnue ou une correction invalide.
@@ -202,12 +212,14 @@ Tests : fixtures synthétiques uniquement, quota UTC, conservation, collision d�
 
 Le test d’amorçage utilise une réservation synthétique, et non le fichier de quota vivant : l’avancement de ce dernier ne doit pas faire échouer les tests du lendemain.
 
-### Identités supplémentaires et box scores non attribués
+### Correspondances supplémentaires et reprise des anciens box scores en attente
 
 Le complément `config/highlightly-identities.verified.json` contient uniquement des correspondances corroborées par des profils, effectifs ou annonces officiels NBA et une observation Highlightly. `prepareRunner` le fusionne avec les identités déjà publiées, sans jointure sur un nom et en refusant toute collision NBA/fournisseur. Les anciennes preuves restent conservées. Les associations d’équipe contradictoires restent en revue ; une ligne inactive n’est pas assimilée à une participation au match.
 
-Les box scores dont les compteurs sont valides mais dont une identité manque sont désormais sauvegardés séparément dans `.github/highlightly-pending-boxes.json`. Ce fichier exclu du site contient uniquement des compteurs normalisés, IDs fournisseur/équipe, noms bornés et horodatages, jamais une réponse brute, un NBA ID supposé ou une clé. Il ne fait pas partie des statistiques publiées. Après ajout d’une correspondance vérifiée, le runner le relit sans appel fournisseur, revalide le match, le score et les références officielles, puis importe le match entier. L’entrée n’est supprimée qu’après confirmation du checkpoint d’import. Un conflit de match/score bloque la reprise pour revue. Le changement d’horloge pendant une collecte et l’interruption entre sauvegarde d’un box score et de son état sont testés.
+Le mécanisme de transition conserve les anciens box scores en attente dans `.github/highlightly-pending-boxes.json`. Ce fichier exclu du site contient uniquement des compteurs normalisés, IDs fournisseur/équipe, noms bornés et horodatages, jamais une réponse brute, un NBA ID supposé ou une clé. Il ne fait pas partie des statistiques publiées. Le runner les relit sans appel fournisseur, revalide le match, le score et les références officielles, puis importe le match entier sous ses IDs fournisseur, sans exiger un rapprochement NBA. L’entrée n’est supprimée qu’après confirmation du checkpoint d’import. Un conflit de match/score bloque la reprise pour revue. Le changement d’horloge pendant une collecte et l’interruption entre sauvegarde d’un box score et de son état sont testés.
 
 Les anomalies fournisseur ont un code stable autorisé, sans message brut. Le contrôle Knicks–Celtics du 23 octobre reste obligatoire ; aucun compteur n’est réécrit pour le faire passer. Une preuve officielle supplémentaire établit le début NBA de Carson Cooper au 31 octobre : une ligne `played` antérieure est bloquée, sans inventer de DNP. Les box scores déjà publiés restent conservés lors d’une correction invalide.
 
 Bilan du premier lot réel du 11 novembre : 90 appels, 25 box scores sur 160 matchs réguliers recensés, 656 lignes. Les 576 anciennes lignes sont inchangées. Les diagnostics révèlent 75 matchs non attribués, un échec de validation source et 59 matchs restant à interroger. Ces derniers ne sont pas présentés comme importés. Le complément vérifié prépare la reprise quotidienne suivante ; il ne modifie pas rétroactivement les chiffres publiés sans relire les box scores nécessaires.
+
+Validation locale du changement fournisseur : 220 tests réussis, 656 lignes publiées et métadonnées de 160 matchs conservées lors de la migration, 6 384 comparaisons d’agrégats identiques entre les moteurs avant/après (399 joueurs, saison et 7/14/30 jours, barèmes par défaut/personnalisé, accès NBA/fournisseur). Aucun appel Highlightly consommé par ces vérifications. Les tests d’interface utilisent un environnement DOM simulé ; la vérification visuelle des futurs profils non rapprochés reste distincte.

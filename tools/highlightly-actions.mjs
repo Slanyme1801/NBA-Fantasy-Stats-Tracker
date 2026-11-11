@@ -4,7 +4,7 @@ import {pathToFileURL} from 'node:url';
 import {published,readJSON,atomicJSON} from './files.mjs';
 import {atomicPrivateJSON} from './highlightly-private.mjs';
 import {bootstrapPrivateSnapshot} from './highlightly-daily.mjs';
-import {validateSeason,validateIdentityMap} from '../assets/core.mjs';
+import {validateSeason,validateIdentityMap,validateProviderRegistry,migrateHighlightlySeason} from '../assets/core.mjs';
 export function reserveDailyBudget(previous,{now=new Date(),runId}){
   const today=now.toISOString().slice(0,10);
   if(now.getUTCHours()===23)throw new Error('Hosted runs must start before 23:00 UTC to avoid crossing the quota day');
@@ -21,22 +21,29 @@ export function runnerInputs(snapshot,verifiedIdentities=null){
   const authorization={provider:'Highlightly',season:'2026-27',publicationAllowed:true,publicDatasetAllowed:true,approvedBy:'repository-owner',publicScope:'normalized-fantasy-stats',confirmedAt:snapshot.publicationAuthorization.confirmedAt,source:'Owner attestation recorded in the validated public snapshot'};
   // Carry only previously verified scheduling metadata, never infer activation from YAML presence.
   if(snapshot.refreshSchedule?.configured===true&&snapshot.refreshSchedule?.verified===true)authorization.refreshSchedule={...snapshot.refreshSchedule,description:'Daily attempt at 09:17 UTC. Verified partial dataset only; GitHub Actions may run late or skip scheduled events.'};
-  const candidate=bootstrapPrivateSnapshot(snapshot,authorization);
+  const candidate=migrateHighlightlySeason(bootstrapPrivateSnapshot(snapshot,authorization));
   const players=[...candidate.players];
   if(verifiedIdentities!==null){
     if(verifiedIdentities?.provider!=='Highlightly'||verifiedIdentities?.season!=='2026-27')throw new Error('Explicit verified Highlightly identity namespace and season required');
     validateIdentityMap(verifiedIdentities);
-    const nbaIds=new Map(players.map(p=>[p.nbaId,p.providerId])),providerIds=new Map(players.map(p=>[p.providerId,p.nbaId]));
+    const nbaIds=new Map(players.filter(p=>p.nbaId!=null).map(p=>[p.nbaId,p.providerId])),providerIds=new Map(players.map(p=>[p.providerId,p.nbaId]));
     for(const person of verifiedIdentities.players){
-      if((nbaIds.has(person.nbaId)&&nbaIds.get(person.nbaId)!==person.providerId)||(providerIds.has(person.providerId)&&providerIds.get(person.providerId)!==person.nbaId))throw new Error('Verified NBA/Highlightly identity collision');
+      if((nbaIds.has(person.nbaId)&&nbaIds.get(person.nbaId)!==person.providerId)||(providerIds.get(person.providerId)!=null&&providerIds.get(person.providerId)!==person.nbaId))throw new Error('Verified NBA/Highlightly identity collision');
       // Existing pairs keep their original provenance. Names are never used to join identities.
       if(nbaIds.has(person.nbaId))continue;
-      players.push(Object.fromEntries(['nbaId','providerId','name','source','verifiedAt'].map(key=>[key,person[key]])));
+      const verified={...Object.fromEntries(['nbaId','providerId','name','source','verifiedAt'].map(key=>[key,person[key]])),playerKey:`highlightly:${person.providerId}`};
+      const index=players.findIndex(p=>p.providerId===person.providerId);
+      if(index>=0)players[index]=verified;else players.push(verified);
       nbaIds.set(person.nbaId,person.providerId);providerIds.set(person.providerId,person.nbaId);
     }
   }
-  validateIdentityMap({season:'2026-27',players});
-  return {authorization,candidate,identities:{provider:'Highlightly',season:'2026-27',players},types:{provider:'Highlightly',season:'2026-27',games:candidate.games.filter(g=>g.type!=='unknown').map(g=>({id:g.id,type:g.type,source:g.classification.source,verifiedAt:g.classification.verifiedAt}))}};
+  validateProviderRegistry({provider:'Highlightly',season:'2026-27',players});
+  candidate.players=players;
+  const byProvider=new Map(players.map(p=>[p.providerId,p]));
+  candidate.lines=candidate.lines.map(line=>({...line,playerKey:`highlightly:${line.providerId}`,nbaId:byProvider.get(line.providerId)?.nbaId??null}));
+  validateSeason(candidate);
+  const verifiedPlayers=players.filter(p=>p.nbaId!=null);validateIdentityMap({season:'2026-27',players:verifiedPlayers});
+  return {authorization,candidate,identities:{provider:'Highlightly',season:'2026-27',players:verifiedPlayers},types:{provider:'Highlightly',season:'2026-27',games:candidate.games.filter(g=>g.type!=='unknown').map(g=>({id:g.id,type:g.type,source:g.classification.source,verifiedAt:g.classification.verifiedAt}))}};
 }
 export function resumeSnapshot(current,checkpoint){
   if(!checkpoint)return current;

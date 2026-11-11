@@ -62,14 +62,13 @@ test('publication marker is bound to current run and day',async()=>isolated(asyn
  }
 }));
 
-test('hosted pending file survives a fresh worker and resolves without downloading again',async()=>isolated(async()=>{
+test('provider-primary checkpoint survives fresh worker and gains NBA mapping without downloading again',async()=>isolated(async()=>{
  await setup();const events=[];const first=await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{events.push(endpoint);if(endpoint==='/matches')return page();const b=box();b[0].boxScores[0].player={id:999,name:'Synthetic New Player'};return b;},persist:async paths=>{events.push(paths[0]);}});
- assert.ok(events.includes(PENDING));assert.ok(events.indexOf(PENDING)>events.indexOf('/box-score/2'));assert.equal(first.pendingState.games.length,1);
- const durable=JSON.parse(await fs.readFile(PENDING,'utf8'));assert.equal(JSON.stringify(durable).includes('nbaId'),false);
+ assert.equal(events.includes(PENDING),false);assert.equal(first.pendingState.games.length,0);assert.equal(first.snapshot.lines.find(l=>l.providerId===999).nbaId,null);
  const checkpoint=JSON.parse(await fs.readFile(CHECKPOINT,'utf8'));await fs.rm('.local',{recursive:true,force:true});await setup();const inputs=runnerInputs(checkpoint,{provider:'Highlightly',season:'2026-27',players:[{nbaId:9,providerId:999,name:'Synthetic New Player',source:'SYNTHETIC independently reviewed identity',verifiedAt:now}]});
  await write('.local/highlightly-candidate.json',inputs.candidate);await write('.local/highlightly-identities.json',inputs.identities);await write('.local/highlightly-game-types.json',inputs.types);
  const result=await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async()=>{throw Error('Provider forbidden');},persist:async()=>{}});
- assert.equal(result.snapshot.games.find(g=>g.id===2).statsState,'available');assert.equal(result.snapshot.lines.find(l=>l.providerId===999).nbaId,9);assert.deepEqual(JSON.parse(await fs.readFile(PENDING,'utf8')).games,[]);
+ assert.equal(result.snapshot.games.find(g=>g.id===2).statsState,'available');assert.equal(result.snapshot.lines.find(l=>l.providerId===999).nbaId,9);await assert.rejects(fs.stat(PENDING),{code:'ENOENT'});
 }));
 test('normalized pending path is explicitly permitted for durable Git checkpoints',()=>{
  const calls=[];persistGitCheckpoint([PENDING],{execute:(_,args)=>{calls.push(args);return {status:args.includes('--quiet')?1:0,stdout:PENDING+'\n'};}});assert.deepEqual(calls[0],['add','--',PENDING]);assert.deepEqual(calls.at(-1),['push','origin','HEAD:main']);
