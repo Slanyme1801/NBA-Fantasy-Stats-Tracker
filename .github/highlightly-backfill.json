@@ -310,6 +310,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:09:41.297Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:09:47.237Z"
         }
       ]
     }
@@ -4654,10 +4657,43 @@
         120,
         119
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:09:47.237Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 4,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547585,
+            "teamId": 45,
+            "providerId": 60996107,
+            "name": "Lauri Markkanen",
+            "fetchedAt": "2026-11-11T11:09:47.237Z"
+          },
+          {
+            "gameId": 1547585,
+            "teamId": 45,
+            "providerId": 64170482,
+            "name": "Jaren Jackson Jr.",
+            "fetchedAt": "2026-11-11T11:09:47.237Z"
+          },
+          {
+            "gameId": 1547585,
+            "teamId": 45,
+            "providerId": 65955512,
+            "name": "Blake Hinson",
+            "fetchedAt": "2026-11-11T11:09:47.237Z"
+          },
+          {
+            "gameId": 1547585,
+            "teamId": 64,
+            "providerId": 75924902,
+            "name": "Yves Missi",
+            "fetchedAt": "2026-11-11T11:09:47.237Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -23304,7 +23340,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 22,
+    "unmappedGames": 23,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
