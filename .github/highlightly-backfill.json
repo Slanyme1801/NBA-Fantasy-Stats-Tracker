@@ -325,6 +325,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:10:11.734Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:10:17.775Z"
         }
       ]
     }
@@ -4989,10 +4992,50 @@
         125,
         121
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:10:17.775Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 5,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547875,
+            "teamId": 35,
+            "providerId": 61002422,
+            "name": "Sam Merrill",
+            "fetchedAt": "2026-11-11T11:10:17.775Z"
+          },
+          {
+            "gameId": 1547875,
+            "teamId": 35,
+            "providerId": 70257272,
+            "name": "Jaylon Tyson",
+            "fetchedAt": "2026-11-11T11:10:17.775Z"
+          },
+          {
+            "gameId": 1547875,
+            "teamId": 35,
+            "providerId": 66477077,
+            "name": "Tristan Enaruna",
+            "fetchedAt": "2026-11-11T11:10:17.775Z"
+          },
+          {
+            "gameId": 1547875,
+            "teamId": 49,
+            "providerId": 77635712,
+            "name": "Egor Demin",
+            "fetchedAt": "2026-11-11T11:10:17.775Z"
+          },
+          {
+            "gameId": 1547875,
+            "teamId": 49,
+            "providerId": 78638597,
+            "name": "Ben Saraf",
+            "fetchedAt": "2026-11-11T11:10:17.775Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -23484,7 +23527,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 27,
+    "unmappedGames": 28,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
