@@ -370,6 +370,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:11:43.384Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:11:49.717Z"
         }
       ]
     }
@@ -5994,10 +5997,50 @@
         127,
         125
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:11:49.717Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 5,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1548103,
+            "teamId": 35,
+            "providerId": 61002422,
+            "name": "Sam Merrill",
+            "fetchedAt": "2026-11-11T11:11:49.717Z"
+          },
+          {
+            "gameId": 1548103,
+            "teamId": 35,
+            "providerId": 70257272,
+            "name": "Jaylon Tyson",
+            "fetchedAt": "2026-11-11T11:11:49.717Z"
+          },
+          {
+            "gameId": 1548103,
+            "teamId": 35,
+            "providerId": 66477077,
+            "name": "Tristan Enaruna",
+            "fetchedAt": "2026-11-11T11:11:49.717Z"
+          },
+          {
+            "gameId": 1548103,
+            "teamId": 41,
+            "providerId": 68915087,
+            "name": "Anthony Edwards",
+            "fetchedAt": "2026-11-11T11:11:49.717Z"
+          },
+          {
+            "gameId": 1548103,
+            "teamId": 41,
+            "providerId": 68895752,
+            "name": "Zyon Pullin",
+            "fetchedAt": "2026-11-11T11:11:49.717Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -24024,7 +24067,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 42,
+    "unmappedGames": 43,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
