@@ -472,6 +472,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:15:11.273Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:15:17.366Z"
         }
       ]
     }
@@ -8016,10 +8019,36 @@
         127,
         101
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:15:17.366Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 3,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1549060,
+            "teamId": 41,
+            "providerId": 68895752,
+            "name": "Zyon Pullin",
+            "fetchedAt": "2026-11-11T11:15:17.366Z"
+          },
+          {
+            "gameId": 1549060,
+            "teamId": 30,
+            "providerId": 66483617,
+            "name": "Isaiah Jackson",
+            "fetchedAt": "2026-11-11T11:15:17.366Z"
+          },
+          {
+            "gameId": 1549060,
+            "teamId": 30,
+            "providerId": 70260092,
+            "name": "Blake Wesley",
+            "fetchedAt": "2026-11-11T11:15:17.366Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=2",
@@ -26227,7 +26256,7 @@
     "verifiedRegularBoxScores": 25,
     "verifiedBoxScores": 25,
     "sourceFailureGames": 1,
-    "unmappedGames": 74,
+    "unmappedGames": 75,
     "unclassifiedGames": 0,
     "pendingGames": 135,
     "inventoryTotal": 405,
