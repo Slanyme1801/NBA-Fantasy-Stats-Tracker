@@ -319,11 +319,11 @@ function compareCurrentTable(players,{asOf=new Date()}={}){
     const dates=range.start?`${range.start} au ${range.end} · UTC`:`Jusqu’au ${range.end} · UTC`;
     const cells=players.map(p=>{
       const a=core.aggregate(data,p.player_id,{days,asOf,weights:META.scoring});
-      return `<td>${a.gp?`<strong class="fpts num">${fmt(a.fptsPerGame)} <small>FP / match</small></strong><div class="small">${a.gp} MJ · ${fmt(a.minutes)} MIN / match${data.minutesPrecision==='rounded-whole-minute'?' ≈':''}</div>`:'<strong>—</strong><div class="small">0 match complet · moyenne et minutes indisponibles</div>'}<div class="small muted">${a.dnp} non-participation(s) · ${a.missing} ligne(s) manquante(s)</div></td>`;
+      return `<td>${a.gp?`<strong class="fpts num">${fmt(a.fptsPerGame)} <small>FP / match</small></strong><div class="small">${a.gp} MJ · ${fmt(a.minutes)} MIN / match${data.minutesPrecision==='rounded-whole-minute'?' ≈':''}</div>`:'<strong>—</strong><div class="small">0 match complet · moyenne et minutes indisponibles</div>'}</td>`;
     }).join('');
     return `<tr><th scope="row">${label}<small style="display:block;font-weight:400">${dates}</small></th>${cells}</tr>`;
   }).join('');
-  return `<section class="panel compare-current"><h3>Forme actuelle comparée</h3><p class="small muted">Même période et même barème pour tous. Échantillon importé partiel, pas une saison complète. Les moyennes et minutes portent uniquement sur les matchs joués disponibles ; une donnée absente ne vaut pas zéro. Les périodes incluent aujourd’hui en UTC.</p><div class="scroll" tabindex="0" role="region" aria-label="Comparaison des moyennes, matchs joués et minutes par période"><table class="compare-periods"><caption class="small">Moyenne fantasy, matchs joués (MJ) et minutes par match (MIN) · ${data.minutesPrecision==='rounded-whole-minute'?'minutes approximatives selon la source':'minutes des matchs importés'}</caption><thead><tr><th scope="col">Période</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div></section>`;
+  return `<section class="panel compare-current"><h3>Forme actuelle comparée</h3><p class="small muted">Même période et même barème pour tous · matchs disponibles.</p><div class="scroll" tabindex="0" role="region" aria-label="Comparaison des moyennes, matchs joués et minutes par période"><table class="compare-periods"><caption class="small">Moyenne fantasy, matchs joués (MJ) et minutes par match (MIN)</caption><thead><tr><th scope="col">Période</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div></section>`;
 }
 
 function compareChart(players){

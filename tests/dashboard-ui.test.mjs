@@ -20,7 +20,7 @@ test('home emits top 10, sample/date warnings, accessible period buttons and ran
  const h=harness();h.context.renderHome();
  assert.match(h.node('hero').html,/role="group"/);assert.match(h.node('dashboardBody').html,/aria-roledescription="carrousel"/);
  assert.equal((h.node('dashboardBody').html.match(/class="dashboard-player"/g)||[]).length,10);
- assert.match(h.node('dashboardBody').html,/pas un classement complet de la ligue/);
+ assert.doesNotMatch(h.node('dashboardBody').html,/dashboard-warning|Données au :|feuilles de statistiques/);
  for(const period of ['7','14','30','night']){
  h.buttons.get(period).onclick();assert.equal(h.buttons.get(period)['aria-pressed'],true);
  h.node('dashboardRankings').onclick();assert.equal(h.context.page,'board');assert.equal(h.node('fDashboardPeriod').value,period);assert.equal(h.node('fSeason').value,core.SEASON);assert.equal(h.node('fSort').value,'season_fpts');assert.equal(h.node('averageOption').textContent,'Moyenne fantasy sur la période');

@@ -46,8 +46,8 @@ test('provider routes and inline arguments reject injection and round-trip safe 
 });
 test('profile, rankings, comparison and trades render quoted string IDs and missing samples',async()=>{
  const a=await app(sample(),{ui:true});await a.run("openPlayer('highlightly:101')");assert.match(a.node('currentProfile').innerHTML,/Historique des matchs · 1 enregistrements/);assert.match(a.node('view').innerHTML,/Unmapped Alpha/);
- assert.match(a.node('currentProfile').innerHTML,/2 lignes de joueur attendent une liaison à l’historique NBA ; les statistiques disponibles sont incluses/);assert.doesNotMatch(a.node('currentProfile').innerHTML,/await verified player identities/);
- await a.run("openPlayer('highlightly:102')");assert.match(a.node('currentProfile').innerHTML,/Un échantillon vide ne signifie pas une performance nulle/);
+ assert.doesNotMatch(a.node('currentProfile').innerHTML,/lignes de joueur attendent une liaison/);assert.doesNotMatch(a.node('currentProfile').innerHTML,/await verified player identities/);
+ await a.run("openPlayer('highlightly:102')");assert.match(a.node('currentProfile').innerHTML,/Aucune ligne de match complète/);
  a.run("go('board')");a.node('fSeason').value='2026-27';await a.run('loadBoard()');assert.match(a.node('boardTable').innerHTML,/openPlayer\(&quot;highlightly:101&quot;\)/);
  await a.run("addComparePlayer('highlightly:101');");await a.run("addComparePlayer('highlightly:102');");assert.match(a.node('compareChips').innerHTML,/removeComparePlayer\(&quot;highlightly:101&quot;\)/);assert.match(a.node('compareBody').innerHTML,/Unmapped Alpha/);
  a.run("removeComparePlayer('highlightly:101')");assert.doesNotMatch(a.node('compareChips').innerHTML,/Unmapped Alpha/);
@@ -74,4 +74,13 @@ test('similar-player buttons retain provider keys and never invent positional el
  a.node('similarPeriod').value='season';a.node('similarMode').value='fpts';a.node('similarTolerance').value='5';a.node('similarMin').value='1';a.run('renderSimilar()');
  assert.match(a.node('similarResults').innerHTML,/openPlayer\(&quot;highlightly:102&quot;\)/);
  a.node('similarMode').value='positions';a.run('renderSimilar()');assert.match(a.node('similarResults').innerHTML,/Éligibilité ESPN vérifiée manquante/);
+});
+
+test('technical provenance is centralized on data page, absent from home and trades',async()=>{
+ const a=await app(sample(),{ui:true});
+ a.run("go('home')");assert.doesNotMatch(a.node('view').innerHTML+a.node('view.hero').innerHTML,/Source récupérée|Données normalisées|feuilles de match différées/);
+ a.run("go('trades')");assert.doesNotMatch(a.node('view').innerHTML,/Source récupérée|Données normalisées|État des données/);
+ a.run("go('data')");
+ const html=a.node('view').innerHTML+a.node('viewh2').innerHTML;
+ assert.match(html,/Lecture des chiffres/);assert.match(html,/Source récupérée/);assert.match(html,/Données normalisées/);assert.match(html,/lignes de joueur attendent une liaison/);assert.match(html,/Minutes|minutes/);assert.match(html,/Feuilles disponibles/);
 });

@@ -53,8 +53,8 @@ test('profile labels sample averages, scoped missing-game counts and rounded min
   vm.runInContext(source.slice(source.indexOf('function renderCurrentProfile(){'),source.indexOf('function renderSimilar(){')),c);
   vm.runInContext('renderCurrentProfile()',c);
   const html=nodes.currentProfile.innerHTML;
-  assert.match(html,/Moyenne de l’échantillon/);assert.match(html,/Dans l’échantillon importé : 0/);
-  assert.match(html,/Ce nombre n’inclut pas tous les matchs manquants de la ligue/);assert.doesNotMatch(html,/League coverage:/);
+  assert.match(html,/Moyenne de l’échantillon/);assert.doesNotMatch(html,/Dans l’échantillon importé :/);
+  assert.doesNotMatch(html,/Dates des requêtes|Données normalisées|Source récupérée/);assert.doesNotMatch(html,/League coverage:/);
   assert.match(html,/<th>MIN ≈<\/th>/);assert.match(html,/<td>≈ 30<\/td>/);
 });
 test('coverage distinguishes previously deferred box scores from NBA identity links',()=>{const d=fixture();d.games[0].refreshIssue={code:'unmapped-players',unmappedPlayerCount:1,preservedPreviousBoxScore:true};const html=vm.runInContext('coverageDetails(currentData)',context(d));assert.match(html,/1 feuilles de match différées attendent leur import par identifiant fournisseur/);assert.match(html,/1 conservent une ancienne feuille vérifiée/);assert.match(html,/La liaison NBA n’est pas nécessaire/);assert.doesNotMatch(html,/await verified player identities/);});

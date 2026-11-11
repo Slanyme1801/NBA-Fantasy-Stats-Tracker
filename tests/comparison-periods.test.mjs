@@ -25,13 +25,13 @@ test('current comparison shows exact season/7/14/30 averages and minutes with st
   assert.ok(rows[i].includes(`${expected.fptsPerGame.toFixed(1)} <small>FP / match</small>`));
   assert.ok(rows[i].includes(`${expected.gp} MJ · ${expected.minutes.toFixed(1)} MIN / match ≈`));
  }
- assert.match(html,/openPlayer\(&quot;highlightly:101&quot;\)/);assert.match(html,/Alpha &lt;test&gt;/);assert.match(html,/Échantillon importé partiel/);assert.match(html,/tabindex="0"/);
+ assert.match(html,/openPlayer\(&quot;highlightly:101&quot;\)/);assert.match(html,/Alpha &lt;test&gt;/);assert.match(html,/matchs disponibles/);assert.match(html,/tabindex="0"/);
  assert.match(rows[1],/2026-11-09 au 2026-11-15/);assert.match(rows[2],/2026-11-02 au 2026-11-15/);
 });
 test('missing or DNP samples never become zero averages or historical substitutes',()=>{
  const a=setup();a.context.players[1].seasons=[{season:'2025-26',gp:82,fpts_per_game:99}];const html=a.render();
  assert.equal((html.match(/0 match complet · moyenne et minutes indisponibles/g)||[]).length,4);
- assert.match(html,/1 non-participation\(s\) · 1 ligne\(s\) manquante\(s\)/);assert.doesNotMatch(html,/99\.0/);
+ assert.doesNotMatch(html,/non-participation\(s\) ·/);assert.doesNotMatch(html,/99\.0/);
 });
 test('comparison uses current custom scoring and reports unavailable current dataset without hiding history',()=>{
  const a=setup();vm.runInContext('META.scoring={...META.scoring,pts:3}',a.context);
