@@ -3,6 +3,10 @@ const SEASONS = [];
 let META = null, CURRENT = null, sortState = {key:"season", dir:"asc"};
 const fmt = (v, d=1) => (v===null||v===undefined||Number.isNaN(v)) ? "—" : Number(v).toFixed(d);
 const el = id => document.getElementById(id);
+const playerArg=id=>window.PlayerIdentity.inlineArg(id);
+const canonicalPlayerId=id=>window.PlayerIdentity.canonical(id);
+const playerPath=id=>'/api/player/'+window.PlayerIdentity.path(id);
+const safeText=value=>window.PlayerIdentity.html(value);
 const identityLabel = p => String(p.identity_label || [p.position ? `Historical position: ${p.position}` : '',p.last_team ? `Historical team: ${p.last_team}` : ''].filter(Boolean).join(' · ')).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 async function api(path, opts){
@@ -23,7 +27,7 @@ function wireSearch(input, box, onSelect){
     items.forEach((p,i) => {
       const d = document.createElement("div");
       if(i===sel) d.className = "sel";
-      d.innerHTML = `<span>${p.full_name}</span><small>${identityLabel(p)}</small>`;
+      d.innerHTML = `<span>${safeText(p.full_name)}</span><small>${identityLabel(p)}</small>`;
       d.onmousedown = e => { e.preventDefault(); close(); input.value=""; select(p); };
       box.appendChild(d);
     });
@@ -99,7 +103,7 @@ function metaFooter(){
 async function openPlayer(id){
   ["home","board","compare","trades","data"].forEach(p => el("tab-"+p).classList.remove("active"));
   el("view").innerHTML = `<p class="dim">Loading…</p>`;
-  CURRENT = await api("/api/player/" + id);
+  CURRENT = await api(playerPath(id));
   sortState = {key:"season", dir:"asc"};
   renderPlayer();
 }
@@ -109,7 +113,7 @@ function renderPlayer(){
   const played = p.seasons.filter(x => x.played && x.season !== "2026-27");
   el("view").innerHTML = `
     <div class="player-head">
-      <h2>${p.full_name}</h2>
+      <h2>${safeText(p.full_name)}</h2>
       <span class="sub">${identityLabel(p)}</span>
     </div>
     <div class="cards">
@@ -261,18 +265,20 @@ function renderChips(){
     const p = comparePlayers[id];
     const name = p ? p.full_name : "…";
     return `<span class="chip" style="border-color:${COMPARE_COLORS[i]}">
-      <i style="background:${COMPARE_COLORS[i]}"></i>${name}
-      <button onclick="removeComparePlayer(${id})" aria-label="Remove">×</button></span>`;
+      <i style="background:${COMPARE_COLORS[i]}"></i>${safeText(name)}
+      <button onclick="removeComparePlayer(${playerArg(id)})" aria-label="Remove">×</button></span>`;
   }).join("") || `<span class="dim" style="font-size:13.5px">No player selected yet.</span>`;
 }
 
 async function addComparePlayer(id){
+  id=canonicalPlayerId(id);if(id===null)return;
   if(compareIds.includes(id) || compareIds.length>=4) return;
   compareIds.push(id);
-  if(!comparePlayers[id]) comparePlayers[id] = await api("/api/player/"+id);
+  if(!comparePlayers[id]) comparePlayers[id] = await api(playerPath(id));
   renderCompare();
 }
 function removeComparePlayer(id){
+  id=canonicalPlayerId(id);
   compareIds = compareIds.filter(x => x!==id);
   renderCompare();
 }
@@ -288,7 +294,7 @@ async function loadCompareBody(){
     <div class="panel">
       <h3>Fantasy points per game by season</h3>
       <div class="legend">${players.map((p,i) =>
-        `<span><i style="background:${COMPARE_COLORS[i]}"></i>${p.full_name}</span>`).join("")}</div>
+        `<span><i style="background:${COMPARE_COLORS[i]}"></i>${safeText(p.full_name)}</span>`).join("")}</div>
       ${compareChart(players)}
     </div>
     <div class="panel">
@@ -331,7 +337,7 @@ function compareChart(players){
 
 function compareTable(players){
   const head = `<th>Season</th>` + players.map((p,i) =>
-    `<th class="fpts" style="color:${COMPARE_COLORS[i]}">${p.full_name}</th>`).join("");
+    `<th class="fpts" style="color:${COMPARE_COLORS[i]}">${safeText(p.full_name)}</th>`).join("");
   const rows = SEASONS.map((s,i) => {
     const cells = players.map(p => {
       const season = p.seasons[i];
@@ -395,8 +401,8 @@ async function loadBoard(){
       <th>5Y FPTS/G</th><th class="fpts">Weighted FPTS/G</th>
       <th>${season || "2025-26"} FPTS/G</th><th>GP</th><th>Total FP ≈ historical</th></tr></thead>
     <tbody>${results.map(r => `
-      <tr class="clickable" onclick="openPlayer(${r.player_id})">
-        <td>${r.rank}</td><td>${r.full_name}</td><td>${r.team||"—"}</td><td>${r.position||"—"}</td>
+      <tr class="clickable" onclick="openPlayer(${playerArg(r.player_id)})">
+        <td>${r.rank}</td><td>${safeText(r.full_name)}</td><td>${r.team||"—"}</td><td>${r.position||"—"}</td>
         <td class="num">${fmt(r.simple_avg)}</td>
         <td class="fpts num">${fmt(r.weighted_avg)}</td>
         <td class="num">${r.season_fpts===null?"—":fmt(r.season_fpts)}</td>
@@ -445,7 +451,7 @@ async function saveScoring(){
   Object.keys(META.stat_labels).forEach(k => weights[k] = parseFloat(el("w-"+k).value));
   await api("/api/scoring", {method:"PUT", headers:{"Content-Type":"application/json"},
     body: JSON.stringify({weights})});
-  await loadMeta(); comparePlayers = {}; for(const id of compareIds) comparePlayers[id] = await api("/api/player/"+id); renderData();
+  await loadMeta(); comparePlayers = {}; for(const id of compareIds) comparePlayers[id] = await api(playerPath(id)); renderData();
 }
 async function resetScoring(){
   const d = {pts:1,fg3m:1,fgm:2,fga:-1,ftm:1,fta:-1,reb:1,ast:2,stl:4,blk:4,tov:-2};

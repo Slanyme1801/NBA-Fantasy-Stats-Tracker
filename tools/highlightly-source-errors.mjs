@@ -11,5 +11,5 @@ const codes={
  'Points do not reconcile':'points-mismatch',
  'Box-score points do not reconcile with final score':'final-score-mismatch'
 };
-export const SOURCE_ERROR_CODES=new Set([...Object.values(codes),'malformed-structure','official-reference-mismatch','official-reference-unverifiable','official-participation-conflict']);
+export const SOURCE_ERROR_CODES=new Set([...Object.values(codes),'malformed-structure','official-reference-mismatch','official-reference-unverifiable','official-participation-conflict','official-participation-review']);
 export const sourceErrorCode=message=>codes[message]||'malformed-structure';

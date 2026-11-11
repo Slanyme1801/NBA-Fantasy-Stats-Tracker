@@ -16,7 +16,7 @@ test('reject missing/invalid counters, duplicated stats/player/team, and inconsi
   for(const mutate of [b=>b[0].boxScores[0].statistics.pop(),b=>b[0].boxScores[0].statistics[0].value=null,b=>b[0].boxScores[0].statistics[0].value=21,b=>b[0].boxScores[0].statistics.push(b[0].boxScores[0].statistics[0]),b=>b[0].boxScores.push(b[0].boxScores[0]),b=>b[1].team.id=10,b=>b[0].boxScores[0].statistics.at(-1).value=5]){const b=box();mutate(b);assert.throws(()=>normalizeBoxScore(b,game(),identities().players,now));}
   const g=game();g.finalScores[0]=21;assert.throws(()=>normalizeBoxScore(box(),g,identities().players,now),/final score/);
 });
-test('identities require provenance and provider namespace; no name joining',async()=>{await assert.rejects(collect({identities:{...identities(),provider:'API-NBA / API-Sports'}}),/namespace/);await assert.rejects(collect({identities:{...identities(),players:[]}}),/Unmapped/);const ids=identities();ids.players[0].source='';await assert.rejects(collect({identities:ids}),/provenance|source/);});
+test('identities require provenance and provider namespace; no name joining',async()=>{await assert.rejects(collect({identities:{...identities(),provider:'API-NBA / API-Sports'}}),/namespace/);const observed=await collect({identities:{...identities(),players:[]}});assert.equal(observed.schemaVersion,2);assert.equal(observed.lines[0].nbaId,null);assert.equal(observed.lines[0].playerKey,'highlightly:101');const ids=identities();ids.players[0].source='';await assert.rejects(collect({identities:ids}),/provenance|source/);});
 test('unknown classification excluded and no box score fetched',async()=>{let calls=0;const r=await collect({types:{...types(),games:[]},client:async()=>{calls++;return envelope();}});assert.equal(calls,1);assert.equal(r.games[0].type,'unknown');assert.equal(r.lines.length,0);});
 test('reject malformed envelope, pagination, season, status and dates',()=>{assert.throws(()=>parseMatches({...envelope(),plan:{tier:'PRO'}}));assert.throws(()=>parseMatches({...envelope(),pagination:{totalCount:2,offset:0,limit:100},data:[]}));assert.throws(()=>normalizeMatch({...match(),season:2026},new Map()));assert.throws(()=>normalizeMatch({...match(),state:{description:'Mystery'}},new Map()));assert.throws(()=>datesInRange('2026-02-30','2026-03-01'));assert.throws(()=>datesInRange('2026-11-01','2026-12-02'));});
 test('duplicates and wrong local-day schedules fail closed',async()=>{await assert.rejects(collect({client:async()=>envelope([match(),match()])}),/Duplicate match/);await assert.rejects(collect({client:async()=>envelope([{...match(),date:'2026-11-15T02:00:00Z'}])}),/local date/);});
@@ -31,3 +31,11 @@ test('server remaining zero or malformed quota blocks subsequent requests',async
   }
 });
 test('server quota consumption outside collector is persisted conservatively',async()=>{const ledger={provider:PROVIDER,requests:[]};const client=makeHighlightlyClient({key:'SYNTHETIC',ledger,saveLedger:async()=>{},fetcher:async()=>({ok:true,headers:new Headers({'x-ratelimit-requests-limit':'100','x-ratelimit-requests-remaining':'97'}),json:async()=>box()})});await client('/box-score/1');assert.equal(ledger.requests.length,3);});
+
+test('unknown played and empty provider rows are retained with distinct keys and no invented NBA IDs',async()=>{
+ const b=box();b[0].boxScores.push({player:{id:103,name:'Synthetic Label'},statistics:[]});b[0].boxScores[0].player.name='Synthetic Label';
+ const result=await collect({identities:{...identities(),players:[]},client:async endpoint=>endpoint==='/matches'?envelope():b});
+ assert.equal(result.players.length,3);assert.equal(result.lines.length,3);assert.ok(result.players.every(p=>p.nbaId===null));
+ assert.equal(aggregate(result,'highlightly:101',{asOf:now}).gp,1);assert.equal(aggregate(result,'highlightly:103',{asOf:now}).gp,0);assert.equal(result.lines.find(l=>l.providerId===103).stats,null);
+ assert.equal(result.games[0].statsState,'available');assert.notEqual(result.players[0].playerKey,result.players[1].playerKey);
+});

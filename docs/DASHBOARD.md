@@ -33,7 +33,7 @@ backfill publication until the import is finished or the owner explicitly approv
 
 ## Verification
 
-Run `node --test tests/dashboard*.test.mjs` for twelve focused tests: calendar and night
+Run `node --test tests/dashboard*.test.mjs` for fifteen focused tests: calendar and night
 boundaries, missing games, zero, exclusions, custom weights, filters, top-ten cap,
 ranking navigation, historical fallback, session restoration and offline assets.
 The UI harness tests rendering/event contracts, not actual browser layout.
@@ -65,3 +65,25 @@ not deploy the dashboard or authorize a merge while the import is incomplete.
 - Latest browser attempt still fails at Chromium startup in this execution
   environment. Actual desktop/mobile layout and browser interaction QA remain
   outstanding; the passing VM harness verifies event/rendering contracts only.
+
+
+## Provider identity compatibility — 2026-11-11
+
+Integrated main `e166f892` (provider-first identities) without changing main or
+publishing the dashboard. The dashboard now resolves each current player through
+`playerIdFor` and matches game lines with the stable provider key. Provider-only
+IDs stay strings through home and ranking clicks. Unlinked rows explicitly say
+“NBA history link pending”; their current stats remain included.
+
+New tests use the real adapter and profile renderer to verify distinct provider
+players with the same name and no NBA link, per-player totals/teams, missing
+samples, actual click handlers, absent historical records, and later NBA mapping
+without duplicate rows or double-counted games. Existing numeric NBA routes and
+historic profiles remain compatible. All 235 tests passed, including 15 dashboard
+tests; data validation and syntax checks passed.
+
+Relative to this main base, all data, identity configuration, quota state,
+collectors, frontend adapter/core and workflows remain unchanged. The inherited
+snapshot still contains 25 box scores; the updated verified registry now has 70
+entries (main added one). The cron remains 09:17 UTC. Browser visual QA remains
+outstanding for the previously documented environment restriction.

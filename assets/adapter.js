@@ -2,23 +2,29 @@
   const historical=window.LegacyApi, core=window.FantasyCore, data=window.CurrentLoad.data;
   const response=body=>({ok:true,json:async()=>body});
   const historicalIds=new Set(window.__DATASET.players.map(p=>p[0]));
-  const eligibility=id=>data.positions.entries.find(p=>p.nbaId===id);
+  const parseId=id=>typeof id==='number'&&Number.isSafeInteger(id)&&id>0?id:typeof id==='string'&&/^[1-9]\d*$/.test(id)&&Number.isSafeInteger(Number(id))?Number(id):typeof id==='string'&&/^highlightly:[1-9]\d*$/.test(id)&&Number.isSafeInteger(Number(id.split(':')[1]))?id:null;
+  const canonical=id=>{const parsed=parseId(id);if(parsed===null)return null;const p=core.findPlayer(data,parsed);return p?core.playerIdFor(p):parsed;};
+  const matches=(row,id)=>{const p=core.findPlayer(data,id);return p?core.playerKeyFor(row)===core.playerKeyFor(p):typeof id==='number'&&row.nbaId===id;};
+  const html=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  window.PlayerIdentity={canonical,matches,html,inlineArg:id=>html(JSON.stringify(canonical(id))),path:id=>encodeURIComponent(String(canonical(id)))};
+  const eligibility=id=>{const resolved=canonical(id);return typeof resolved==='number'?data.positions.entries.find(p=>p.nbaId===resolved):undefined;};
   const norm=s=>s.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   const identityMetadata=person=>{
     const id=person.player_id,verifiedPosition=eligibility(id)?.positions.join('/')||null;
     const historicalPosition=person.position||null,historicalTeam=person.last_team||null;
     const games=new Map(data.games.map(g=>[g.id,g]));
-    const latest=data.lines.filter(r=>r.nbaId===id&&r.participation==='played'&&games.get(r.gameId)?.status==='finished'&&games.get(r.gameId)?.statsState==='available')
+    const latest=data.lines.filter(r=>matches(r,id)&&r.participation==='played'&&games.get(r.gameId)?.status==='finished'&&games.get(r.gameId)?.statsState==='available')
       .sort((a,b)=>games.get(b.gameId).start.localeCompare(games.get(a.gameId).start)||b.gameId-a.gameId)[0];
     const game=latest?games.get(latest.gameId):null,team=game?(latest.teamId===game.home.id?game.home.code:game.away.code):null;
     const positionLabel=verifiedPosition?`ESPN ${core.SEASON}: ${verifiedPosition}`:historicalPosition?`Historical position: ${historicalPosition} · ESPN not imported`:'ESPN position not imported';
     const teamLabel=team?`Latest imported team: ${team} (${game.start.slice(0,10)} UTC)`:historicalTeam?`Historical team: ${historicalTeam}`:'Team not available';
-    return {...person,position:verifiedPosition,last_team:team||historicalTeam,historical_position:historicalPosition,historical_last_team:historicalTeam,team_as_of:game?.start||null,team_basis:team?'latest-verified-import':historicalTeam?'historical':'unavailable',identity_label:`${positionLabel} · ${teamLabel}`};
+    const mapped=core.findPlayer(data,id),pending=mapped&&mapped.nbaId==null;
+    return {...person,player_key:mapped?core.playerKeyFor(mapped):null,identity_pending:!!pending,position:verifiedPosition,last_team:team||historicalTeam,historical_position:historicalPosition,historical_last_team:historicalTeam,team_as_of:game?.start||null,team_basis:team?'latest-verified-import':historicalTeam?'historical':'unavailable',identity_label:`${pending?'NBA identity link pending · ':''}${positionLabel} · ${teamLabel}`};
   };
   const weights=async()=> (await (await historical('/api/scoring')).json()).scoring;
   const seasonRow=(id,w)=>{
     const a=core.aggregate(data,id,{weights:w});
-    const teamIds=[...new Set(data.lines.filter(r=>r.nbaId===id).map(r=>r.teamId))];
+    const teamIds=[...new Set(data.lines.filter(r=>matches(r,id)).map(r=>r.teamId))];
     const teams=[...new Map(data.games.flatMap(g=>[g.home,g.away]).map(t=>[t.id,t.code])).entries()].filter(([id])=>teamIds.includes(id)).map(([,code])=>code);
     return {season:core.SEASON,played:a.gp>0,gp:a.gp,...a.averages,min:a.minutes,fpts_per_game:a.fptsPerGame,total_fpts:a.totalFpts,team:teams.join('/'),teams_label:teams.join('/'),team_count:teams.length,exact:true,note:data.connection==='not-connected'?'Not connected':'No complete regular-season games',aggregate:a};
   };
@@ -30,14 +36,16 @@
     }
     if(url.pathname==='/api/meta') {
       const meta=await (await historical(path,options)).json();
-      return response({...meta,players:new Set([...historicalIds,...data.players.map(p=>p.nbaId)]).size,teams:[...new Set([...meta.teams,...data.games.flatMap(g=>[g.home.code,g.away.code])])].sort(),seasons:[...meta.seasons,core.SEASON],rows_per_season:{...meta.rows_per_season,[core.SEASON]:data.players.length},current:data,scoring_name:core.scoringName(meta.scoring)});
+      return response({...meta,players:new Set([...historicalIds,...data.players.map(p=>core.playerIdFor(p))]).size,teams:[...new Set([...meta.teams,...data.games.flatMap(g=>[g.home.code,g.away.code])])].sort(),seasons:[...meta.seasons,core.SEASON],rows_per_season:{...meta.rows_per_season,[core.SEASON]:data.players.length},current:data,scoring_name:core.scoringName(meta.scoring)});
     }
     if(url.pathname.startsWith('/api/player/')){
-      const id=Number(url.pathname.split('/').pop());
+      let raw;try{raw=decodeURIComponent(url.pathname.split('/').pop());}catch{return {ok:false,json:async()=>({detail:'Invalid player ID'})};}
+      const id=canonical(raw);
+      if(id===null)return {ok:false,json:async()=>({detail:'Invalid player ID'})};
       let p;
-      if(historicalIds.has(id))p=await (await historical(path,options)).json();
+      if(historicalIds.has(id))p=await (await historical('/api/player/'+id,options)).json();
       else {
-        const person=data.players.find(p=>p.nbaId===id);if(!person) return historical(path,options);
+        const person=core.findPlayer(data,id);if(!person) return {ok:false,json:async()=>({detail:'Player not found'})};
         p={player_id:id,full_name:person.name,position:null,last_team:null,summary:{simple_avg:null,weighted_avg:null,total_fpts:null,total_gp:0,seasons_played:0,best_season:null},seasons:window.__DATASET.seasons.map(season=>({season,played:false,note:'No historical record'})),scoring:await weights()};
       }
       p.seasons.push(seasonRow(id,p.scoring));p.eligibility=eligibility(id);return response(identityMetadata(p));
@@ -45,14 +53,14 @@
     if(url.pathname==='/api/search') {
       const results=(await (await historical(path,options)).json()).results;
       const q=norm(url.searchParams.get('q')||'');
-      if(q)for(const p of data.players.filter(p=>!historicalIds.has(p.nbaId)&&norm(p.name).includes(q)))results.push({player_id:p.nbaId,full_name:p.name,position:null,last_team:null});
+      if(q)for(const p of data.players.filter(p=>!historicalIds.has(p.nbaId)&&norm(p.name).includes(q)))results.push({player_id:core.playerIdFor(p),full_name:p.name,position:null,last_team:null});
       return response({results:results.slice(0,12).map(identityMetadata)});
     }
     if(url.pathname==='/api/leaderboard') {
       const season=url.searchParams.get('season');
       if(season===core.SEASON){
         const w=await weights(),min=Number(url.searchParams.get('min_gp')||0),pos=url.searchParams.get('position'),team=url.searchParams.get('team');
-        const rows=data.players.map(p=>{const r=seasonRow(p.nbaId,w);return {player_id:p.nbaId,full_name:p.name,position:eligibility(p.nbaId)?.positions.join('/')||null,team:r.team,season_fpts:r.fpts_per_game,season_gp:r.gp,total_gp:r.gp,total_fpts:r.total_fpts,simple_avg:r.fpts_per_game,weighted_avg:r.fpts_per_game};})
+        const rows=data.players.map(p=>{const r=seasonRow(core.playerIdFor(p),w);return {player_id:core.playerIdFor(p),full_name:p.name,position:eligibility(p.nbaId)?.positions.join('/')||null,team:r.team,season_fpts:r.fpts_per_game,season_gp:r.gp,total_gp:r.gp,total_fpts:r.total_fpts,simple_avg:r.fpts_per_game,weighted_avg:r.fpts_per_game};})
           .filter(r=>r.season_gp>0&&r.season_gp>=min&&(!pos||r.position?.split('/').includes(pos))&&(!team||r.team.split('/').includes(team)));
         const key={gp:'season_gp',name:'full_name'}[url.searchParams.get('sort')]||url.searchParams.get('sort')||'season_fpts';
         rows.sort((a,b)=>key==='full_name'?a[key].localeCompare(b[key]):(b[key]??0)-(a[key]??0));

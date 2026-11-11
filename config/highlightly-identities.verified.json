@@ -484,6 +484,13 @@
       "name": "Tyler Nickel",
       "source": "Official NBA profile name + team NY: https://www.nba.com/player/1643589; corroborates provider game 1549056 team 26 on 2026-10-30",
       "verifiedAt": "2026-11-11T11:16:12.530Z"
+    },
+    {
+      "nbaId": 1631104,
+      "providerId": 70260092,
+      "name": "Blake Wesley",
+      "source": "NBA identity + dated LAC appearance: https://www.nba.com/player/1631104/blake-wesley/bio; https://www.nba.com/clippers/player/1631104/blake_wesley; https://nba.highlightly.net/box-score/1549060",
+      "verifiedAt": "2026-11-11T12:25:45.145Z"
     }
   ]
 }

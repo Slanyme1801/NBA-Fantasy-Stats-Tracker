@@ -1,6 +1,6 @@
 // Synthetic tests: never run hosted setup or access a real provider/private workspace.
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';
-import {reserveDailyBudget,runnerInputs,resumeSnapshot} from '../tools/highlightly-actions.mjs';import {fixture,now,player} from './fixtures.mjs';import {publicHighlightlySnapshot} from '../tools/highlightly-public.mjs';
+import {reserveDailyBudget,runnerInputs,resumeSnapshot} from '../tools/highlightly-actions.mjs';import {migrateHighlightlySeason} from '../assets/core.mjs';import {fixture,now,player} from './fixtures.mjs';import {publicHighlightlySnapshot} from '../tools/highlightly-public.mjs';
 const options={now:new Date('2026-11-20T09:00:00Z'),runId:'123'};
 const snapshot=()=>{const d=fixture();d.provider='Highlightly';d.scope={startDate:'2026-11-14',endDate:'2026-11-14',timeZone:'America/New_York',completeSeason:false};d.games.forEach(g=>g.provider='Highlightly');d.lines.forEach(l=>l.provider='Highlightly');return publicHighlightlySnapshot(d,{provider:'Highlightly',season:'2026-27',publicationAllowed:true,publicDatasetAllowed:true,approvedBy:'repository-owner',publicScope:'normalized-fantasy-stats',confirmedAt:now,source:'SYNTHETIC owner attestation'});};
 test('durable reservation blocks every second attempt on same UTC day including retry after failure',()=>{const r=reserveDailyBudget(null,options);assert.equal(r.reservedRequests,90);assert.throws(()=>reserveDailyBudget(r,options),/already reserved/);assert.throws(()=>reserveDailyBudget(r,{...options,runId:'124'}),/already reserved/);assert.equal(reserveDailyBudget(r,{...options,now:new Date('2026-11-21T09:00:00Z')}).dayUTC,'2026-11-21');});
@@ -18,7 +18,7 @@ test('workflow publishes durable partial progress even when collection fails aft
 test('verified hosted scheduling metadata uses the deployed off-hour cron without inventing activation',()=>{const d=snapshot();d.refreshSchedule={configured:true,verified:true,description:'Prior verified schedule'};assert.match(runnerInputs(d).authorization.refreshSchedule.description,/09:17 UTC/);d.refreshSchedule.verified=false;assert.equal(runnerInputs(d).authorization.refreshSchedule,undefined);});
 
 test('optional verified identity supplement preserves absent behavior and all existing mappings',()=>{
- const current=snapshot(),before=structuredClone(current);
+ const current=migrateHighlightlySeason(snapshot()),before=structuredClone(current);
  assert.deepEqual(runnerInputs(current).identities.players,current.players);
  assert.deepEqual(runnerInputs(current,null).identities.players,current.players);
  const additional={...player(4),name:current.players[0].name,extra:'must not be copied'};
@@ -26,7 +26,7 @@ test('optional verified identity supplement preserves absent behavior and all ex
  const inputs=runnerInputs(current,supplemental);
  assert.equal(inputs.identities.players.length,4);assert.deepEqual(inputs.identities.players.slice(0,3),current.players);
  assert.equal(inputs.identities.players[3].nbaId,4);assert.equal(inputs.identities.players[3].extra,undefined);
- assert.deepEqual(current,before);assert.deepEqual(inputs.candidate.players,current.players);
+ assert.deepEqual(current,before);assert.equal(inputs.candidate.players.length,4);assert.deepEqual(inputs.candidate.players.slice(0,3),current.players);
 });
 test('verified identity supplement rejects wrong namespace, invalid provenance, duplicates and both collision directions',()=>{
  const current=snapshot(),document={provider:'Highlightly',season:'2026-27',players:[player(4)]};
@@ -45,4 +45,12 @@ test('committed identity supplement validates against the currently published id
  const r=runnerInputs(current,extra);
  assert.ok(r.identities.players.length>=current.players.length);
  for(const p of current.players)assert.ok(r.identities.players.some(x=>x.nbaId===p.nbaId&&x.providerId===p.providerId));
+});
+
+test('runner upgrades provider-only identities and all existing lines without rekeying or name joins',()=>{
+ const current=migrateHighlightlySeason(snapshot());const unknown=current.players[0];unknown.nbaId=null;current.positions.entries=current.positions.entries.filter(p=>p.nbaId!==1);current.lines.filter(l=>l.providerId===unknown.providerId).forEach(l=>l.nbaId=null);
+ const before=structuredClone(current),extra={provider:'Highlightly',season:'2026-27',players:[{...player(1),name:'Different reviewed label'}]};
+ const result=runnerInputs(current,extra);assert.equal(result.candidate.players.length,current.players.length);assert.equal(result.candidate.players[0].playerKey,unknown.playerKey);assert.equal(result.candidate.lines.find(l=>l.providerId===101).nbaId,1);assert.deepEqual(result.candidate.lines[0].stats,current.lines[0].stats);assert.deepEqual(current,before);
+ assert.equal(runnerInputs(current).identities.players.some(p=>p.providerId===101),false);
+ const collision={...extra,players:[{...player(1),nbaId:2}]};assert.throws(()=>runnerInputs(current,collision),/collision/);
 });

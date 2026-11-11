@@ -1,4 +1,4 @@
-import {SEASON, DEFAULT_SCORING, bounds, aggregate} from './core.mjs';
+import {SEASON, DEFAULT_SCORING, bounds, aggregate, playerIdFor, playerKeyFor} from './core.mjs';
 const nightFormatter=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'});
 export function nightDate(value){const parts=Object.fromEntries(nightFormatter.formatToParts(new Date(value)).map(p=>[p.type,p.value]));return `${parts.year}-${parts.month}-${parts.day}`;}
 // Only validated, completed regular-season counters contribute. Missing is never zero.
@@ -14,12 +14,12 @@ export function dashboardRanking(data,{period='7',asOf=new Date(),weights=DEFAUL
   const sample={...data,games,lines:data.lines.filter(r=>gameMap.has(r.gameId))};
   const positions=new Map(data.positions.entries.map(p=>[p.nbaId,p.positions]));
   let rows=data.players.map(p=>{
-    const a=aggregate(sample,p.nbaId,{weights,asOf:now});
-    const playerLines=sample.lines.filter(r=>r.nbaId===p.nbaId&&r.participation==='played');
+    const a=aggregate(sample,playerIdFor(p),{weights,asOf:now});
+    const playerLines=sample.lines.filter(r=>playerKeyFor(r)===playerKeyFor(p)&&r.participation==='played');
     const teams=[...new Set(playerLines.map(r=>{const g=gameMap.get(r.gameId);return r.teamId===g.home.id?g.home.code:g.away.code;}))];
-    return {id:p.nbaId,name:p.name,teams,positions:positions.get(p.nbaId)||[],...a};
+    return {id:playerIdFor(p),playerKey:playerKeyFor(p),identityPending:p.nbaId==null,name:p.name,teams,positions:positions.get(p.nbaId)||[],...a};
   }).filter(r=>r.gp>0&&r.gp>=minGames&&(!team||r.teams.includes(team))&&(!position||r.positions.includes(position)));
   const field=sort==='total_fpts'?'totalFpts':sort==='gp'?'gp':'fptsPerGame';
-  rows.sort((a,b)=>(sort==='name'?a.name.localeCompare(b.name):b[field]-a[field])||a.name.localeCompare(b.name)||a.id-b.id);
+  rows.sort((a,b)=>(sort==='name'?a.name.localeCompare(b.name):b[field]-a[field])||a.name.localeCompare(b.name)||String(a.id).localeCompare(String(b.id)));
   return {rows,range,night,importedGames:games.length,boxedGames:games.filter(g=>g.statsState==='available').length};
 }

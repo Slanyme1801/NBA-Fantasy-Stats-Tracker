@@ -55,11 +55,11 @@ test('inventory includes only finished games; unknown type never fetches box sco
  const result=await runSeasonBackfill(options({inventoryState:seeded([match(1),scheduled,unknown])}));
  assert.equal(result.snapshot.games.length,2);assert.equal(result.snapshot.backfillProgress.unclassifiedGames,1);assert.equal(result.snapshot.lines.length,2);
 });
-test('unmapped whole games are deferred, not retried for same identities, repaired from paid cache',async()=>{
+test('unknown NBA identity imports immediately and future mapping enriches without paid calls',async()=>{
  const cache=memoryCache(),inventoryState=seeded(),ids=identities();ids.players.pop();
- const first=await runSeasonBackfill(options({cache,inventoryState,identities:ids}));assert.equal(first.snapshot.lines.length,0);assert.equal(first.snapshot.games[0].refreshIssue.code,'unmapped-players');
- const second=await runSeasonBackfill(options({cache,inventoryState,identities:ids,previous:first.snapshot,client:async()=>{throw Error('No repeated paid call');}}));assert.equal(second.snapshot.lines.length,0);
- const repaired=await runSeasonBackfill(options({cache,inventoryState,previous:second.snapshot,client:async()=>{throw Error('Must reuse mapped cache');}}));assert.equal(repaired.snapshot.lines.length,2);assert.equal(repaired.snapshot.games[0].refreshIssue,undefined);
+ const first=await runSeasonBackfill(options({cache,inventoryState,identities:ids}));assert.equal(first.snapshot.lines.length,2);assert.equal(first.snapshot.games[0].statsState,'available');assert.equal(first.snapshot.lines[1].nbaId,null);assert.equal(first.snapshot.lines[1].playerKey,'highlightly:102');
+ const second=await runSeasonBackfill(options({cache,inventoryState,identities:ids,previous:first.snapshot,client:async()=>{throw Error('No repeated paid call');}}));assert.equal(second.snapshot.lines.length,2);
+ const repaired=await runSeasonBackfill(options({cache,inventoryState,previous:second.snapshot,client:async()=>{throw Error('No fetch to enrich identity');}}));assert.equal(repaired.snapshot.lines.length,2);assert.equal(repaired.snapshot.lines[1].nbaId,2);assert.deepEqual(repaired.snapshot.lines[1].stats,first.snapshot.lines[1].stats);
 });
 test('malformed source game is explicit; other games continue; no retry same UTC day',async()=>{
  const inventoryState=seeded([match(1),match(2)]),cache=memoryCache(),calls=[];
@@ -123,10 +123,10 @@ test('public checkpoint round trip retains skip metadata and progress without ra
  const authorization={provider:PROVIDER,season:'2026-27',publicationAllowed:true,publicDatasetAllowed:true,approvedBy:'repository-owner',publicScope:'normalized-fantasy-stats',confirmedAt:time,source:'SYNTHETIC test authorization only'};
  const projected=JSON.parse(JSON.stringify(publicHighlightlySnapshot(first.snapshot,authorization)));
  assert.equal(projected.rawSecret,undefined);assert.equal(projected.games[0].rawPayload,undefined);assert.equal(projected.games[2].refreshIssue.reason,undefined);
- assert.equal(projected.games[0].boxScoreCheckedAt,time);assert.match(projected.games[1].refreshIssue.identityRevision,/^[a-f0-9]{64}$/);assert.deepEqual(projected.backfillProgress,first.snapshot.backfillProgress);
+ assert.equal(projected.games[0].boxScoreCheckedAt,time);assert.equal(projected.lines.find(l=>l.providerId===999).nbaId,null);assert.equal(projected.lines.find(l=>l.providerId===999).playerKey,'highlightly:999');assert.deepEqual(projected.backfillProgress,first.snapshot.backfillProgress);
  const previous={...projected,publicationPolicy:'private-only-rights-unverified'};
  const resumed=await runSeasonBackfill(options({previous,inventoryState,client:async()=>{throw Error('No repeat even on fresh worker with empty cache');}}));
- assert.deepEqual(resumed.snapshot.lines,projected.lines);assert.equal(resumed.snapshot.backfillProgress.sourceFailureGames,1);assert.equal(resumed.snapshot.backfillProgress.unmappedGames,1);
+ assert.deepEqual(resumed.snapshot.lines,projected.lines);assert.equal(resumed.snapshot.backfillProgress.sourceFailureGames,1);assert.equal(resumed.snapshot.backfillProgress.unmappedGames,0);
 });
 test('provider game ID cannot silently change teams even when old validated box is preserved',async()=>{
  const previous=await prior22(),changed=match(1);changed.homeTeam.id=30;let calls=0;
@@ -143,5 +143,5 @@ test('reviewed Knicks game stays blocked when official Hart identity cannot be v
  const g=result.snapshot.games.find(g=>g.id===1547577);assert.equal(g.statsState,'missing');assert.equal(g.refreshIssue.officialReference.status,'unverifiable');assert.equal(result.snapshot.lines.length,previous.lines.length);
  assert.equal(g.refreshIssue.identityObservations[0].providerId,999);assert.equal(g.refreshIssue.identityObservations[0].name,'Josh Hart');assert.equal(JSON.stringify(g.refreshIssue).includes('MUST NOT COPY'),false);
  assert.equal(result.snapshot.players.some(p=>p.providerId===999),false);
- assert.equal(g.refreshIssue.code,'unmapped-players');await runSeasonBackfill(options({previous:result.snapshot,inventoryState,client:async()=>{throw Error('No repeated blocked reference request');}}));
+ assert.equal(g.refreshIssue.code,'source-data-error');await runSeasonBackfill(options({previous:result.snapshot,inventoryState,client:async()=>{throw Error('No repeated blocked reference request');}}));
 });

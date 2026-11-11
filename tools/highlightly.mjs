@@ -1,5 +1,7 @@
 // Server/local only. Never import this module into the public application.
-import {COUNTERS, SEASON, emptySeason, validateIdentityMap, validateSeason} from '../assets/core.mjs';
+import {COUNTERS, SEASON, emptySeason, validateIdentityMap, validateSeason, validateProviderRegistry} from '../assets/core.mjs';
+import {checkOfficialReference} from './highlightly-reference.mjs';
+import {checkOfficialParticipation} from './highlightly-participation-reference.mjs';
 import {classifications} from './provider.mjs';
 export const PROVIDER='Highlightly';
 const check=(ok,message)=>{if(!ok)throw new Error(message);};
@@ -60,9 +62,19 @@ export function parseBoxScore(body,game){
 export function normalizeBoxScore(body,game,players,now){
   return parseBoxScore(body,game).map(line=>{
     const person=players.find(p=>p.providerId===line.providerId);
-    check(person,'Unmapped Highlightly player ID; verified NBA identity required');
-    return {...line,nbaId:person.nbaId,updatedAt:now};
+    return {...line,playerKey:`highlightly:${line.providerId}`,nbaId:person?.nbaId??null,updatedAt:now};
   });
+}
+// Provider IDs remain the only observation key. A label never establishes an NBA mapping.
+export function providerPlayers(body,game,knownPlayers,now){
+  parseBoxScore(body,game);
+  const players=body.flatMap(team=>team.boxScores.map(row=>{
+    const prior=knownPlayers.find(p=>p.providerId===row.player.id);
+    const observed=row.player.name;
+    const name=typeof observed==='string'&&observed.trim()&&observed.length<=100&&/^[\p{L}\p{M} .,'’\-]+$/u.test(observed)?observed:`Highlightly ${row.player.id}`;
+    return prior?{...prior,playerKey:`highlightly:${prior.providerId}`,nbaId:prior.nbaId??null}:{playerKey:`highlightly:${row.player.id}`,providerId:row.player.id,nbaId:null,name,source:`Highlightly observed box score ${game.id}`,verifiedAt:now};
+  }));
+  validateProviderRegistry({provider:PROVIDER,season:SEASON,players});return players;
 }
 export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLimit=90,intervalMs=6100,ledger,saveLedger,sleep=ms=>new Promise(r=>setTimeout(r,ms)),now=()=>Date.now()}){
   check(typeof key==='string'&&key.length>0,'HIGHLIGHTLY_API_KEY is absent. No connection attempted.');
@@ -155,18 +167,19 @@ export async function collectHighlightly({client,identities,types,startDate,endD
       offset+=result.data.length;
     }while(offset<total);
   }
-  const lines=[];
+  const lines=[],registry=new Map(identities.players.map(p=>[p.providerId,{...p,playerKey:`highlightly:${p.providerId}`} ]));
   for(const game of games.filter(g=>g.status==='finished'&&g.type!=='unknown')){
     const body=await request(`/box-score/${game.id}`,{},body=>parseBoxScore(body,game),{date:localMatchDay(game),game});
-    const missing=parseBoxScore(body,game).filter(line=>!identities.players.some(p=>p.providerId===line.providerId));
-    if(missing.length&&unmappedPolicy==='skip-game'){
-      game.statsState='missing';game.refreshIssue={code:'unmapped-players',unmappedPlayerCount:missing.length,attemptedAt:now,preservedPreviousBoxScore:false};
-      continue;
+    const rawLines=parseBoxScore(body,game);
+    const participationReference=checkOfficialParticipation(rawLines,game,now),officialReference=checkOfficialReference(body,game,identities,now);
+    if(participationReference||officialReference&&officialReference.status!=='verified'){
+      game.statsState='missing';game.refreshIssue={code:'source-data-error',sourceErrorCode:participationReference?(participationReference.reviewKind==='documented-roster-event'?'official-participation-review':'official-participation-conflict'):`official-reference-${officialReference.status}`,attemptedAt:now,preservedPreviousBoxScore:false,...(participationReference?{participationReference}:{officialReference})};continue;
     }
-    lines.push(...normalizeBoxScore(body,game,identities.players,now));game.statsState='available';await onGame(game.id);
+    for(const person of providerPlayers(body,game,[...registry.values()],now))registry.set(person.providerId,person);
+    lines.push(...normalizeBoxScore(body,game,[...registry.values()],now));game.statsState='available';await onGame(game.id);
   }
-  const used=new Set(lines.map(l=>l.nbaId));
-  return validateSeason({...emptySeason(),provider:PROVIDER,publicationPolicy:'private-only-rights-unverified',minutesPrecision:'rounded-whole-minute',scope:{startDate,endDate,timeZone:'America/New_York',completeSeason:false},connection:'connected',updatedAt:now,coverageCheckedAt:now,players:identities.players.filter(p=>used.has(p.nbaId)),games,lines},knownIds);
+  const used=new Set(lines.map(l=>l.providerId));
+  return validateSeason({...emptySeason(),schemaVersion:2,provider:PROVIDER,publicationPolicy:'private-only-rights-unverified',minutesPrecision:'rounded-whole-minute',scope:{startDate,endDate,timeZone:'America/New_York',completeSeason:false},connection:'connected',updatedAt:now,coverageCheckedAt:now,players:[...registry.values()].filter(p=>used.has(p.providerId)),games,lines},knownIds);
 }
 
 export const localMatchDay=game=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(game.start));

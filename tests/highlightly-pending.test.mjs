@@ -21,19 +21,16 @@ test('invalid pending counters, dates, team IDs, duplicate players, NBA IDs and 
  for(const mutate of [s=>s.games[0].players[0].stats.pts++,s=>s.games[0].players[0].stats.reb++,s=>s.games[0].players[0].teamId=99,s=>s.games[0].players[0].nbaId=1,s=>s.games[0].players[0].providerId=102,s=>s.games[0].fetchedAt='2099-01-01T00:00:00.000Z',s=>s.games[0].game.finalScores[0]++,s=>s.games.push(s.games[0]),s=>s.provider='other']){const s=pending();mutate(s);assert.throws(()=>publicPendingBoxes(s,now));}
  const entry=pending().games[0];for(const mutate of [g=>g.start='2026-11-02T20:00:00Z',g=>g.home.id=30,g=>g.finalScores[0]++]){const g=normalizeMatch(match(),new Map());mutate(g);assert.throws(()=>pendingBody(entry,g),/changed/);}
 });
-test('fresh worker resolves pending whole box with empty cache and forbidden provider, purging only after progress',async()=>{
- const saves=[];const first=await runSeasonBackfill(opts({identities:{provider:PROVIDER,season:'2026-27',players:[player(1)]},savePending:async state=>saves.push(structuredClone(state))}));
- assert.equal(first.snapshot.lines.length,0);assert.equal(saves.at(-1).games.length,1);assert.equal(first.pendingState.games.length,1);
- const events=[];const second=await runSeasonBackfill(opts({previous:first.snapshot,pendingState:first.pendingState,client:async()=>{throw Error('Provider forbidden');},saveProgress:async s=>events.push(['progress',s.lines.length]),savePending:async s=>events.push(['pending',s.games.length])}));
- assert.equal(second.snapshot.lines.length,2);assert.equal(second.snapshot.games[0].statsState,'available');assert.equal(second.pendingState.games.length,0);assert.ok(events.findIndex(e=>e[0]==='progress'&&e[1]===2)<events.findIndex(e=>e[0]==='pending'&&e[1]===0));
+test('fresh worker resolves legacy pending whole box without NBA mapping, provider or private cache',async()=>{
+ const events=[];const second=await runSeasonBackfill(opts({identities:{provider:PROVIDER,season:'2026-27',players:[]},pendingState:pending(),client:async()=>{throw Error('Provider forbidden');},saveProgress:async s=>events.push(['progress',s.lines.length]),savePending:async s=>events.push(['pending',s.games.length])}));
+ assert.equal(second.snapshot.lines.length,2);assert.equal(second.snapshot.lines[0].nbaId,null);assert.equal(second.snapshot.games[0].statsState,'available');assert.equal(second.pendingState.games.length,0);assert.ok(events.findIndex(e=>e[0]==='progress'&&e[1]===2)<events.findIndex(e=>e[0]==='pending'&&e[1]===0));
 });
-test('zero provider budget and incomplete new-day inventory still resolves retained normalized pending box',async()=>{
- const first=await runSeasonBackfill(opts({identities:{provider:PROVIDER,season:'2026-27',players:[player(1)]}}));let calls=0;
- const second=await runSeasonBackfill(opts({previous:first.snapshot,pendingState:first.pendingState,inventoryState:null,now:()=>Date.parse(now)+86400000,client:async()=>{calls++;throw Object.assign(Error('Quota zero'),{code:'HIGHLIGHTLY_BUDGET'});}}));
+test('zero budget and incomplete new-day inventory still resolves retained normalized pending box',async()=>{
+ let calls=0;const second=await runSeasonBackfill(opts({pendingState:pending(),inventoryState:null,now:()=>Date.parse(now)+86400000,client:async()=>{calls++;throw Object.assign(Error('Quota zero'),{code:'HIGHLIGHTLY_BUDGET'});}}));
  assert.equal(calls,1);assert.equal(second.snapshot.lines.length,2);assert.equal(second.snapshot.backfillProgress.budgetExhausted,true);assert.equal(second.snapshot.backfillProgress.inventoryComplete,false);
 });
-test('failed pending persistence stops before progress claims or a second provider call',async()=>{
- let calls=0;const progress=[];await assert.rejects(runSeasonBackfill(opts({identities:{provider:PROVIDER,season:'2026-27',players:[]},client:async()=>{calls++;return box();},savePending:async()=>{throw Error('SYNTHETIC persistence failed');},saveProgress:async s=>progress.push(s)})),/persistence failed/);assert.equal(calls,1);assert.equal(progress.at(-1).lines.length,0);
+test('failed pending purge stops before another provider call and retains fully saved snapshot',async()=>{
+ const progress=[];await assert.rejects(runSeasonBackfill(opts({pendingState:pending(),client:async()=>{throw Error('No provider call');},savePending:async()=>{throw Error('SYNTHETIC persistence failed');},saveProgress:async s=>progress.push(s)})),/persistence failed/);assert.equal(progress.at(-1).lines.length,2);
 });
 test('source error code is stable allowlisted and free text remains excluded',async()=>{
  const result=await runSeasonBackfill(opts({client:async()=>[]}));const issue=result.snapshot.games[0].refreshIssue;
@@ -42,20 +39,19 @@ test('source error code is stable allowlisted and free text remains excluded',as
 function reviewedBox(hartSteals=3){
  const b=box();b[0].boxScores[0].player={id:47043992,name:'Karl-Anthony Towns'};b[0].boxScores[0].statistics.find(s=>s.name==='Total Steals').value=0;
  const zero={player:{id:37927457,name:'Jordan Clarkson'},statistics:b[0].boxScores[0].statistics.map(s=>({...s,value:0}))};b[0].boxScores.push(zero);
- b[1].boxScores[0].player={id:999,name:'Josh Hart'};b[1].boxScores[0].statistics.find(s=>s.name==='Total Steals').value=hartSteals;return b;
+ b[1].boxScores[0].player={id:45941252,name:'Josh Hart'};b[1].boxScores[0].statistics.find(s=>s.name==='Total Steals').value=hartSteals;return b;
 }
-const reviewedIds=includeHart=>({provider:PROVIDER,season:'2026-27',players:[{...player(1626157),providerId:47043992},{...player(203903),providerId:37927457},...(includeHart?[{...player(1628404),providerId:999}]:[])]});
-test('pending official reference retains zero counters and releases only after separately verified Hart mapping',async()=>{
- const raw={...match(),id:1547577},p={...page(),data:[raw]},inventoryState=seedSeasonInventory([p],{now});
- const first=await runSeasonBackfill(opts({inventoryState,identities:reviewedIds(false),client:async()=>reviewedBox()}));
- assert.equal(first.snapshot.games[0].refreshIssue.code,'unmapped-players');assert.equal(first.pendingState.games.length,1);
- const next=await runSeasonBackfill(opts({inventoryState,identities:reviewedIds(true),previous:first.snapshot,pendingState:first.pendingState,client:async()=>{throw Error('No provider call');}}));
- assert.equal(next.snapshot.games[0].statsState,'available');assert.equal(next.snapshot.lines.length,3);assert.equal(next.pendingState.games.length,0);
+const reviewedIds=includeHart=>({provider:PROVIDER,season:'2026-27',players:[{...player(1626157),providerId:47043992},{...player(203903),providerId:37927457},...(includeHart?[{...player(1628404),providerId:45941252}]:[])]});
+test('legacy pending official reference uses reviewed provider IDs without requiring general NBA mapping',async()=>{
+ const raw={...match(),id:1547577},inventoryState=seedSeasonInventory([{...page(),data:[raw]}],{now});
+ const stored={...emptyPending(),games:[normalizePendingBox(reviewedBox(),normalizeMatch(raw,new Map()),now)]};
+ const next=await runSeasonBackfill(opts({inventoryState,identities:{provider:PROVIDER,season:'2026-27',players:[]},pendingState:stored,client:async()=>{throw Error('No provider call');}}));
+ assert.equal(next.snapshot.games[0].statsState,'available');assert.equal(next.snapshot.lines.length,3);assert.equal(next.pendingState.games.length,0);assert.equal(next.snapshot.lines[0].nbaId,null);
 });
-test('durable pending cannot bypass official mismatch discovered when Hart identity becomes known',async()=>{
- const inventoryState=seedSeasonInventory([{...page(),data:[{...match(),id:1547577}]}],{now});
- const first=await runSeasonBackfill(opts({inventoryState,identities:reviewedIds(false),client:async()=>reviewedBox(2)}));
- const next=await runSeasonBackfill(opts({inventoryState,identities:reviewedIds(true),previous:first.snapshot,pendingState:first.pendingState,client:async()=>{throw Error('No provider call');}}));
+test('legacy pending cannot bypass official Hart counter mismatch even without NBA mapping',async()=>{
+ const raw={...match(),id:1547577},inventoryState=seedSeasonInventory([{...page(),data:[raw]}],{now});
+ const stored={...emptyPending(),games:[normalizePendingBox(reviewedBox(2),normalizeMatch(raw,new Map()),now)]};
+ const next=await runSeasonBackfill(opts({inventoryState,identities:{provider:PROVIDER,season:'2026-27',players:[]},pendingState:stored,client:async()=>{throw Error('No provider call');}}));
  assert.equal(next.snapshot.lines.length,0);assert.equal(next.snapshot.games[0].refreshIssue.sourceErrorCode,'official-reference-mismatch');assert.equal(next.pendingState.games.length,0);
 });
 test('pending box is not purged if the resolved whole-game checkpoint fails',async()=>{
@@ -85,16 +81,16 @@ test('durable pending replay cannot bypass official Cooper participation conflic
  const result=await runSeasonBackfill({...args,pendingState:stored,client:async()=>{throw Error('No provider call');}});
  assert.equal(result.snapshot.lines.length,0);assert.equal(result.snapshot.games[0].refreshIssue.sourceErrorCode,'official-participation-conflict');assert.equal(result.pendingState.games.length,0);
 });
-test('normalized pending persistence and final result use advancing clock after a paid response',async()=>{
- let clock=Date.parse(now),durable;const result=await runSeasonBackfill(opts({now:()=>clock,identities:{provider:PROVIDER,season:'2026-27',players:[]},client:async()=>{clock+=6100;return box();},savePending:async s=>{durable=structuredClone(s);}}));
- assert.equal(durable.games[0].fetchedAt,new Date(clock).toISOString());assert.equal(result.pendingState.games.length,1);assert.equal(result.snapshot.updatedAt,now);
+test('provider-primary checkpoint retains actual fetchedAt with advancing paid-response clock',async()=>{
+ let clock=Date.parse(now);const result=await runSeasonBackfill(opts({now:()=>clock,identities:{provider:PROVIDER,season:'2026-27',players:[]},client:async()=>{clock+=6100;return box();}}));
+ assert.equal(result.snapshot.games[0].boxScoreCheckedAt,new Date(clock).toISOString());assert.equal(result.snapshot.updatedAt,now);assert.equal(result.snapshot.lines.length,2);assert.equal(result.pendingState.games.length,0);
 });
 test('crash after saving pending correction before issue checkpoint preserves newer pending and older verified box',async()=>{
  const original=await runSeasonBackfill(opts());const b=box();b[0].boxScores[0].player={id:999,name:'Synthetic Corrected Player'};
  let clock=Date.parse(now)+6100,durable;const pendingCorrection={...emptyPending(),games:[normalizePendingBox(b,normalizeMatch(match(),new Map()),new Date(clock).toISOString())]};
  // Reproduce the durable state after paid correction save succeeded but checkpoint save did not.
- await assert.rejects(runSeasonBackfill(opts({previous:original.snapshot,pendingState:pendingCorrection,now:()=>clock,client:async()=>{throw Error('No provider call');},saveProgress:async s=>{if(s.games[0].refreshIssue)throw Error('SYNTHETIC issue checkpoint interrupted');},savePending:async s=>{durable=s;}})),/checkpoint interrupted/);
+ await assert.rejects(runSeasonBackfill(opts({previous:original.snapshot,pendingState:pendingCorrection,now:()=>clock,client:async()=>{throw Error('No provider call');},saveProgress:async s=>{if(s.lines.some(l=>l.providerId===999))throw Error('SYNTHETIC issue checkpoint interrupted');},savePending:async s=>{durable=s;}})),/checkpoint interrupted/);
  assert.equal(durable,undefined);clock+=6100;
  const recovered=await runSeasonBackfill(opts({previous:original.snapshot,pendingState:pendingCorrection,now:()=>clock,client:async()=>{throw Error('No provider call');}}));
- assert.deepEqual(recovered.snapshot.lines,original.snapshot.lines);assert.equal(recovered.snapshot.games[0].statsState,'available');assert.equal(recovered.snapshot.games[0].refreshIssue.code,'unmapped-players');assert.equal(recovered.pendingState.games.length,1);
+ assert.equal(recovered.snapshot.lines.length,original.snapshot.lines.length);assert.equal(recovered.snapshot.lines[0].providerId,999);assert.equal(recovered.snapshot.lines[0].nbaId,null);assert.equal(recovered.snapshot.games[0].statsState,'available');assert.equal(recovered.snapshot.games[0].refreshIssue,undefined);assert.equal(recovered.pendingState.games.length,0);
 });
