@@ -262,6 +262,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:07:57.221Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:08:03.376Z"
         }
       ]
     }
@@ -3516,10 +3519,64 @@
         135,
         92
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:08:03.376Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 7,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547076,
+            "teamId": 34,
+            "providerId": 97817,
+            "name": "Kawhi Leonard",
+            "fetchedAt": "2026-11-11T11:08:03.376Z"
+          },
+          {
+            "gameId": 1547076,
+            "teamId": 34,
+            "providerId": 66498077,
+            "name": "Scottie Barnes",
+            "fetchedAt": "2026-11-11T11:08:03.376Z"
+          },
+          {
+            "gameId": 1547076,
+            "teamId": 34,
+            "providerId": 65936927,
+            "name": "Immanuel Quickley",
+            "fetchedAt": "2026-11-11T11:08:03.376Z"
+          },
+          {
+            "gameId": 1547076,
+            "teamId": 34,
+            "providerId": 76400072,
+            "name": "Collin Murray-Boyles",
+            "fetchedAt": "2026-11-11T11:08:03.376Z"
+          },
+          {
+            "gameId": 1547076,
+            "teamId": 27,
+            "providerId": 38933807,
+            "name": "Norman Powell",
+            "fetchedAt": "2026-11-11T11:08:03.376Z"
+          },
+          {
+            "gameId": 1547076,
+            "teamId": 27,
+            "providerId": 61000817,
+            "name": "Zach Collins",
+            "fetchedAt": "2026-11-11T11:08:03.376Z"
+          },
+          {
+            "gameId": 1547076,
+            "teamId": 27,
+            "providerId": 73471217,
+            "name": "Jaylin Sellers",
+            "fetchedAt": "2026-11-11T11:08:03.376Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -22121,7 +22178,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 0,
-    "unmappedGames": 7,
+    "unmappedGames": 8,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
