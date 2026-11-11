@@ -433,6 +433,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:13:51.907Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:13:58.095Z"
         }
       ]
     }
@@ -7273,10 +7276,22 @@
         111,
         117
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:13:58.095Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 1,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1548366,
+            "teamId": 45,
+            "providerId": 65955512,
+            "name": "Blake Hinson",
+            "fetchedAt": "2026-11-11T11:13:58.095Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=2",
@@ -25276,7 +25291,7 @@
     "verifiedRegularBoxScores": 24,
     "verifiedBoxScores": 24,
     "sourceFailureGames": 1,
-    "unmappedGames": 62,
+    "unmappedGames": 63,
     "unclassifiedGames": 0,
     "pendingGames": 136,
     "inventoryTotal": 405,
