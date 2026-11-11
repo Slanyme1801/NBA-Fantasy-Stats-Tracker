@@ -391,6 +391,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:12:26.170Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:12:32.218Z"
         }
       ]
     }
@@ -6470,10 +6473,29 @@
         114,
         134
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:12:32.218Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 2,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1548110,
+            "teamId": 3,
+            "providerId": 76584947,
+            "name": "Cam Whitmore",
+            "fetchedAt": "2026-11-11T11:12:32.218Z"
+          },
+          {
+            "gameId": 1548110,
+            "teamId": 3,
+            "providerId": 66505502,
+            "name": "Ryan Nembhard",
+            "fetchedAt": "2026-11-11T11:12:32.218Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=2",
@@ -24283,7 +24305,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 49,
+    "unmappedGames": 50,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
