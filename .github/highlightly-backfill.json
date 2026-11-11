@@ -379,6 +379,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:12:01.706Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:12:07.873Z"
         }
       ]
     }
@@ -6188,10 +6191,50 @@
         110,
         102
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:12:07.873Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 5,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1548106,
+            "teamId": 39,
+            "providerId": 78225902,
+            "name": "Bogoljub Markovic",
+            "fetchedAt": "2026-11-11T11:12:07.873Z"
+          },
+          {
+            "gameId": 1548106,
+            "teamId": 39,
+            "providerId": 64168712,
+            "name": "Gary Trent Jr.",
+            "fetchedAt": "2026-11-11T11:12:07.873Z"
+          },
+          {
+            "gameId": 1548106,
+            "teamId": 39,
+            "providerId": 65958167,
+            "name": "Kevin Porter Jr.",
+            "fetchedAt": "2026-11-11T11:12:07.873Z"
+          },
+          {
+            "gameId": 1548106,
+            "teamId": 36,
+            "providerId": 65955962,
+            "name": "Tyrese Haliburton",
+            "fetchedAt": "2026-11-11T11:12:07.873Z"
+          },
+          {
+            "gameId": 1548106,
+            "teamId": 36,
+            "providerId": 66477347,
+            "name": "Kobe Brown",
+            "fetchedAt": "2026-11-11T11:12:07.873Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -24125,7 +24168,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 45,
+    "unmappedGames": 46,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
