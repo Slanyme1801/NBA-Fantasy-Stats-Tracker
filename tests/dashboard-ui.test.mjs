@@ -127,3 +127,11 @@ test('mobile header search can fill its row and suggestions remain readable',asy
  assert.match(css,/min-height:48px;font-size:16px/);
  assert.match(css,/max-height:min\(340px,50dvh\)/);
 });
+
+test('mobile header isolates search from navigation even with legacy inline flex sizing',async()=>{
+ const css=await fs.readFile(new URL('../assets/style.css',import.meta.url),'utf8'),html=await fs.readFile(new URL('../index.html',import.meta.url),'utf8');
+ assert.match(css,/header\.top\{display:grid;grid-template-columns:minmax\(0,1fr\)/);
+ assert.match(css,/#navSearchWrap\{grid-row:3;order:3!important;flex:none!important;width:100%!important;max-width:none!important/);
+ assert.match(css,/html\{overflow-x:clip\}/);
+ assert.match(html,/id="navSearch" autocorrect="off" autocapitalize="none" spellcheck="false"/);
+});

@@ -188,3 +188,22 @@ header.top{background:#1f4294;border-top-color:#1f4294}
  .results div{flex-direction:column;align-items:flex-start;gap:3px;min-height:56px;font-size:16px;line-height:1.4;overflow-wrap:anywhere}
  .results small{font-size:13px;line-height:1.4;color:var(--ink-dim)}
 }
+/* Keep the mobile header on three independent rows, including older cached HTML. */
+@media(max-width:760px){
+ html{overflow-x:clip}
+ body{width:100%;min-width:0;overflow-x:clip}
+ header.top{display:grid;grid-template-columns:minmax(0,1fr);width:100%;max-width:100%;min-width:0}
+ header.top>*{min-width:0;max-width:100%}
+ header.top .brand{grid-row:1;justify-self:start}
+ header.top nav{grid-row:2;display:flex;width:100%;max-width:100%;min-width:0;overflow-x:auto}
+ #navSearchWrap{grid-row:3;order:3!important;flex:none!important;width:100%!important;max-width:none!important;min-width:0;margin:0}
+ #navSearch{font-size:16px!important;line-height:1.5;width:100%;min-width:0}
+ #navResults{left:0;right:0;width:auto;min-width:0;max-width:100%;max-height:40vh;max-height:40dvh}
+ #navResults div{display:flex;flex-direction:column;white-space:normal;min-width:0;width:100%;font-size:16px}
+ #navResults small{display:block;max-width:100%;font-size:13px;white-space:normal}
+ main,.panel,.hero,.dashboard,.dashboard-carousel,.dashboard-slide-window{min-width:0;max-width:100%}
+ .dashboard-spotlight-score,.dashboard-quick-actions,.dashboard-match{min-width:0;max-width:100%}
+ .dashboard-quick-actions .btn{min-width:0;white-space:normal}
+ .dashboard-statline{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .dashboard-statline>div{min-width:0}
+}
