@@ -23,3 +23,9 @@ test('photo catalogue refresh bypasses stale HTTP caches without breaking fallba
  globalThis.fetch=async()=>{throw new Error('offline');};assert.equal((await loadPlayerPhotos()).count,0);
  }finally{globalThis.fetch=original;}
 });
+
+test('transparent PNGs are flagged without inventing rights certification',async()=>{
+ const api=createPlayerPhotos(manifest),cutouts=Object.values(manifest.players).filter(p=>p.transparent);
+ assert.equal(cutouts.length,10);assert.match(api.credits(),/10 images sont des PNG/);assert.match(api.credits(),/usage non commercial uniquement/);assert.match(api.credits(),/droits photographiques originaux non audités/);
+ for(const p of cutouts){const bytes=await fs.readFile(new URL('../'+p.path,import.meta.url));assert.equal(bytes.subarray(1,4).toString(),'PNG');assert.match(api.portrait(p.nbaId),/photo-transparent/);}
+});
