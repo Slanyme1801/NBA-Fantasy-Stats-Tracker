@@ -367,6 +367,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:11:37.249Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:11:43.384Z"
         }
       ]
     }
@@ -5927,10 +5930,43 @@
         110,
         103
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:11:43.384Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 4,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1548102,
+            "teamId": 33,
+            "providerId": 66499802,
+            "name": "Moussa Diabate",
+            "fetchedAt": "2026-11-11T11:11:43.384Z"
+          },
+          {
+            "gameId": 1548102,
+            "teamId": 33,
+            "providerId": 66500372,
+            "name": "Brandon Miller",
+            "fetchedAt": "2026-11-11T11:11:43.384Z"
+          },
+          {
+            "gameId": 1548102,
+            "teamId": 33,
+            "providerId": 45495752,
+            "name": "Dennis Schroder",
+            "fetchedAt": "2026-11-11T11:11:43.384Z"
+          },
+          {
+            "gameId": 1548102,
+            "teamId": 50,
+            "providerId": 66494672,
+            "name": "Justin Champagnie",
+            "fetchedAt": "2026-11-11T11:11:43.384Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -23988,7 +24024,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 41,
+    "unmappedGames": 42,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
