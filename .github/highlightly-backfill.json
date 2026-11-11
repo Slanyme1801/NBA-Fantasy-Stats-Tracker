@@ -337,6 +337,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:10:36.188Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:10:42.282Z"
         }
       ]
     }
@@ -5264,10 +5267,22 @@
         114,
         121
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:10:42.282Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 1,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547877,
+            "teamId": 23,
+            "providerId": 73099082,
+            "name": "Asa Newell",
+            "fetchedAt": "2026-11-11T11:10:42.282Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -23635,7 +23650,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 31,
+    "unmappedGames": 32,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
