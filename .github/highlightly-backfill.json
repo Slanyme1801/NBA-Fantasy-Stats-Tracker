@@ -253,6 +253,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:07:39.035Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:07:45.128Z"
         }
       ]
     }
@@ -3329,10 +3332,43 @@
         128,
         116
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:07:45.128Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 4,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547073,
+            "teamId": 50,
+            "providerId": 66494672,
+            "name": "Justin Champagnie",
+            "fetchedAt": "2026-11-11T11:07:45.128Z"
+          },
+          {
+            "gameId": 1547073,
+            "teamId": 50,
+            "providerId": 66483872,
+            "name": "Reece Beekman",
+            "fetchedAt": "2026-11-11T11:07:45.128Z"
+          },
+          {
+            "gameId": 1547073,
+            "teamId": 39,
+            "providerId": 78225902,
+            "name": "Bogoljub Markovic",
+            "fetchedAt": "2026-11-11T11:07:45.128Z"
+          },
+          {
+            "gameId": 1547073,
+            "teamId": 39,
+            "providerId": 64168712,
+            "name": "Gary Trent Jr.",
+            "fetchedAt": "2026-11-11T11:07:45.128Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -22027,7 +22063,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 0,
-    "unmappedGames": 4,
+    "unmappedGames": 5,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
