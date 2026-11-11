@@ -18,7 +18,14 @@
   renderBoard=function(){originalBoard();el('fSeason').closest('label').insertAdjacentHTML('afterend',`<label>Current period<select id="fDashboardPeriod"><option value="season">Full imported sample</option>${Object.entries(labels).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></label>`);el('fDashboardPeriod').onchange=()=>{el('fSeason').value=C.SEASON;setBoardPositions();loadBoard();};};
   loadBoard=async function(){
     const period=el('fDashboardPeriod')?.value;
-    if(!period||period==='season'||el('fSeason').value!==C.SEASON)return originalLoadBoard();
+    const periodActive=!!period&&period!=='season'&&el('fSeason').value===C.SEASON;
+    const sort=el('fSort'),averageOption=sort.querySelector('option[value="season_fpts"]');
+    if(averageOption)averageOption.textContent=periodActive?'Selected period FPTS/G':'Selected season FPTS/G';
+    // Historical average modes both map to per-game average in a single
+    // current period. Keep the visible selection honest on every entry path,
+    // including direct navigation, restored controls and subsequent sort edits.
+    if(periodActive&&['weighted_avg','simple_avg'].includes(sort.value))sort.value='season_fpts';
+    if(!periodActive)return originalLoadBoard();
     ++boardRequest; // Invalidate any older asynchronous historical response.
     const result=window.FantasyDashboard.dashboardRanking(currentData,{period,weights:META.scoring,team:el('fTeam').value,position:el('fPos').value,minGames:Number(el('fGp').value),sort:el('fSort').value});
     el('boardNote').textContent=`${rangeLabel(result)}. Imported sample only, not league-wide rankings. ${result.boxedGames} / ${result.importedGames} imported finished games have box scores. Minimum 1 complete game. Positions use verified ESPN eligibility only.`;
