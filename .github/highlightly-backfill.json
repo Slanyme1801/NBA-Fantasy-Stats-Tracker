@@ -376,6 +376,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:11:55.620Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:12:01.706Z"
         }
       ]
     }
@@ -6142,10 +6145,22 @@
         109,
         113
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:12:01.706Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 1,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1548105,
+            "teamId": 40,
+            "providerId": 79188002,
+            "name": "Sergio de Larrea",
+            "fetchedAt": "2026-11-11T11:12:01.706Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -24110,7 +24125,7 @@
     "verifiedRegularBoxScores": 23,
     "verifiedBoxScores": 23,
     "sourceFailureGames": 1,
-    "unmappedGames": 44,
+    "unmappedGames": 45,
     "unclassifiedGames": 0,
     "pendingGames": 137,
     "inventoryTotal": 405,
