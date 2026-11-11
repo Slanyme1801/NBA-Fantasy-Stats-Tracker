@@ -92,3 +92,9 @@ test('French spotlight separates period average from full dated last-game statli
  for(const label of ['MIN ≈','PTS','REB','PASSES','INT','CONTRES','BP','TIRS','3 PTS','LF','FANTASY'])assert.ok(html.includes('>'+label+'<'));
  assert.doesNotMatch(h.node('dashboardBody').html,/dashboardPause|Pause slideshow/);
 });
+test('requested home copy remains exact and mobile shortcut stays explicit',async()=>{
+ const app=await fs.readFile(new URL('../assets/app.js',import.meta.url),'utf8');
+ assert.ok(app.includes('<h1>Te fait pas SCAM narvalo</h1>'));
+ assert.ok(app.includes('<p>Viens cons les stats à jour et historiques des boys pour vérifier ton trade avant de te faire scam.</p>'));
+ const h=harness();h.context.renderHome();assert.match(h.node('dashboardSlide').html,/Comparer ce joueur/);assert.match(h.node('dashboardSlide').html,/#dashboardComplete/);
+});

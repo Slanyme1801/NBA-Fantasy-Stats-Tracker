@@ -49,7 +49,7 @@ test('profile labels sample averages, scoped missing-game counts and rounded min
   Object.assign(c,{CURRENT:{player_id:3,seasons:[]},el:id=>nodes[id]??=( {innerHTML:''}),renderSimilar:()=>{}});
   c.window.FantasyCore.aggregate=()=>({gp:1,dnp:0,missing:0,uncollectedGames:0,period:{days:7,start:'2026-11-04',end:'2026-11-10'},fptsPerGame:5});
   c.window.FantasyCore.fantasyPoints=()=>5;
-  c.aggregateTable=()=>'';
+  c.aggregateTable=()=>'';c.recentGameChart=()=>'';
   vm.runInContext(source.slice(source.indexOf('function renderCurrentProfile(){'),source.indexOf('function renderSimilar(){')),c);
   vm.runInContext('renderCurrentProfile()',c);
   const html=nodes.currentProfile.innerHTML;

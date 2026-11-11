@@ -70,8 +70,8 @@ function renderHome(){
   const loaded = META && META.players > 0;
   el("view").innerHTML = `
     <section class="hero">
-      <h1>Tous les joueurs NBA, selon votre barème.</h1>
-      <p>Cinq saisons historiques. Un espace pour explorer les joueurs et évaluer les échanges.</p>
+      <h1>Te fait pas SCAM narvalo</h1>
+      <p>Viens cons les stats à jour et historiques des boys pour vérifier ton trade avant de te faire scam.</p>
       <div class="searchbox">
         <input id="mainSearch" placeholder="Rechercher un joueur NBA…" autocomplete="off">
         <div class="results" id="mainResults" hidden></div>
@@ -247,7 +247,7 @@ let comparePlayers = {}; // player_id -> payload cache
 function renderCompare(){
   el("view").innerHTML = `
     <h2 style="letter-spacing:-.03em">Comparer les joueurs</h2>
-    <p class="dim" style="margin-top:-6px">Sélectionnez 2 à 4 joueurs pour comparer leurs saisons.</p>
+    <p class="dim" style="margin-top:-6px">Sélectionnez 2 à 4 joueurs pour comparer leur forme récente et leurs saisons.</p>
     <div class="panel">
       <div class="chips" id="compareChips"></div>
       <div class="searchbox" id="compareSearchWrap" style="max-width:420px;margin-top:${compareIds.length?'12px':'0'}">
@@ -294,6 +294,7 @@ async function loadCompareBody(){
   }
   const players = compareIds.map(id => comparePlayers[id]);
   body.innerHTML = `
+    ${compareCurrentTable(players)}
     <div class="panel">
       <h3>Points fantasy par match et par saison</h3>
       <div class="legend">${players.map((p,i) =>
@@ -304,6 +305,25 @@ async function loadCompareBody(){
       <h3>Saison par saison — FPTS/G</h3>
       <div class="scroll">${compareTable(players)}</div>
     </div>`;
+}
+
+// Same raw counters, scoring weights and UTC windows as the current profile.
+// Missing samples stay unavailable; current data never borrows historical stats.
+function compareCurrentTable(players,{asOf=new Date()}={}){
+  const core=window.FantasyCore,data=window.CurrentLoad?.data;
+  if(!core||!data)return `<section class="panel compare-current"><h3>Forme actuelle comparée</h3><p class="empty">Données actuelles indisponibles. Les comparaisons historiques restent accessibles ci-dessous.</p></section>`;
+  const periods=[{days:null,label:`${core.SEASON} · échantillon importé`},{days:7,label:'7 derniers jours'},{days:14,label:'14 derniers jours'},{days:30,label:'30 derniers jours'}];
+  const headers=players.map(p=>`<th scope="col"><button class="text-button" onclick="openPlayer(${playerArg(p.player_id)})">${safeText(p.full_name)}</button></th>`).join('');
+  const rows=periods.map(({days,label})=>{
+    const range=core.bounds(days,asOf);
+    const dates=range.start?`${range.start} au ${range.end} · UTC`:`Jusqu’au ${range.end} · UTC`;
+    const cells=players.map(p=>{
+      const a=core.aggregate(data,p.player_id,{days,asOf,weights:META.scoring});
+      return `<td>${a.gp?`<strong class="fpts num">${fmt(a.fptsPerGame)} <small>FP / match</small></strong><div class="small">${a.gp} MJ · ${fmt(a.minutes)} MIN / match${data.minutesPrecision==='rounded-whole-minute'?' ≈':''}</div>`:'<strong>—</strong><div class="small">0 match complet · moyenne et minutes indisponibles</div>'}<div class="small muted">${a.dnp} non-participation(s) · ${a.missing} ligne(s) manquante(s)</div></td>`;
+    }).join('');
+    return `<tr><th scope="row">${label}<small style="display:block;font-weight:400">${dates}</small></th>${cells}</tr>`;
+  }).join('');
+  return `<section class="panel compare-current"><h3>Forme actuelle comparée</h3><p class="small muted">Même période et même barème pour tous. Échantillon importé partiel, pas une saison complète. Les moyennes et minutes portent uniquement sur les matchs joués disponibles ; une donnée absente ne vaut pas zéro. Les périodes incluent aujourd’hui en UTC.</p><div class="scroll" tabindex="0" role="region" aria-label="Comparaison des moyennes, matchs joués et minutes par période"><table class="compare-periods"><caption class="small">Moyenne fantasy, matchs joués (MJ) et minutes par match (MIN) · ${data.minutesPrecision==='rounded-whole-minute'?'minutes approximatives selon la source':'minutes des matchs importés'}</caption><thead><tr><th scope="col">Période</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div></section>`;
 }
 
 function compareChart(players){

@@ -45,3 +45,16 @@ test('spotlight exposes latest played line inside period separately from average
  assert.equal(row.gp,2);assert.equal(row.latestMatch.gameId,2);assert.equal(row.latestMatch.opponent,'TST');assert.equal(row.latestMatch.home,false);assert.equal(row.latestMatch.stats.pts,30);assert.equal(row.latestMatch.seconds,1999);assert.notEqual(row.latestMatch.fpts,row.fptsPerGame);
  const night=dashboardRanking(d,{period:'night',asOf:now});assert.equal(night.rows.length,0);
 });
+test('available night is explicit and may precede the latest missing night',()=>{
+ const d=fixture();d.games.push(game(2,'2026-11-15T06:00:00Z',{statsState:'missing'}));
+ assert.equal(dashboardRanking(d,{period:'night',asOf:now}).rows.length,0);
+ const available=dashboardRanking(d,{period:'available',asOf:now});assert.equal(available.night,'2026-11-14');assert.equal(available.rows.length,3);
+});
+test('game curves retain zero/negative scores, skip DNP/missing/future and deduplicate provider identities',async()=>{
+ const {playerGameSeries}=await import('../assets/dashboard.mjs');const d=fixture();
+ d.games=[game(1,'2026-11-10T01:00:00Z'),game(2,'2026-11-11T01:00:00Z'),game(3,'2026-11-12T01:00:00Z'),game(4,'2026-11-20T01:00:00Z')];
+ d.lines=[line(1,1),line(1,1),line(2,1,{participation:'dnp',seconds:null,stats:null}),line(3,1,{stats:stats({pts:0})}),line(4,1)];
+ const series=playerGameSeries(d,1,{asOf:now,weights:{...DEFAULT_SCORING,pts:-100}});
+ assert.equal(series.length,2);assert.equal(series[0].date,d.games[0].start);assert.ok(series[0].fpts<0);assert.equal(series[0].minutes,30);assert.equal(series[0].opponent,'SIM');
+ assert.deepEqual(playerGameSeries(d,999,{asOf:now}),[]);
+});

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 import * as core from '../assets/core.mjs';
+import * as dashboard from '../assets/dashboard.mjs';
 import {fixture,game,line,player} from './fixtures.mjs';
 import {loadCurrent} from '../assets/loader.mjs';
 import {checksum} from '../tools/files.mjs';
@@ -17,7 +18,7 @@ function sample(mapped=false){
 async function app(data,{ui=false}={}){
  const stored=new Map(),nodes=new Map();
  const node=id=>{if(!nodes.has(id))nodes.set(id,{id,value:'',innerHTML:'',textContent:'',hidden:false,checked:false,type:'text',isConnected:true,classList:{toggle(){},remove(){}},focus(){},addEventListener(){},setAttribute(){},appendChild(){},insertAdjacentHTML(_where,html){this.innerHTML+=html;},querySelector:selector=>node(id+selector),querySelectorAll:()=>[],matches:()=>true});return nodes.get(id);};
- const win={__DATASET:structuredClone(history),FantasyCore:core,CurrentLoad:{data,state:'fresh'},addEventListener(){},dispatchEvent(){},scrollTo(){},scrollY:0,AppUpdates:{render(){}}};
+ const win={__DATASET:structuredClone(history),FantasyCore:core,FantasyDashboard:dashboard,CurrentLoad:{data,state:'fresh'},addEventListener(){},dispatchEvent(){},scrollTo(){},scrollY:0,AppUpdates:{render(){}}};
  const context=vm.createContext({window:win,document:{getElementById:node,createElement:()=>node('new'),querySelectorAll:()=>[],activeElement:null,body:{prepend(){}}},navigator:{onLine:true},localStorage:{getItem:k=>stored.get(k),setItem:(k,v)=>stored.set(k,v)},URL,URLSearchParams,Event,location:{href:'https://test.local/project/'},setTimeout,clearTimeout});
  for(const file of ['legacy.js','adapter.js',...(ui?['app.js','companion.js']:[])])vm.runInContext(await fs.readFile(new URL('../assets/'+file,import.meta.url),'utf8'),context);
  const api=async path=>{const res=await win.AppApi(path);if(!res.ok)throw Error((await res.json()).detail);return JSON.parse(JSON.stringify(await res.json()));};
