@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import {createPlayerPhotos} from '../assets/photos.mjs';
 const manifest=JSON.parse(await fs.readFile(new URL('../data/player-photos.json',import.meta.url),'utf8'));
 test('photo catalogue never substitutes an unknown/provider identity and keeps credits',()=>{
- const api=createPlayerPhotos(manifest);assert.equal(api.count,32);assert.equal(api.portrait('highlightly:101'),'');assert.equal(api.portrait(99999999),'');
+ const api=createPlayerPhotos(manifest);assert.equal(api.count,manifest.scope.coveredCount);assert.ok(api.count>0&&api.count<=manifest.scope.targetCount);assert.equal(api.portrait('highlightly:101'),'');assert.equal(api.portrait(99999999),'');
  const p=Object.values(manifest.players)[0];assert.ok(api.portrait(p.nbaId).includes(p.path));assert.ok(api.credits().includes(p.author));assert.match(api.credits(),/pas un tirage aléatoire/);
 });
 test('all listed photo assets exist and malformed external paths are rejected',async()=>{

@@ -1,5 +1,5 @@
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const safeUrl=value=>{try{const u=new URL(value);return u.protocol==='https:'?escape(u.href):'';}catch{return '';}};
+const safeUrl=value=>{try{const u=new URL(value);if(u.protocol==='http:'&&u.hostname==='creativecommons.org')u.protocol='https:';return u.protocol==='https:'?escape(u.href):'';}catch{return '';}};
 export function createPlayerPhotos(manifest={}){
  const entries=Object.values(manifest.players||{}).filter(p=>Number.isSafeInteger(p.nbaId)&&/^assets\/player-photos\/[\w-]+\.(?:jpg|png|webp)$/.test(p.path)&&safeUrl(p.source)&&(safeUrl(p.licenseUrl)||p.license==='Public domain'));
  const byId=new Map(entries.map(p=>[p.nbaId,p]));
