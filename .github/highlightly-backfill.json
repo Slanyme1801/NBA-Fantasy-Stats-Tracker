@@ -280,6 +280,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:08:34.107Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:08:40.218Z"
         }
       ]
     }
@@ -3911,10 +3914,36 @@
         121,
         96
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:08:40.218Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 3,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547082,
+            "teamId": 30,
+            "providerId": 66483617,
+            "name": "Isaiah Jackson",
+            "fetchedAt": "2026-11-11T11:08:40.218Z"
+          },
+          {
+            "gameId": 1547082,
+            "teamId": 32,
+            "providerId": 47340197,
+            "name": "Domantas Sabonis",
+            "fetchedAt": "2026-11-11T11:08:40.218Z"
+          },
+          {
+            "gameId": 1547082,
+            "teamId": 32,
+            "providerId": 70536827,
+            "name": "Nique Clifford",
+            "fetchedAt": "2026-11-11T11:08:40.218Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -22330,7 +22359,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 0,
-    "unmappedGames": 13,
+    "unmappedGames": 14,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
