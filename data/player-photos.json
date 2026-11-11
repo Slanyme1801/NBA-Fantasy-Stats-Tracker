@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 81,
-    "transparentCount": 78,
+    "coveredCount": 85,
+    "transparentCount": 82,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2211,6 +2211,106 @@
         "date": "2026-11-11",
         "status": "current-club",
         "currentTeam": "pelicans",
+        "source": "https://www.nba.com/players"
+      }
+    },
+    "1630559": {
+      "nbaId": 1630559,
+      "name": "Austin Reaves",
+      "path": "assets/player-photos/1630559-current.png",
+      "alt": "Austin Reaves en maillot jaune des Lakers, faisant un geste de la main.",
+      "source": "https://uniqrenders.com/athletes/basketball/austin-reaves-los-angeles-lakers-nba-usa-american-basketball-players-7505",
+      "originalUrl": "https://uniqrenders.com/Uploads/28-2-2025/7505/austin-reaves-los-angeles-lakers-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "Détourage : Uniqrenders ; photographe original non indiqué.",
+      "license": "Téléchargement public Uniqrenders ; licence photo originale non précisée.",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/austin-reaves-los-angeles-lakers-nba-usa-american-basketball-players-7505",
+      "rightsStatus": "Téléchargement proposé publiquement par la source ; licence de republication et droits photographiques originaux non établis. Crédit conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1291,
+      "height": 1722,
+      "sha256": "85c35d8dd799093e2f90d46c57df5546026a56afcfc0b1f49b86b2500043491e",
+      "transformations": "Aucune modification ; PNG original téléchargé.",
+      "selection": "Pose naturelle, identité et maillot actuel contrôlés visuellement ; canal alpha vérifié.",
+      "clubAudit": {
+        "date": "2026-11-11",
+        "status": "current-club",
+        "currentTeam": "lakers",
+        "source": "https://www.nba.com/players"
+      }
+    },
+    "1628398": {
+      "nbaId": 1628398,
+      "name": "Kyle Kuzma",
+      "path": "assets/player-photos/1628398-current.png",
+      "alt": "Kyle Kuzma en maillot blanc des Bucks, les mains sur les hanches.",
+      "source": "https://uniqrenders.com/athletes/basketball/kyle-kuzma-milwaukee-bucks-nba-usa-american-basketball-players-7508",
+      "originalUrl": "https://uniqrenders.com/Uploads/28-2-2025/7508/kyle-kuzma-milwaukee-bucks-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "Détourage : Uniqrenders ; photographe original non indiqué.",
+      "license": "Téléchargement public Uniqrenders ; licence photo originale non précisée.",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/kyle-kuzma-milwaukee-bucks-nba-usa-american-basketball-players-7508",
+      "rightsStatus": "Téléchargement proposé publiquement par la source ; licence de republication et droits photographiques originaux non établis. Crédit conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1463,
+      "height": 1639,
+      "sha256": "f4122d445873a7643d4ac2851bf7c44d12cdeec3ac53e3d853c95a876c10c083",
+      "transformations": "Aucune modification ; PNG original téléchargé.",
+      "selection": "Pose naturelle, identité et maillot actuel contrôlés visuellement ; canal alpha vérifié.",
+      "clubAudit": {
+        "date": "2026-11-11",
+        "status": "current-club",
+        "currentTeam": "bucks",
+        "source": "https://www.nba.com/players"
+      }
+    },
+    "201566": {
+      "nbaId": 201566,
+      "name": "Russell Westbrook",
+      "path": "assets/player-photos/201566-civil.png",
+      "alt": "Russell Westbrook sautant en costume sombre avec un ballon de basket.",
+      "source": "https://www.pngkit.com/view/u2w7o0t4y3r5y3r5_russell-westbrook-suit-russell-westbrook-dunking-white-background/",
+      "originalUrl": "https://www.pngkit.com/png/detail/315-3159984_russell-westbrook-suit-russell-westbrook-dunking-white-background.png",
+      "author": "Photographe original non indiqué ; retrait du fond par outil IA.",
+      "license": "PNGKit : usage personnel non commercial ; droits photographiques originaux non certifiés",
+      "licenseUrl": "https://www.pngkit.com/terms/",
+      "rightsStatus": "La page propose l’intégration sur un site ou blog ; conditions limitées aux projets personnels non commerciaux. La source ne garantit pas de licence du contenu original. Utilisation sur ce site personnel non commercial, provenance conservée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1024,
+      "height": 1536,
+      "sha256": "75b2b76b982e6e768071028dd3cd34f6c7b40e93caf1225b8e7e1f06821de2e1",
+      "transformations": "Retrait du fond uni avec imagegen, agrandissement génératif et recadrage autour de la silhouette ; détails reconstruits, non identiques pixel par pixel à la source.",
+      "selection": "Pose en saut, tenue civile et ballon conservés ; véritable alpha vérifié.",
+      "clubAudit": {
+        "date": "2026-11-11",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": null,
+        "source": "Inspection visuelle du fichier source : costume, aucun maillot."
+      }
+    },
+    "1628976": {
+      "nbaId": 1628976,
+      "name": "Wendell Carter Jr.",
+      "path": "assets/player-photos/1628976-action.png",
+      "alt": "Wendell Carter Jr. avec lunettes de protection, en maillot bleu Orlando Magic.",
+      "source": "https://uniqrenders.com/athletes/basketball/wendell-carter-jr-orlando-magic-nba-usa-american-basketball-players-732",
+      "originalUrl": "https://uniqrenders.com/Uploads/25-10-2022/732/wendell-carter-jr-orlando-magic-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "Détourage : Uniqrenders ; photographe original non indiqué.",
+      "license": "Téléchargement public Uniqrenders ; licence photo originale non précisée",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/wendell-carter-jr-orlando-magic-nba-usa-american-basketball-players-732",
+      "rightsStatus": "Téléchargement proposé publiquement par la source ; licence de republication et droits photographiques originaux non établis. Crédit conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1099,
+      "height": 1559,
+      "sha256": "599303d1d1f8051021b4e77521f5b3fc080a2352daac13809dd4cfdaa458d53b",
+      "transformations": "Aucune ; original PNG transparent conservé.",
+      "selection": "Pose naturelle avec lunettes, tenue Orlando actuelle ; véritable transparence alpha0–255 vérifiée.",
+      "clubAudit": {
+        "date": "2026-11-11",
+        "status": "current-club",
+        "currentTeam": "magic",
         "source": "https://www.nba.com/players"
       }
     }
