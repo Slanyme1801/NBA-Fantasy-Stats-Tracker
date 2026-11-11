@@ -54,11 +54,11 @@
   .results{
     position:absolute;left:0;right:0;top:calc(100% + 8px);background:var(--panel);
     border:1px solid var(--line);border-radius:12px;overflow:hidden;text-align:left;
-    z-index:30;max-height:340px;overflow-y:auto;
+    z-index:30;max-height:340px;overflow-y:auto;color:var(--ink);
   }
   .results div{padding:11px 15px;display:flex;justify-content:space-between;gap:10px}
   .results div:hover,.results div.sel{background:var(--bg-2)}
-  .results small{color:var(--ink-faint)}
+  .results small{color:var(--ink-dim)}
 
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:20px 0}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}

@@ -26,7 +26,7 @@ test('photo catalogue refresh bypasses stale HTTP caches without breaking fallba
 
 test('transparent PNGs are flagged without inventing rights certification',async()=>{
  const api=createPlayerPhotos(manifest),cutouts=Object.values(manifest.players).filter(p=>p.transparent);
- assert.equal(cutouts.length,10);assert.match(api.credits(),/10 images sont des PNG/);assert.match(api.credits(),/usage non commercial uniquement/);assert.match(api.credits(),/droits photographiques originaux non audités/);
+ assert.equal(cutouts.length,manifest.scope.transparentCount);assert.ok(api.credits().includes(`${cutouts.length} images sont des PNG`));assert.match(api.credits(),/usage non commercial uniquement/);assert.match(api.credits(),/droits photographiques originaux non audités/);
  for(const p of cutouts){const bytes=await fs.readFile(new URL('../'+p.path,import.meta.url));assert.equal(bytes.subarray(1,4).toString(),'PNG');assert.match(api.portrait(p.nbaId),/photo-transparent/);}
 });
 
@@ -37,4 +37,21 @@ test('profile portraits have one centered responsive slot for every image format
  assert.match(css,/\.player-head\{align-items:center/);
  assert.match(css,/object-fit:contain;object-position:center/);
  assert.match(css,/@media\(max-width:420px\)/);
+});
+
+test('catalogue only presents current-club or civilian photos after the club audit',()=>{
+ assert.equal(Object.keys(manifest.players).length,manifest.scope.coveredCount);
+ for(const p of Object.values(manifest.players)){assert.ok(['current-club','civilian-no-club-uniform'].includes(p.clubAudit?.status));assert.equal(p.clubAudit.date,'2026-11-11');}
+ assert.equal(manifest.players['203081'].clubAudit.status,'civilian-no-club-uniform');
+ assert.equal(manifest.players['1629029'].clubAudit.currentTeam,'lakers');
+ assert.equal(createPlayerPhotos(manifest).portrait(1628392),'');
+ assert.ok(!createPlayerPhotos(manifest).credits().includes('maillots peuvent être anciens'));
+});
+
+test('portraits keep invisible framing and search results set their own readable color',async()=>{
+ const css=await fs.readFile(new URL('../assets/dashboard.css',import.meta.url),'utf8');
+ const style=await fs.readFile(new URL('../assets/style.css',import.meta.url),'utf8');
+ assert.match(css,/background:transparent;border:0;border-radius:0;overflow:hidden/);
+ assert.match(style,/overflow-y:auto;color:var\(--ink\)/);
+ assert.match(style,/\.results small\{color:var\(--ink-dim\)\}/);
 });
