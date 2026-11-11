@@ -304,6 +304,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:09:28.984Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:09:35.102Z"
         }
       ]
     }
@@ -4571,10 +4574,29 @@
         111,
         128
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:09:35.102Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 2,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547582,
+            "teamId": 25,
+            "providerId": 66505382,
+            "name": "Jalen Duren",
+            "fetchedAt": "2026-11-11T11:09:35.102Z"
+          },
+          {
+            "gameId": 1547582,
+            "teamId": 25,
+            "providerId": 65936597,
+            "name": "Isaiah Joe",
+            "fetchedAt": "2026-11-11T11:09:35.102Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -22711,7 +22733,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 1,
-    "unmappedGames": 21,
+    "unmappedGames": 22,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
