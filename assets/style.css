@@ -1,9 +1,9 @@
 
   :root{
-    --bg:#0d1220; --bg-2:#131b2e; --panel:#171f33; --line:#26314c;
-    --ink:#e9edf6; --ink-dim:#9aa6bf; --ink-faint:#6b7690;
-    --amber:#ffb020; --amber-soft:rgba(255,176,32,.14);
-    --cyan:#54c8e8; --up:#43c98a; --down:#ff6b81;
+    --bg:#f3f6fb; --bg-2:#eaf0f8; --panel:#ffffff; --line:#ccd7e6;
+    --ink:#122745; --ink-dim:#475b76; --ink-faint:#536781;
+    --amber:#c8102e; --amber-soft:rgba(200,16,46,.08);
+    --cyan:#17408b; --up:#176c46; --down:#bb1230;
     --radius:14px;
     --sans:"Inter","Segoe UI",Roboto,-apple-system,"Helvetica Neue",Arial,sans-serif;
   }
@@ -66,7 +66,7 @@
   .card .value{font-size:30px;font-weight:700;letter-spacing:-.02em}
   .card.hero-stat{
     background:linear-gradient(160deg,var(--amber-soft),transparent 70%);
-    border-color:rgba(255,176,32,.35);
+    border-color:rgba(200,16,46,.3);
   }
   .card.hero-stat .value{color:var(--amber);font-size:44px}
 
@@ -104,7 +104,7 @@
     padding:8px 10px;border-radius:9px;font-family:inherit;font-size:14px;
   }
   .btn{
-    background:var(--amber);color:#17110026;color:#1a1200;border:0;border-radius:10px;
+    background:var(--amber);color:#ffffff;border:0;border-radius:10px;
     padding:10px 14px;font-weight:650;
   }
   .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
@@ -158,3 +158,8 @@
   @media (prefers-reduced-motion:no-preference){
     .card.hero-stat .value{transition:color .2s}
   }
+
+/* NBA-inspired light palette; tokens retain compatibility with existing views. */
+header.top{background:#fff;border-top:4px solid #17408b;box-shadow:0 2px 12px #17408b0a}
+nav button.active{background:#17408b;color:#fff;border-color:#17408b}
+.panel{box-shadow:0 3px 16px #17408b06}

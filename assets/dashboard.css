@@ -1,7 +1,7 @@
-.dashboard{background:radial-gradient(ellipse at top right,rgba(84,200,232,.09),transparent 65%),var(--panel);overflow:hidden}
+.dashboard{background:radial-gradient(ellipse at top right,rgba(23,64,139,.09),transparent 65%),var(--panel);overflow:hidden}
 .dashboard h2{margin:4px 0;font-size:clamp(23px,4vw,32px)}
 .dashboard-periods{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
-.dashboard-periods [aria-pressed=true]{background:var(--amber);border-color:var(--amber);color:var(--bg)}
+.dashboard-periods [aria-pressed=true]{background:var(--amber);border-color:var(--amber);color:#fff}
 .dashboard-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .dashboard-summary h3,.dashboard-summary p{margin:5px 0}
 .dashboard-warning{border-left:3px solid var(--amber);padding:8px 12px;color:var(--ink-dim);font-size:13px}
@@ -10,7 +10,7 @@
 .dashboard-leaders li::after{content:'';position:absolute;bottom:0;left:0;height:2px;width:var(--score-width);background:var(--cyan);opacity:.65;pointer-events:none}
 .dashboard-leaders li:first-child{border-color:var(--amber)}
 .dashboard-player{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:transparent;color:var(--ink);border:0;min-height:88px;padding:14px}
-.dashboard-player:hover{background:rgba(84,200,232,.07)}
+.dashboard-player:hover{background:rgba(23,64,139,.07)}
 .dashboard-player:focus-visible{outline-offset:-3px}
 .dashboard-rank{color:var(--ink-dim);width:20px;flex-shrink:0}
 .dashboard-avatar{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--amber-soft);color:var(--amber);font-size:12px;flex-shrink:0}
@@ -20,3 +20,17 @@
 @keyframes dashboard-enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
 @media(max-width:760px){.dashboard-leaders{grid-template-columns:1fr}.dashboard-player{gap:9px;padding:12px}.dashboard-periods .btn{flex:1 1 40%;font-size:13px}.dashboard-summary .btn{width:100%}}
 @media(prefers-reduced-motion:reduce){.dashboard-leaders li{animation:none}}
+/* One performance at a time, with the complete ranking always available below. */
+.dashboard-carousel{margin:24px 0;padding:24px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(120deg,var(--bg-2),rgba(23,64,139,.08))}
+.dashboard-carousel-heading,.dashboard-carousel-controls{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.dashboard-carousel-heading{color:var(--ink-dim);font-size:13px}.dashboard-carousel-controls{justify-content:center;margin-top:18px}
+.dashboard-slide-window{overflow:hidden;min-height:170px;display:grid;align-items:center}
+.dashboard-spotlight{display:flex;align-items:center;gap:24px;padding:24px 0;animation:dashboard-slide .55s ease-out both}
+.dashboard-spotlight-rank{font-size:clamp(28px,5vw,56px);font-weight:900;color:var(--amber)}
+.dashboard-spotlight-info{flex:1;min-width:0}.dashboard-spotlight-name{font-size:clamp(23px,4vw,38px);font-weight:800;text-align:left;overflow-wrap:anywhere}
+.dashboard-spotlight-info p{font-size:13px;color:var(--ink-dim);margin:10px 0}
+.dashboard-spotlight-score{text-align:right}.dashboard-spotlight-score strong{display:block;font-size:clamp(38px,6vw,68px);color:var(--cyan);line-height:1.1}.dashboard-spotlight-score span{font-size:11px;letter-spacing:.12em;color:var(--ink-dim)}
+.dashboard-table-wrap{overflow-x:auto}.dashboard-table{width:100%;min-width:390px}.dashboard-table caption{text-align:left;padding:0 0 12px}.dashboard-table th{text-align:left}.dashboard-table .dashboard-player{display:inline;padding:6px 0;min-height:0;font:inherit;font-weight:600;cursor:pointer}.dashboard-table th small{display:block;font-weight:400}
+@keyframes dashboard-slide{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@media(max-width:760px){.dashboard-carousel{padding:16px}.dashboard-spotlight{gap:12px;flex-wrap:wrap}.dashboard-spotlight-info{flex-basis:65%}.dashboard-spotlight-score{width:100%;text-align:left;padding-left:42px}.dashboard-slide-window{min-height:240px}.dashboard-carousel-controls .btn{min-height:44px}.dashboard-table{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.dashboard-spotlight{animation:none}}

@@ -18,7 +18,7 @@ function harness(){
 }
 test('home emits top 10, sample/date warnings, accessible period buttons and ranking route',async()=>{
  const h=harness();h.context.renderHome();
- assert.match(h.node('hero').html,/role="group"/);assert.match(h.node('hero').html,/aria-live="polite"/);
+ assert.match(h.node('hero').html,/role="group"/);assert.match(h.node('dashboardBody').html,/aria-roledescription="carousel"/);
  assert.equal((h.node('dashboardBody').html.match(/class="dashboard-player"/g)||[]).length,10);
  assert.match(h.node('dashboardBody').html,/not a complete league ranking/);
  for(const period of ['7','14','30','night']){
@@ -61,4 +61,29 @@ test('period selection preserves explicit total, games and name sorts',async()=>
   assert.equal(h.node('fSort').value,sort);
   h.node('fDashboardPeriod').value='season';await h.context.loadBoard();assert.equal(h.node('averageOption').textContent,'Selected season FPTS/G');
  }
+});
+test('carousel advances one player, wraps, pauses, resets on period change and leaves complete table',()=>{
+ const h=harness();let tick=null,cleared=0;
+ h.context.window.setTimeout=(fn,ms)=>{assert.equal(ms,5000);tick=fn;return 1;};
+ h.context.window.clearTimeout=()=>{tick=null;cleared++;};
+ h.node('dashboardCarousel').isConnected=true;
+ h.context.renderHome();assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
+ assert.equal((h.node('dashboardBody').html.match(/class="dashboard-player"/g)||[]).length,10);
+ tick();assert.equal(h.node('dashboardSlideCount').textContent,'2 / 10');
+ h.node('dashboardNext').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'3 / 10');assert.equal(tick,null);
+ h.node('dashboardPause').onclick();assert.ok(tick);
+ h.node('dashboardCarousel').onmouseenter();assert.equal(tick,null);
+ h.node('dashboardCarousel').onmouseleave();assert.ok(tick);
+ h.node('dashboardCarousel').onfocusin();assert.equal(tick,null);
+ h.buttons.get('14').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
+ h.node('dashboardPrevious').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'10 / 10');
+ assert.ok(cleared>0);
+});
+test('reduced motion starts paused and detached carousel never advances',()=>{
+ const h=harness();let tick=null;
+ h.context.window.matchMedia=()=>({matches:true});
+ h.context.window.setTimeout=fn=>{tick=fn;return 1;};h.context.window.clearTimeout=()=>{tick=null;};
+ h.context.renderHome();assert.equal(tick,null);assert.equal(h.node('dashboardPause').textContent,'Play slideshow');
+ h.node('dashboardNext').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'2 / 10');
+ h.node('dashboardPause').onclick();assert.ok(tick);tick();assert.equal(h.node('dashboardSlideCount').textContent,'2 / 10');
 });

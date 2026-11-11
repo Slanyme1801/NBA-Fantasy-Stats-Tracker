@@ -1,18 +1,45 @@
 /* Independent home dashboard and period-aware ranking extension. */
 (function(){
-  let selected='night';
+  let selected='night',stopCarousel=()=>{};
   const labels={night:'Latest imported night','7':'Last 7 days','14':'Last 14 days','30':'Last 30 days'};
   const ranking=period=>window.FantasyDashboard.dashboardRanking(currentData,{period,weights:META.scoring});
   const rangeLabel=r=>r.range.start?`${r.range.start}${r.range.start===r.range.end?'':` through ${r.range.end}`} · ${r.range.timeZone}`:'No completed regular-season date imported';
   const originalHome=renderHome;
-  renderHome=function(){originalHome();el('view').querySelector('.hero').insertAdjacentHTML('afterend',`<section class="dashboard panel" aria-labelledby="dashboardTitle"><div class="section-title"><div><span class="eyebrow">THE FANTASY PULSE</span><h2 id="dashboardTitle">Standout performances</h2></div><span class="badge">${esc(scoreLabel())}</span></div><p class="muted">Top 10 in the imported sample · ranked by fantasy points per game, minimum 1 complete game.</p><div class="dashboard-periods" role="group" aria-label="Performance period">${Object.entries(labels).map(([key,label])=>`<button type="button" class="btn ghost" data-period="${key}" aria-pressed="${selected===key}">${label}</button>`).join('')}</div><div id="dashboardBody" aria-live="polite"></div></section>`);document.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{selected=button.dataset.period;renderDashboard();});renderDashboard();};
+  renderHome=function(){originalHome();el('view').querySelector('.hero').insertAdjacentHTML('afterend',`<section class="dashboard panel" aria-labelledby="dashboardTitle"><div class="section-title"><div><span class="eyebrow">THE FANTASY PULSE</span><h2 id="dashboardTitle">Standout performances</h2></div><span class="badge">${esc(scoreLabel())}</span></div><p class="muted">Top 10 in the imported sample · ranked by fantasy points per game, minimum 1 complete game.</p><div class="dashboard-periods" role="group" aria-label="Performance period">${Object.entries(labels).map(([key,label])=>`<button type="button" class="btn ghost" data-period="${key}" aria-pressed="${selected===key}">${label}</button>`).join('')}</div><div id="dashboardBody"></div></section>`);document.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{selected=button.dataset.period;renderDashboard();});renderDashboard();};
   function renderDashboard(){
-    const result=ranking(selected),rows=result.rows.slice(0,10),max=Math.max(1,...rows.map(r=>Math.abs(r.fptsPerGame)));
+    stopCarousel();
+    const result=ranking(selected),rows=result.rows.slice(0,10);
     document.querySelectorAll('[data-period]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.period===selected));
-    el('dashboardBody').innerHTML=`<div class="dashboard-summary"><div><h3><button class="text-button" id="dashboardCategory">${esc(labels[selected])} →</button></h3><p class="small">${rangeLabel(result)}</p></div><button class="btn ghost" id="dashboardRankings">View these rankings →</button></div><p class="dashboard-warning">Imported sample only, not a complete league ranking. ${result.boxedGames} / ${result.importedGames} imported finished games have box scores. ${window.CurrentLoad.state==='cached'?'Cached snapshot: refresh failed. ':''}Snapshot: ${esc(displayDate(currentData.updatedAt))}.</p>${rows.length?`<ol class="dashboard-leaders">${rows.map((r,i)=>`<li style="--order:${i};--score-width:${Math.abs(r.fptsPerGame)/max*100}%"><button class="dashboard-player" data-player="${esc(r.id)}"><span class="dashboard-rank">${i+1}</span><span class="dashboard-avatar" aria-hidden="true">${esc(r.name.split(' ').map(x=>x[0]).slice(0,2).join(''))}</span><span class="dashboard-name"><strong>${esc(r.name)}</strong><small>${esc(r.teams.join(' / '))} · ${r.gp} GP · ${r.dnp} DNP · ${r.missing} missing${r.identityPending?' · NBA history link pending':''}</small></span><span class="dashboard-score"><strong>${fmt(r.fptsPerGame)}</strong><small>FPTS/G</small></span></button></li>`).join('')}</ol>`:'<p class="empty">No complete player performances in this period. Missing imports are not zero performances.</p>'}<p class="small muted">Finished regular-season games only. Unimported games and absent player lines are unknown, not recorded DNP. The latest imported night uses New York dates; 7/14/30-day windows include today in UTC.</p>`;
+    el('dashboardBody').innerHTML=`<div class="dashboard-summary"><div><h3><button class="text-button" id="dashboardCategory">${esc(labels[selected])} →</button></h3><p class="small">${rangeLabel(result)}</p></div><button class="btn ghost" id="dashboardRankings">View these rankings →</button></div><p class="dashboard-warning">Imported sample only, not a complete league ranking. ${result.boxedGames} / ${result.importedGames} imported finished games have box scores. ${window.CurrentLoad.state==='cached'?'Cached snapshot: refresh failed. ':''}Snapshot: ${esc(displayDate(currentData.updatedAt))}.</p>${rows.length?`<section id="dashboardCarousel" class="dashboard-carousel" role="region" aria-roledescription="carousel" aria-label="Top performances"><div class="dashboard-carousel-heading"><span class="eyebrow">IN THE SPOTLIGHT</span><span id="dashboardSlideCount"></span></div><div class="dashboard-slide-window"><div id="dashboardSlide"></div></div><div class="dashboard-carousel-controls"><button type="button" class="btn ghost" id="dashboardPrevious" aria-label="Previous player">←</button><button type="button" class="btn ghost" id="dashboardPause">Pause slideshow</button><button type="button" class="btn ghost" id="dashboardNext" aria-label="Next player">→</button></div></section><h3>Complete top ${rows.length}</h3><div class="dashboard-table-wrap"><table class="dashboard-table"><caption class="small">${esc(labels[selected])} · imported sample · FPTS/G</caption><thead><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Team</th><th scope="col">GP</th><th scope="col">FPTS/G</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><th scope="row"><button class="dashboard-player" data-player="${esc(r.id)}">${esc(r.name)}</button>${r.identityPending?'<small class="muted">NBA history link pending</small>':''}</th><td>${esc(r.teams.join(' / '))}</td><td>${r.gp}</td><td class="fpts">${fmt(r.fptsPerGame)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="empty">No complete player performances in this period. Missing imports are not zero performances.</p>'}<p class="small muted">Finished regular-season games only. Unimported games and absent player lines are unknown, not recorded DNP. The latest imported night uses New York dates; 7/14/30-day windows include today in UTC.</p>`;
+    if(rows.length)startCarousel(rows);
     el('dashboardRankings').onclick=()=>openDashboardRankings(selected);
     el('dashboardCategory').onclick=()=>openDashboardRankings(selected);
     el('dashboardBody').querySelectorAll('[data-player]').forEach(b=>b.onclick=()=>openPlayer(b.dataset.player));
+  }
+  function startCarousel(rows){
+    const root=el('dashboardCarousel'),slide=el('dashboardSlide'),pause=el('dashboardPause');
+    const motion=window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    let index=0,paused=!!motion?.matches,hovered=false,timer=null;
+    const clear=()=>{if(timer!==null)window.clearTimeout(timer);timer=null;};
+    const schedule=()=>{clear();if(!paused&&!hovered&&rows.length>1&&window.setTimeout)timer=window.setTimeout(()=>{if(!root.isConnected){clear();return;}if(!document.hidden)show(index+1);else schedule();},5000);};
+    function show(next){
+      index=(next+rows.length)%rows.length;const r=rows[index];
+      slide.innerHTML=`<div class="dashboard-spotlight"><span class="dashboard-spotlight-rank">#${index+1}</span><div class="dashboard-spotlight-info"><button class="text-button dashboard-spotlight-name" data-player="${esc(r.id)}">${esc(r.name)}</button><p>${esc(r.teams.join(' / '))} · ${r.gp} GP · ${r.dnp} DNP · ${r.missing} missing</p>${r.identityPending?'<small>NBA history link pending</small>':''}</div><div class="dashboard-spotlight-score"><strong>${fmt(r.fptsPerGame)}</strong><span>FPTS / GAME</span></div></div>`;
+      slide.querySelector('[data-player]').onclick=()=>openPlayer(String(r.id));
+      el('dashboardSlideCount').textContent=`${index+1} / ${rows.length}`;
+      pause.textContent=paused?'Play slideshow':'Pause slideshow';pause.setAttribute('aria-pressed',String(paused));
+      schedule();
+    }
+    pause.onclick=()=>{paused=!paused;show(index);};
+    el('dashboardPrevious').onclick=()=>{paused=true;show(index-1);};
+    el('dashboardNext').onclick=()=>{paused=true;show(index+1);};
+    root.onmouseenter=()=>{hovered=true;clear();};root.onmouseleave=()=>{hovered=false;schedule();};
+    // Keyboard interaction pauses until the visitor explicitly presses Play.
+    root.onfocusin=()=>{paused=true;clear();pause.textContent='Play slideshow';pause.setAttribute('aria-pressed','true');};
+    const reduced=()=>{if(motion.matches){paused=true;clear();pause.textContent='Play slideshow';pause.setAttribute('aria-pressed','true');}};
+    motion?.addEventListener?.('change',reduced);
+    stopCarousel=()=>{clear();motion?.removeEventListener?.('change',reduced);};
+    show(0);
   }
   const originalBoard=renderBoard,originalLoadBoard=loadBoard;
   renderBoard=function(){originalBoard();el('fSeason').closest('label').insertAdjacentHTML('afterend',`<label>Current period<select id="fDashboardPeriod"><option value="season">Full imported sample</option>${Object.entries(labels).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></label>`);el('fDashboardPeriod').onchange=()=>{el('fSeason').value=C.SEASON;setBoardPositions();loadBoard();};};
