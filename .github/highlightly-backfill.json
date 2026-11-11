@@ -463,6 +463,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:14:52.912Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:14:59.008Z"
         }
       ]
     }
@@ -7873,10 +7876,43 @@
         114,
         121
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:14:59.008Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 4,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1549057,
+            "teamId": 34,
+            "providerId": 66498077,
+            "name": "Scottie Barnes",
+            "fetchedAt": "2026-11-11T11:14:59.008Z"
+          },
+          {
+            "gameId": 1549057,
+            "teamId": 34,
+            "providerId": 65936927,
+            "name": "Immanuel Quickley",
+            "fetchedAt": "2026-11-11T11:14:59.008Z"
+          },
+          {
+            "gameId": 1549057,
+            "teamId": 34,
+            "providerId": 76400072,
+            "name": "Collin Murray-Boyles",
+            "fetchedAt": "2026-11-11T11:14:59.008Z"
+          },
+          {
+            "gameId": 1549057,
+            "teamId": 24,
+            "providerId": 60995867,
+            "name": "Desmond Bane",
+            "fetchedAt": "2026-11-11T11:14:59.008Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=2",
@@ -25566,7 +25602,7 @@
     "verifiedRegularBoxScores": 24,
     "verifiedBoxScores": 24,
     "sourceFailureGames": 1,
-    "unmappedGames": 72,
+    "unmappedGames": 73,
     "unclassifiedGames": 0,
     "pendingGames": 136,
     "inventoryTotal": 405,
