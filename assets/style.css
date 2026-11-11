@@ -170,3 +170,8 @@ header.top{background:#17408b;color:#fff;border-top:4px solid #c8102e;border-bot
 .brand span{color:#fff}nav button{color:#e8efff}nav button.active{background:#c8102e;border-color:#c8102e;color:#fff}nav button:hover{background:#24549f;color:#fff}
 .hero{background:linear-gradient(120deg,#d6e3f5,#edf2f8);border-radius:18px;padding:36px 18px;margin-bottom:24px}
 @media(max-width:760px){main{padding:18px 12px 60px}.hero{padding:26px 12px}header.top{padding:12px}}
+
+/* Original user-provided logo, unaltered. Header matches its dominant blue. */
+header.top{background:#1f4294;border-top-color:#1f4294}
+.brand{display:flex;align-items:center;gap:10px;border:0;padding:0;background:transparent;color:#fff;text-align:left;flex-shrink:0}.brand-logo{display:block;width:54px;height:68px;object-fit:contain}.brand-text{white-space:nowrap}
+@media(max-width:760px){.brand-logo{width:44px;height:55px}.brand{gap:9px}header.top .brand{width:auto}}

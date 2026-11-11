@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NBA Fantasy Stats</title>
 <link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#17408b">
+<meta name="theme-color" content="#1f4294">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,7 +20,7 @@
 </head>
 <body>
 <header class="top">
-  <div class="brand" onclick="go('home')">NBA <span>Fantasy</span> Stats</div>
+  <button type="button" class="brand" onclick="go('home')" aria-label="NBA Fantasy Stats, accueil"><img class="brand-logo" src="./assets/brand/lebron-nba-original.webp" alt="" width="54" height="68"><span class="brand-text">NBA <span>Fantasy</span> Stats</span></button>
   <div class="searchbox" style="flex:1;max-width:340px" id="navSearchWrap">
     <input aria-label="Rechercher des joueurs NBA" id="navSearch" placeholder="Rechercher un joueur NBA…" autocomplete="off">
     <div class="results" id="navResults" hidden></div>
@@ -28,7 +28,7 @@
   <nav>
     <button id="tab-home" onclick="go('home')">Accueil</button>
     <button id="tab-board" onclick="go('board')">Classements</button>
-    <button id="tab-trades" onclick="go('trades')">Échanges</button>
+    <button id="tab-trades" onclick="go('trades')">Trades</button>
     <button id="tab-compare" onclick="go('compare')">Comparer</button>
     <button id="tab-data" onclick="go('data')">Données et barème</button>
   </nav>

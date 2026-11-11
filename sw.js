@@ -4,7 +4,7 @@ layout: null
 // Pages makes this script byte-different on every published commit.
 const VERSION='{{ site.github.build_revision }}';
 const PREFIX='nbafs-shell-v3:'+self.registration.scope+':',SHELL=PREFIX+VERSION;
-const ASSETS=['','index.html','manifest.webmanifest','icon-192.png','icon-512.png','apple-touch-icon.png','icon-maskable-512.png','assets/style.css','assets/companion.css','assets/dashboard.css','assets/dashboard.mjs','assets/dashboard.js','assets/core.mjs','assets/loader.mjs','assets/boot.mjs','assets/legacy.js','assets/adapter.js','assets/app.js','assets/companion.js','assets/updates.mjs','data/history-v1.json'];
+const ASSETS=['','index.html','manifest.webmanifest','icon-192.png','icon-512.png','apple-touch-icon.png','icon-maskable-512.png','assets/brand/lebron-nba-original.webp','assets/style.css','assets/companion.css','assets/dashboard.css','assets/dashboard.mjs','assets/photos.mjs','assets/dashboard.js','assets/core.mjs','assets/loader.mjs','assets/boot.mjs','assets/legacy.js','assets/adapter.js','assets/app.js','assets/companion.js','assets/updates.mjs','data/history-v1.json'];
 const address=relative=>new URL(relative,self.registration.scope).href;
 async function fetchRelease(relative){
   const url=new URL(relative||'index.html',self.registration.scope);url.searchParams.set('app-version',VERSION);

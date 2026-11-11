@@ -1,13 +1,13 @@
 {
   "name": "NBA Fantasy Stats",
   "short_name": "Fantasy Stats",
-  "description": "Votre compagnon NBA fantasy : historique, forme actuelle et comparaison des échanges.",
+  "description": "Votre compagnon NBA fantasy : historique, forme actuelle et comparaison des trades.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#cad6e7",
-  "theme_color": "#17408b",
+  "theme_color": "#1f4294",
   "icons": [
     {
       "src": "./icon-192.png",
