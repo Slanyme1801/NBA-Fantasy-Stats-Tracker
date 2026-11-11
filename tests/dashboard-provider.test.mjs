@@ -29,12 +29,12 @@ test('provider-only rows remain separate with independent teams, totals and miss
  d.lines.push({...d.lines[0]});assert.equal(dashboard.dashboardRanking(d,{period:'7'}).rows.find(p=>p.id==='highlightly:101').gp,1);
 });
 test('dashboard player and ranking clicks open provider profiles without fabricated history',async()=>{
- const a=await app(sample());a.run("go('home')");assert.match(a.node('dashboardBody').innerHTML,/NBA history link pending/);
+ const a=await app(sample());a.run("go('home')");assert.match(a.node('dashboardBody').innerHTML,/Lien avec l’historique NBA en attente/);
  const buttons=a.node('dashboardBody').players;assert.equal(buttons.length,2);
- await buttons.find(b=>b.dataset.player==='highlightly:101').onclick();assert.equal(a.win.FantasySession.capture().playerId,'highlightly:101');assert.match(a.node('currentProfile').innerHTML,/Game log · 1 records/);
+ await buttons.find(b=>b.dataset.player==='highlightly:101').onclick();assert.equal(a.win.FantasySession.capture().playerId,'highlightly:101');assert.match(a.node('currentProfile').innerHTML,/Historique des matchs · 1 enregistrements/);
  const p=await a.api('/api/player/highlightly%3A101');assert.equal(p.summary.total_gp,0);assert.ok(p.seasons.slice(0,-1).every(s=>!s.played&&s.note==='No historical record'));assert.equal(p.seasons.at(-1).gp,1);
- a.run("go('home')");a.node('dashboardRankings').onclick();await a.run('loadBoard()');assert.match(a.node('boardTable').innerHTML,/NBA history link pending/);
- await a.node('boardTable').players.find(b=>b.dataset.player==='highlightly:102').onclick();assert.equal(a.win.FantasySession.capture().playerId,'highlightly:102');assert.match(a.node('currentProfile').innerHTML,/Game log · 1 records/);
+ a.run("go('home')");a.node('dashboardRankings').onclick();await a.run('loadBoard()');assert.match(a.node('boardTable').innerHTML,/Lien avec l’historique NBA en attente/);
+ await a.node('boardTable').players.find(b=>b.dataset.player==='highlightly:102').onclick();assert.equal(a.win.FantasySession.capture().playerId,'highlightly:102');assert.match(a.node('currentProfile').innerHTML,/Historique des matchs · 1 enregistrements/);
 });
 test('later NBA mapping enriches one row and old provider links resolve to the same profile',async()=>{
  const before=dashboard.dashboardRanking(sample(),{period:'7'}),data=sample(true),after=dashboard.dashboardRanking(data,{period:'7'});assert.equal(before.rows.length,after.rows.length);

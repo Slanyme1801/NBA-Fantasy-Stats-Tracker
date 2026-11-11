@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>NBA Fantasy Stats</title>
 <link rel="manifest" href="./manifest.webmanifest">
-<meta name="theme-color" content="#0d1220">
+<meta name="theme-color" content="#17408b">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,19 +22,19 @@
 <header class="top">
   <div class="brand" onclick="go('home')">NBA <span>Fantasy</span> Stats</div>
   <div class="searchbox" style="flex:1;max-width:340px" id="navSearchWrap">
-    <input aria-label="Search NBA players" id="navSearch" placeholder="Search NBA player…" autocomplete="off">
+    <input aria-label="Rechercher des joueurs NBA" id="navSearch" placeholder="Rechercher un joueur NBA…" autocomplete="off">
     <div class="results" id="navResults" hidden></div>
   </div>
   <nav>
-    <button id="tab-home" onclick="go('home')">Home</button>
-    <button id="tab-board" onclick="go('board')">Rankings</button>
-    <button id="tab-trades" onclick="go('trades')">Trades</button>
-    <button id="tab-compare" onclick="go('compare')">Compare</button>
-    <button id="tab-data" onclick="go('data')">Data &amp; scoring</button>
+    <button id="tab-home" onclick="go('home')">Accueil</button>
+    <button id="tab-board" onclick="go('board')">Classements</button>
+    <button id="tab-trades" onclick="go('trades')">Échanges</button>
+    <button id="tab-compare" onclick="go('compare')">Comparer</button>
+    <button id="tab-data" onclick="go('data')">Données et barème</button>
   </nav>
 </header>
 
-<main id="view"><p role="status">Loading verified data…</p></main>
+<main id="view"><p role="status">Chargement des données vérifiées…</p></main>
 
 
 <script type="module" src="./assets/boot.mjs"></script>

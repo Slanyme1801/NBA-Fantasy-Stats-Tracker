@@ -83,7 +83,7 @@
     const seasons = D.seasons.map((s) => {
       const row = p.seasons.get(s);
       return row ? seasonPayload(row, w)
-                 : { season: s, played: false, note: "N/A - Did not play" };
+                 : { season: s, played: false, note: "N/D — Aucun match joué" };
     });
     const played = seasons.filter((s) => s.played);
     const pairs = played.map((s) => [s.fpts_per_game, s.gp]);
@@ -207,7 +207,7 @@
   window.LegacyApi = async function (input, init) {
     const raw = typeof input === "string" ? input : input.url;
     if (!raw || raw.indexOf("/api/") === -1) {
-      throw new Error("Unknown local query");
+      throw new Error("Requête locale inconnue");
     }
     const url = new URL(raw, location.href.startsWith("file:") ? "http://local/" : location.href);
     const path = url.pathname;
@@ -220,7 +220,7 @@
     }
     if (path.startsWith("/api/player/")) {
       const payload = playerPayload(parseInt(path.split("/").pop(), 10));
-      return payload ? json(payload) : json({ detail: "Player not found" }, 404);
+      return payload ? json(payload) : json({ detail: "Joueur introuvable" }, 404);
     }
     if (path === "/api/leaderboard") return json({ results: leaderboard(url.searchParams) });
     if (path === "/api/scoring") {
@@ -232,10 +232,10 @@
     }
     if (path === "/api/update" || path === "/api/update/status") {
       return json({ status: "unavailable", log: [
-        "This build has the 5 seasons embedded in the file itself.",
-        "Collection is a separate, manually configured local process.",
+        "Cette version intègre les cinq saisons directement dans le fichier.",
+        "La collecte est un processus local séparé, configuré manuellement.",
       ], report: null });
     }
-    return json({ detail: "Not found" }, 404);
+    return json({ detail: "Introuvable" }, 404);
   };
 })();

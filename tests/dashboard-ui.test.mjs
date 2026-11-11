@@ -18,12 +18,12 @@ function harness(){
 }
 test('home emits top 10, sample/date warnings, accessible period buttons and ranking route',async()=>{
  const h=harness();h.context.renderHome();
- assert.match(h.node('hero').html,/role="group"/);assert.match(h.node('dashboardBody').html,/aria-roledescription="carousel"/);
+ assert.match(h.node('hero').html,/role="group"/);assert.match(h.node('dashboardBody').html,/aria-roledescription="carrousel"/);
  assert.equal((h.node('dashboardBody').html.match(/class="dashboard-player"/g)||[]).length,10);
- assert.match(h.node('dashboardBody').html,/not a complete league ranking/);
+ assert.match(h.node('dashboardBody').html,/pas un classement complet de la ligue/);
  for(const period of ['7','14','30','night']){
  h.buttons.get(period).onclick();assert.equal(h.buttons.get(period)['aria-pressed'],true);
- h.node('dashboardRankings').onclick();assert.equal(h.context.page,'board');assert.equal(h.node('fDashboardPeriod').value,period);assert.equal(h.node('fSeason').value,core.SEASON);assert.equal(h.node('fSort').value,'season_fpts');assert.equal(h.node('averageOption').textContent,'Selected period FPTS/G');
+ h.node('dashboardRankings').onclick();assert.equal(h.context.page,'board');assert.equal(h.node('fDashboardPeriod').value,period);assert.equal(h.node('fSeason').value,core.SEASON);assert.equal(h.node('fSort').value,'season_fpts');assert.equal(h.node('averageOption').textContent,'Moyenne fantasy sur la période');
  assert.match(h.node('boardTable').html,/Synthetic Test/);assert.equal((h.node('boardTable').html.match(/data-player=/g)||[]).length,12);
  h.context.go('home');
  }
@@ -47,36 +47,32 @@ test('direct period selection normalizes historical AVG labels on every ranking 
  for(const period of ['night','7','14','30'])for(const oldSort of ['weighted_avg','simple_avg']){
   const h=harness();h.context.go('board');h.node('fSort').value=oldSort;
   h.node('fDashboardPeriod').value=period;h.node('fDashboardPeriod').onchange();
-  assert.equal(h.node('fSort').value,'season_fpts');assert.equal(h.node('averageOption').textContent,'Selected period FPTS/G');
+  assert.equal(h.node('fSort').value,'season_fpts');assert.equal(h.node('averageOption').textContent,'Moyenne fantasy sur la période');
   assert.match(h.node('boardTable').html,/Synthetic Test/);
   // Also covers controls restored without firing their change handler.
   h.node('fSort').value=oldSort;await h.context.loadBoard();assert.equal(h.node('fSort').value,'season_fpts');
   h.node('fSeason').value='2025-26';h.node('fSort').value=oldSort;await h.context.loadBoard();
-  assert.equal(h.node('fSort').value,oldSort);assert.equal(h.node('averageOption').textContent,'Selected season FPTS/G');
+  assert.equal(h.node('fSort').value,oldSort);assert.equal(h.node('averageOption').textContent,'Moyenne fantasy sur la saison');
  }
 });
 test('period selection preserves explicit total, games and name sorts',async()=>{
  for(const sort of ['total_fpts','gp','name']){
   const h=harness();h.context.go('board');h.node('fSort').value=sort;h.node('fDashboardPeriod').value='7';h.node('fDashboardPeriod').onchange();
   assert.equal(h.node('fSort').value,sort);
-  h.node('fDashboardPeriod').value='season';await h.context.loadBoard();assert.equal(h.node('averageOption').textContent,'Selected season FPTS/G');
+  h.node('fDashboardPeriod').value='season';await h.context.loadBoard();assert.equal(h.node('averageOption').textContent,'Moyenne fantasy sur la saison');
  }
 });
 test('carousel advances one player, wraps, pauses, resets on period change and leaves complete table',()=>{
  const h=harness();let tick=null,cleared=0;
- h.context.window.setTimeout=(fn,ms)=>{assert.equal(ms,5000);tick=fn;return 1;};
+ h.context.window.setTimeout=(fn,ms)=>{assert.equal(ms,8000);tick=fn;return 1;};
  h.context.window.clearTimeout=()=>{tick=null;cleared++;};
  h.node('dashboardCarousel').isConnected=true;
  h.context.renderHome();assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
  assert.equal((h.node('dashboardBody').html.match(/class="dashboard-player"/g)||[]).length,10);
  tick();assert.equal(h.node('dashboardSlideCount').textContent,'2 / 10');
- h.node('dashboardNext').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'3 / 10');assert.equal(tick,null);
- h.node('dashboardPause').onclick();assert.ok(tick);
+ h.node('dashboardNext').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'3 / 10');assert.ok(tick);
  h.node('dashboardCarousel').onmouseenter();assert.equal(tick,null);
  h.node('dashboardCarousel').onmouseleave();assert.ok(tick);
- h.node('dashboardCarousel').onfocusin({target:h.node('dashboardPause')});assert.ok(tick);
- h.node('dashboardPause').onclick();assert.equal(tick,null);
- h.node('dashboardPause').onclick();assert.ok(tick);
  h.node('dashboardCarousel').onfocusin();assert.equal(tick,null);
  h.buttons.get('14').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
  h.node('dashboardPrevious').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'10 / 10');
@@ -86,7 +82,13 @@ test('reduced motion starts paused and detached carousel never advances',()=>{
  const h=harness();let tick=null;
  h.context.window.matchMedia=()=>({matches:true});
  h.context.window.setTimeout=fn=>{tick=fn;return 1;};h.context.window.clearTimeout=()=>{tick=null;};
- h.context.renderHome();assert.equal(tick,null);assert.equal(h.node('dashboardPause').textContent,'Play slideshow');
+ h.context.renderHome();assert.equal(tick,null);assert.doesNotMatch(h.node('dashboardBody').html,/dashboardPause/);
  h.node('dashboardNext').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'2 / 10');
- h.node('dashboardPause').onclick();assert.ok(tick);tick();assert.equal(h.node('dashboardSlideCount').textContent,'2 / 10');
+});
+test('French spotlight separates period average from full dated last-game statline without a pause control',()=>{
+ const h=harness();h.context.renderHome();
+ const html=h.node('dashboardSlide').html;
+ assert.match(html,/MOYENNE FANTASY/);assert.match(html,/Dernier match disponible dans cette période/);assert.match(html,/contre SIM/);assert.match(html,/pas une moyenne/);
+ for(const label of ['MIN ≈','PTS','REB','PASSES','INT','CONTRES','BP','TIRS','3 PTS','LF','FANTASY'])assert.ok(html.includes('>'+label+'<'));
+ assert.doesNotMatch(h.node('dashboardBody').html,/dashboardPause|Pause slideshow/);
 });

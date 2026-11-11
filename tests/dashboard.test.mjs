@@ -38,3 +38,10 @@ test('retains all candidates for rankings, deterministic tie breaks, no rounding
  const r=dashboardRanking(d,{period:'7',asOf:now});assert.equal(r.rows.length,12);assert.equal(r.rows[1].id,10);
  assert.throws(()=>dashboardRanking(d,{period:'365'}));
 });
+test('spotlight exposes latest played line inside period separately from average, ignoring missing and future games',()=>{
+ const d=fixture();d.games=[game(1,'2026-11-10T01:00:00Z'),game(2,'2026-11-12T01:00:00Z'),game(3,'2026-11-14T01:00:00Z'),game(4,'2026-11-16T01:00:00Z')];
+ d.lines=[line(1,1,{stats:stats({pts:10})}),line(2,1,{teamId:20,stats:stats({pts:30}),seconds:1999}),line(3,1,{participation:'missing',stats:null,seconds:null}),line(4,1,{stats:stats({pts:90})})];
+ const row=dashboardRanking(d,{period:'7',asOf:now}).rows[0];
+ assert.equal(row.gp,2);assert.equal(row.latestMatch.gameId,2);assert.equal(row.latestMatch.opponent,'TST');assert.equal(row.latestMatch.home,false);assert.equal(row.latestMatch.stats.pts,30);assert.equal(row.latestMatch.seconds,1999);assert.notEqual(row.latestMatch.fpts,row.fptsPerGame);
+ const night=dashboardRanking(d,{period:'night',asOf:now});assert.equal(night.rows.length,0);
+});

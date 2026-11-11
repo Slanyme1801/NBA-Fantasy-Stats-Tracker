@@ -1,4 +1,4 @@
-import {SEASON, DEFAULT_SCORING, bounds, aggregate, playerIdFor, playerKeyFor} from './core.mjs';
+import {SEASON, DEFAULT_SCORING, bounds, aggregate, playerIdFor, playerKeyFor, fantasyPoints} from './core.mjs';
 const nightFormatter=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'});
 export function nightDate(value){const parts=Object.fromEntries(nightFormatter.formatToParts(new Date(value)).map(p=>[p.type,p.value]));return `${parts.year}-${parts.month}-${parts.day}`;}
 // Only validated, completed regular-season counters contribute. Missing is never zero.
@@ -17,7 +17,10 @@ export function dashboardRanking(data,{period='7',asOf=new Date(),weights=DEFAUL
     const a=aggregate(sample,playerIdFor(p),{weights,asOf:now});
     const playerLines=sample.lines.filter(r=>playerKeyFor(r)===playerKeyFor(p)&&r.participation==='played');
     const teams=[...new Set(playerLines.map(r=>{const g=gameMap.get(r.gameId);return r.teamId===g.home.id?g.home.code:g.away.code;}))];
-    return {id:playerIdFor(p),playerKey:playerKeyFor(p),identityPending:p.nbaId==null,name:p.name,teams,positions:positions.get(p.nbaId)||[],...a};
+    const latestLine=[...playerLines].sort((a,b)=>new Date(gameMap.get(b.gameId).start)-new Date(gameMap.get(a.gameId).start))[0];
+    const latestGame=latestLine?gameMap.get(latestLine.gameId):null;
+    const latestMatch=latestLine?{gameId:latestGame.id,date:latestGame.start,opponent:latestLine.teamId===latestGame.home.id?latestGame.away.code:latestGame.home.code,home:latestLine.teamId===latestGame.home.id,seconds:latestLine.seconds,stats:{...latestLine.stats},fpts:fantasyPoints(latestLine.stats,weights)}:null;
+    return {latestMatch,id:playerIdFor(p),playerKey:playerKeyFor(p),identityPending:p.nbaId==null,name:p.name,teams,positions:positions.get(p.nbaId)||[],...a};
   }).filter(r=>r.gp>0&&r.gp>=minGames&&(!team||r.teams.includes(team))&&(!position||r.positions.includes(position)));
   const field=sort==='total_fpts'?'totalFpts':sort==='gp'?'gp':'fptsPerGame';
   rows.sort((a,b)=>(sort==='name'?a.name.localeCompare(b.name):b[field]-a[field])||a.name.localeCompare(b.name)||String(a.id).localeCompare(String(b.id)));

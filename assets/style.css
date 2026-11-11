@@ -163,3 +163,10 @@
 header.top{background:#fff;border-top:4px solid #17408b;box-shadow:0 2px 12px #17408b0a}
 nav button.active{background:#17408b;color:#fff;border-color:#17408b}
 .panel{box-shadow:0 3px 16px #17408b06}
+/* Wider courtside layout, NBA blue structure and softer slate content surfaces. */
+:root{--bg:#cad6e7;--bg-2:#dce5f1;--panel:#edf2f8;--line:#acbed6;--ink:#102744;--ink-dim:#374e6b;--ink-faint:#49607b}
+main{max-width:1480px;width:100%;padding-left:clamp(16px,3vw,48px);padding-right:clamp(16px,3vw,48px)}
+header.top{background:#17408b;color:#fff;border-top:4px solid #c8102e;border-bottom:1px solid #12346e}
+.brand span{color:#fff}nav button{color:#e8efff}nav button.active{background:#c8102e;border-color:#c8102e;color:#fff}nav button:hover{background:#24549f;color:#fff}
+.hero{background:linear-gradient(120deg,#d6e3f5,#edf2f8);border-radius:18px;padding:36px 18px;margin-bottom:24px}
+@media(max-width:760px){main{padding:18px 12px 60px}.hero{padding:26px 12px}header.top{padding:12px}}

@@ -44,13 +44,13 @@ test('provider routes and inline arguments reject injection and round-trip safe 
  for(const id of ['highlightly:1);alert(1)//','__proto__','-1','1e3','highlightly:0']){assert.equal(win.PlayerIdentity.canonical(id),null);assert.equal(win.PlayerIdentity.inlineArg(id),'null');await assert.rejects(api('/api/player/'+encodeURIComponent(id)));}
 });
 test('profile, rankings, comparison and trades render quoted string IDs and missing samples',async()=>{
- const a=await app(sample(),{ui:true});await a.run("openPlayer('highlightly:101')");assert.match(a.node('currentProfile').innerHTML,/Game log · 1 records/);assert.match(a.node('view').innerHTML,/Unmapped Alpha/);
- assert.match(a.node('currentProfile').innerHTML,/2 provider player game records have an NBA historical link pending; available stats are included/);assert.doesNotMatch(a.node('currentProfile').innerHTML,/await verified player identities/);
- await a.run("openPlayer('highlightly:102')");assert.match(a.node('currentProfile').innerHTML,/An empty sample is not a zero performance/);
+ const a=await app(sample(),{ui:true});await a.run("openPlayer('highlightly:101')");assert.match(a.node('currentProfile').innerHTML,/Historique des matchs · 1 enregistrements/);assert.match(a.node('view').innerHTML,/Unmapped Alpha/);
+ assert.match(a.node('currentProfile').innerHTML,/2 lignes de joueur attendent une liaison à l’historique NBA ; les statistiques disponibles sont incluses/);assert.doesNotMatch(a.node('currentProfile').innerHTML,/await verified player identities/);
+ await a.run("openPlayer('highlightly:102')");assert.match(a.node('currentProfile').innerHTML,/Un échantillon vide ne signifie pas une performance nulle/);
  a.run("go('board')");a.node('fSeason').value='2026-27';await a.run('loadBoard()');assert.match(a.node('boardTable').innerHTML,/openPlayer\(&quot;highlightly:101&quot;\)/);
  await a.run("addComparePlayer('highlightly:101');");await a.run("addComparePlayer('highlightly:102');");assert.match(a.node('compareChips').innerHTML,/removeComparePlayer\(&quot;highlightly:101&quot;\)/);assert.match(a.node('compareBody').innerHTML,/Unmapped Alpha/);
  a.run("removeComparePlayer('highlightly:101')");assert.doesNotMatch(a.node('compareChips').innerHTML,/Unmapped Alpha/);
- a.run("go('trades');tradeState.period='season';addTrade('left','highlightly:101');addTrade('right','highlightly:102')");await a.run('updateTrades()');assert.match(a.node('tradePlayers-left').innerHTML,/removeTrade\('left',&quot;highlightly:101&quot;\)/);assert.match(a.node('tradeSummary').innerHTML,/unavailable is not zero/);
+ a.run("go('trades');tradeState.period='season';addTrade('left','highlightly:101');addTrade('right','highlightly:102')");await a.run('updateTrades()');assert.match(a.node('tradePlayers-left').innerHTML,/removeTrade\('left',&quot;highlightly:101&quot;\)/);assert.match(a.node('tradeSummary').innerHTML,/indisponible ne signifie pas zéro/);
 });
 test('refresh draft canonicalizes aliases after mapping and removes duplicate selections',async()=>{
  const a=await app(sample(true),{ui:true});
@@ -72,5 +72,5 @@ test('similar-player buttons retain provider keys and never invent positional el
  const a=await app(d,{ui:true});await a.run("openPlayer('highlightly:101')");
  a.node('similarPeriod').value='season';a.node('similarMode').value='fpts';a.node('similarTolerance').value='5';a.node('similarMin').value='1';a.run('renderSimilar()');
  assert.match(a.node('similarResults').innerHTML,/openPlayer\(&quot;highlightly:102&quot;\)/);
- a.node('similarMode').value='positions';a.run('renderSimilar()');assert.match(a.node('similarResults').innerHTML,/Verified ESPN eligibility is missing/);
+ a.node('similarMode').value='positions';a.run('renderSimilar()');assert.match(a.node('similarResults').innerHTML,/Éligibilité ESPN vérifiée manquante/);
 });

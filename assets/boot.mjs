@@ -8,9 +8,9 @@ const script = src => new Promise((resolve,reject)=>{
 });
 try {
   const response=await fetch(new URL('data/history-v1.json',document.baseURI));
-  if(!response.ok) throw new Error('Historical data unavailable');
+  if(!response.ok) throw new Error('Données historiques indisponibles');
   const history=await response.json();
-  if(history.players?.length!==1029 || history.rows?.length!==2867 || history.seasons?.length!==5) throw new Error('Historical data validation failed');
+  if(history.players?.length!==1029 || history.rows?.length!==2867 || history.seasons?.length!==5) throw new Error('Échec de la validation des données historiques');
   window.__DATASET=history;
   window.FantasyCore=core;
   window.FantasyDashboard=dashboard;
@@ -24,6 +24,6 @@ try {
   await window.AppUpdates.ready();
 } catch(error) {
   const view=document.getElementById('view');
-  view.innerHTML='<div class="empty"><h2>Data could not be loaded</h2><p>The first visit needs a connection. Previously cached data remains on this device.</p><button class="btn" onclick="location.reload()">Retry</button></div>';
+  view.innerHTML='<div class="empty"><h2>Impossible de charger les données</h2><p>La première visite nécessite une connexion. Les données déjà mises en cache restent sur cet appareil.</p><button class="btn" onclick="location.reload()">Réessayer</button></div>';
   console.error(error);
 }
