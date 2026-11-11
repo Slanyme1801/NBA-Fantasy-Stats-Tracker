@@ -1,0 +1,22 @@
+.dashboard{background:radial-gradient(ellipse at top right,rgba(84,200,232,.09),transparent 65%),var(--panel);overflow:hidden}
+.dashboard h2{margin:4px 0;font-size:clamp(23px,4vw,32px)}
+.dashboard-periods{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.dashboard-periods [aria-pressed=true]{background:var(--amber);border-color:var(--amber);color:var(--bg)}
+.dashboard-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.dashboard-summary h3,.dashboard-summary p{margin:5px 0}
+.dashboard-warning{border-left:3px solid var(--amber);padding:8px 12px;color:var(--ink-dim);font-size:13px}
+.dashboard-leaders{list-style:none;padding:0;margin:20px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dashboard-leaders li{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:var(--bg-2);animation:dashboard-enter .4s both;animation-delay:calc(var(--order)*35ms)}
+.dashboard-leaders li::after{content:'';position:absolute;bottom:0;left:0;height:2px;width:var(--score-width);background:var(--cyan);opacity:.65;pointer-events:none}
+.dashboard-leaders li:first-child{border-color:var(--amber)}
+.dashboard-player{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:transparent;color:var(--ink);border:0;min-height:88px;padding:14px}
+.dashboard-player:hover{background:rgba(84,200,232,.07)}
+.dashboard-player:focus-visible{outline-offset:-3px}
+.dashboard-rank{color:var(--ink-dim);width:20px;flex-shrink:0}
+.dashboard-avatar{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--amber-soft);color:var(--amber);font-size:12px;flex-shrink:0}
+.dashboard-name{flex:1;min-width:0;overflow-wrap:anywhere}
+.dashboard-name small,.dashboard-score small{display:block;font-size:11px;color:var(--ink-dim)}
+.dashboard-score{text-align:right;flex-shrink:0}.dashboard-score strong{font-size:24px;color:var(--cyan)}
+@keyframes dashboard-enter{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+@media(max-width:760px){.dashboard-leaders{grid-template-columns:1fr}.dashboard-player{gap:9px;padding:12px}.dashboard-periods .btn{flex:1 1 40%;font-size:13px}.dashboard-summary .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.dashboard-leaders li{animation:none}}
