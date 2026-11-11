@@ -24,7 +24,7 @@ Ouvrir `http://127.0.0.1:4173/NBA-Fantasy-Stats-Tracker/`. Le serveur écoute un
 
 **Les données Highlightly 2026–27 sont connectées sous autorisation du propriétaire, mais l’import reste partiel.** Le point de départ du 10 novembre contient 154 matchs réguliers recensés et 22 box scores vérifiés. Les compteurs du fichier publié font foi pour l’état actuel. Les anciennes saisons sont conservées. Les matchs manquants ne sont jamais interprétés comme des zéros.
 
-Le workflow quotidien tente une collecte à **09:00 UTC**, avec 90 requêtes maximum et une réservation durable empêchant une seconde consommation le même jour. Il inventorie la saison, contrôle jusqu’à six matchs récents puis importe les box scores manquants du plus ancien au plus récent. Chaque match vérifié est sauvegardé dans GitHub avant l’appel suivant ; les erreurs fournisseur et identités non vérifiées restent signalées. Aucun secret ni réponse brute n’est publié.
+Le workflow quotidien tente une collecte à **09:17 UTC**, avec 90 requêtes maximum et une réservation durable empêchant une seconde consommation le même jour. Il inventorie la saison, contrôle jusqu’à six matchs récents puis importe les box scores manquants du plus ancien au plus récent. Chaque match vérifié est sauvegardé dans GitHub avant l’appel suivant ; les erreurs fournisseur et identités non vérifiées restent signalées. Aucun secret ni réponse brute n’est publié.
 
 Le barème par défaut reste :
 

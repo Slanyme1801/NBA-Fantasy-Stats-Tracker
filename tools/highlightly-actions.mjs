@@ -20,7 +20,7 @@ export function runnerInputs(snapshot){
   if(snapshot.provider!=='Highlightly'||snapshot.publicationPolicy!=='authorized-public-normalized'||snapshot.publicationAuthorization?.scope!=='normalized-fantasy-stats')throw new Error('An authorized public Highlightly snapshot is required');
   const authorization={provider:'Highlightly',season:'2026-27',publicationAllowed:true,publicDatasetAllowed:true,approvedBy:'repository-owner',publicScope:'normalized-fantasy-stats',confirmedAt:snapshot.publicationAuthorization.confirmedAt,source:'Owner attestation recorded in the validated public snapshot'};
   // Carry only previously verified scheduling metadata, never infer activation from YAML presence.
-  if(snapshot.refreshSchedule?.configured===true&&snapshot.refreshSchedule?.verified===true)authorization.refreshSchedule=snapshot.refreshSchedule;
+  if(snapshot.refreshSchedule?.configured===true&&snapshot.refreshSchedule?.verified===true)authorization.refreshSchedule={...snapshot.refreshSchedule,description:'Daily attempt at 09:17 UTC. Verified partial dataset only; GitHub Actions may run late or skip scheduled events.'};
   const candidate=bootstrapPrivateSnapshot(snapshot,authorization);
   return {authorization,candidate,identities:{provider:'Highlightly',season:'2026-27',players:candidate.players},types:{provider:'Highlightly',season:'2026-27',games:candidate.games.filter(g=>g.type!=='unknown').map(g=>({id:g.id,type:g.type,source:g.classification.source,verifiedAt:g.classification.verifiedAt}))}};
 }

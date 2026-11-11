@@ -150,9 +150,9 @@ Pour une machine persistante, conserver `.local/` en privé. Pour un futur runne
 
 Le rapport privé `.local/highlightly-daily-report.json` distingue tentative, échec, candidat collecté et publication locale. Il garde `deployed: false`, car un succès local ne prouve pas une mise en ligne. Si les sources restent partielles, une exécution quotidienne améliore la fraîcheur de l’échantillon mais ne garantit pas la couverture de toute la NBA.
 
-### Workflow GitHub Actions préparé : 09:00 UTC
+### Workflow GitHub Actions : 09:17 UTC
 
-`.github/workflows/highlightly-daily.yml` définit le cron `0 9 * * *` et une exécution manuelle. Il n’est autorisé à travailler que sur `main` et si la variable de dépôt `HIGHLIGHTLY_DAILY_ENABLED` vaut exactement `true`. Le secret `HIGHLIGHTLY_API_KEY` est obligatoire. La présence du fichier n’est pas une preuve que ces réglages, le secret ou une première exécution sont en place. Les horaires Actions peuvent être retardés par GitHub.
+`.github/workflows/highlightly-daily.yml` définit le cron `17 9 * * *` et une exécution manuelle. Il n’est autorisé à travailler que sur `main` et si la variable de dépôt `HIGHLIGHTLY_DAILY_ENABLED` vaut exactement `true`. Le secret `HIGHLIGHTLY_API_KEY` est obligatoire. La présence du fichier n’est pas une preuve que ces réglages, le secret ou une première exécution sont en place. Les horaires Actions peuvent être retardés par GitHub.
 
 Avant tout appel fournisseur, le workflow **commite et pousse** une réservation complète de 90 appels dans `.github/highlightly-quota.json`. Ce petit état public ne contient que la journée UTC, l’ID du run, la date et le budget réservé. Toute deuxième tentative le même jour est refusée, même après échec, annulation ou interruption. La réservation n’est jamais réduite en fonction du nombre réel d’appels ; elle protège donc aussi une consommation impossible à reconstruire après crash. Une journée suivante peut réserver un nouveau budget. Les démarrages manuels à partir de 23:00 UTC sont refusés afin que le timeout de trente minutes ne traverse pas minuit. Une réservation corrompue/future bloque le travail. Un push rejeté avant réservation interdit la collecte ; un push rejeté après collecte conserve l’ancienne version publique et la réservation. Ne pas effacer ce fichier pour forcer un retry.
 
@@ -160,7 +160,7 @@ Le runner éphémère reconstruit les identités et classifications uniquement d
 
 Le workflow conserve le mode Pages existant `legacy`, branche `main`, chemin `/`. Il le vérifie avant collecte et refuse une configuration différente au lieu de la changer. Comme le push `GITHUB_TOKEN` ne garantit pas un déclenchement Pages, il appelle explicitement [Request a GitHub Pages build](https://docs.github.com/en/rest/pages/pages#request-a-github-pages-build), `POST /repos/{owner}/{repo}/pages/builds`, avec la permission `pages: write`. Il contrôle ensuite que le build réussi concerne exactement le commit publié, dans une limite de dix minutes. Aucun nouvel artifact de déploiement n’est créé ; Jekyll conserve les exclusions existantes de `.local`, secrets, outils et configurations.
 
-Si les règles de branche refusent les commits du bot, le job échoue sans contourner ces règles. L’activation demande donc aussi de vérifier les permissions du bot et le premier build. Ne marquer `refreshSchedule.verified` qu’après cette vérification réelle. La confirmation de fréquence devra distinguer « planifié à 09:00 UTC » de « première actualisation et déploiement vérifiés ».
+Si les règles de branche refusent les commits du bot, le job échoue sans contourner ces règles. L’activation demande donc aussi de vérifier les permissions du bot et le premier build. Ne marquer `refreshSchedule.verified` qu’après cette vérification réelle. La confirmation de fréquence devra distinguer « planifié à 09:17 UTC » de « première actualisation et déploiement vérifiés ».
 
 #### Amorçage du 10 novembre et validation sans API
 
@@ -194,3 +194,10 @@ Ce mode remplace la collecte hébergée limitée aux trois dernières journées.
 `workflow_dispatch` reste en validation seule par défaut et ne consomme aucun appel. Le workflow est protégé par une concurrence unique et une durée maximum de 30 minutes. Une réservation après 23:00 UTC est refusée pour éviter de traverser la remise à zéro quotidienne.
 
 Tests : fixtures synthétiques uniquement, quota UTC, conservation, collision d’identité, reprise à cache vide, interruption, invalidité fournisseur, projection publique et push incertain. Aucune promesse de saison complète : consulter `backfillProgress` et les états de couverture du snapshot courant.
+
+
+### Reprise du 11 novembre
+
+À 10:59 UTC, aucun événement planifié du 11 novembre ne figurait dans Actions, malgré le workflow actif, le secret présent et la variable activée. La cause côté ordonnanceur n’est pas établie. Le cron est décalé à 09:17 UTC pour éviter le début d’heure, conformément aux recommandations GitHub. Cela réenregistre la planification, sans garantir l’émission de chaque événement. Un lancement manuel autorisé peut amorcer le rattrapage, toujours soumis à la même réservation exclusive de 90 appels. Ne pas supprimer ni réduire une réservation pour compenser un retard.
+
+Le test d’amorçage utilise une réservation synthétique, et non le fichier de quota vivant : l’avancement de ce dernier ne doit pas faire échouer les tests du lendemain.

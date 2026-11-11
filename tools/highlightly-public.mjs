@@ -44,6 +44,8 @@ export function publicRefreshIssue(issue){
     requireValue(Number.isSafeInteger(issue.unmappedPlayerCount)&&issue.unmappedPlayerCount>0,'Invalid missing identity count');result.unmappedPlayerCount=issue.unmappedPlayerCount;
     if(issue.identityRevision!==undefined){requireValue(/^[a-f0-9]{64}$/.test(issue.identityRevision),'Invalid identity revision');result.identityRevision=issue.identityRevision;}
   }
+  if(issue.identityObservations!==undefined)result.identityObservations=publicIdentityObservations(issue.identityObservations);
+  if(issue.officialReference!==undefined)result.officialReference=publicOfficialReference(issue.officialReference);
   // Free-form error messages are deliberately excluded.
   return result;
 }
@@ -51,4 +53,16 @@ export function publicBackfillProgress(progress){
   const counts=['inventoryOffset','completedGamesSeen','outsideDateScopeFinished','regularGamesSeen','verifiedRegularBoxScores','verifiedBoxScores','sourceFailureGames','unmappedGames','unclassifiedGames','pendingGames'];
   requireValue(counts.every(k=>Number.isSafeInteger(progress[k])&&progress[k]>=0)&&(progress.inventoryTotal===null||(Number.isSafeInteger(progress.inventoryTotal)&&progress.inventoryTotal>=0))&&typeof progress.inventoryComplete==='boolean'&&typeof progress.budgetExhausted==='boolean'&&date(progress.attemptedAt)&&/^\d{4}-\d\d-\d\d$/.test(progress.inventoryDayUTC),'Invalid backfill progress');
   return pick(progress,[...counts,'inventoryTotal','inventoryComplete','inventoryDayUTC','budgetExhausted','attemptedAt']);
+}
+
+export function publicIdentityObservations(rows){
+  const id=n=>Number.isSafeInteger(n)&&n>0;
+  requireValue(Array.isArray(rows)&&rows.length<=100,'Invalid identity observations');
+  return rows.map(r=>{requireValue(id(r.gameId)&&id(r.teamId)&&id(r.providerId)&&date(r.fetchedAt)&&(r.name===null||(typeof r.name==='string'&&r.name.length<=100&&/^[\p{L}\p{M} .,'’\-]+$/u.test(r.name))),'Invalid identity observation');return pick(r,['gameId','teamId','providerId','name','fetchedAt']);});
+}
+export function publicOfficialReference(r){
+  requireValue(r?.gameId===1547577&&r.nbaGameId==='0022600008'&&r.source==='https://www.nba.com/game/0022600008/box-score'&&date(r.verifiedAt)&&date(r.checkedAt)&&['verified','mismatch','unverifiable'].includes(r.status)&&Array.isArray(r.checks)&&r.checks.length===4,'Invalid official reference');
+  const expected=new Map([['1626157:stl',0],['1628404:stl',3],['203903:fgm',0],['203903:fga',0]]),seen=new Set();
+  const checks=r.checks.map(c=>{const key=`${c.nbaId}:${c.stat}`;requireValue(expected.has(key)&&expected.get(key)===c.expected&&!seen.has(key),'Invalid official comparison');seen.add(key);requireValue([1626157,1628404,203903].includes(c.nbaId)&&(c.providerId===null||(Number.isSafeInteger(c.providerId)&&c.providerId>0))&&['stl','fgm','fga'].includes(c.stat)&&Number.isSafeInteger(c.expected)&&c.expected>=0&&(c.observed===null||(Number.isSafeInteger(c.observed)&&c.observed>=0))&&['verified','mismatch','unverifiable'].includes(c.status),'Invalid official comparison');return pick(c,['nbaId','providerId','stat','expected','observed','status']);});
+  return {...pick(r,['gameId','nbaGameId','source','verifiedAt','checkedAt','status']),checks};
 }

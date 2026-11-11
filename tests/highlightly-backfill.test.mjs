@@ -137,3 +137,11 @@ test('source retry allowance is bounded and new backlog is attempted before sour
  const calls=[];const result=await runSeasonBackfill(options({previous:first.snapshot,maxSourceRetriesPerRun:2,now:()=>Date.parse(time)+86400000,client:async e=>{calls.push(e);return e==='/matches'?page([...games,match(5)]):box();}}));
  assert.deepEqual(calls,['/matches','/box-score/5','/box-score/1','/box-score/2']);assert.equal(result.snapshot.backfillProgress.sourceFailureGames,2);assert.equal(result.snapshot.lines.length,6);
 });
+test('reviewed Knicks game stays blocked when official Hart identity cannot be verified and reports normalized evidence',async()=>{
+ const inventoryState=seeded([match(1547577)]),b=box();b[0].boxScores[0].player={id:999,name:'Josh Hart',rawSecret:'MUST NOT COPY'};
+ const previous=await prior22(),result=await runSeasonBackfill(options({previous,inventoryState,client:async()=>b}));
+ const g=result.snapshot.games.find(g=>g.id===1547577);assert.equal(g.statsState,'missing');assert.equal(g.refreshIssue.officialReference.status,'unverifiable');assert.equal(result.snapshot.lines.length,previous.lines.length);
+ assert.equal(g.refreshIssue.identityObservations[0].providerId,999);assert.equal(g.refreshIssue.identityObservations[0].name,'Josh Hart');assert.equal(JSON.stringify(g.refreshIssue).includes('MUST NOT COPY'),false);
+ assert.equal(result.snapshot.players.some(p=>p.providerId===999),false);
+ assert.equal(g.refreshIssue.code,'unmapped-players');await runSeasonBackfill(options({previous:result.snapshot,inventoryState,client:async()=>{throw Error('No repeated blocked reference request');}}));
+});

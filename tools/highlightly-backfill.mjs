@@ -5,6 +5,7 @@ import {PROVIDER,parseMatches,normalizeMatch,parseBoxScore,normalizeBoxScore,loc
 import {makeCachedLoader,mergeHighlightly,validatePrivate} from './highlightly-private.mjs';
 import {verifiedSchedule} from './highlightly-schedule.mjs';
 import {classifications} from './provider.mjs';
+import {missingIdentityObservations,checkOfficialReference} from './highlightly-reference.mjs';
 const requireValue=(ok,message)=>{if(!ok)throw new Error(message);};
 const count=n=>Number.isSafeInteger(n)&&n>=0;
 const digest=value=>createHash('sha256').update(JSON.stringify(value)).digest('hex');
@@ -98,8 +99,10 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
     if(budgetExhausted)break;
     const correction=corrections.some(g=>g.id===game.id),revision=correction?`correction-${dayUTC}`:oldGames.get(game.id)?.refreshIssue?.code==='source-data-error'?`source-retry-${dayUTC}`:null;
     const boxLoad=makeCachedLoader({client,cache,now,refreshFrom:revision?'2026-07-01':null,refreshId:revision,onRequest:async r=>receipts.push(r)});
-    let body;
+    let body,observations=[],sourceReference=null;
     try{body=await boxLoad(`/box-score/${game.id}`,{},body=>{
+      observations=missingIdentityObservations(body,game,identities,timestamp);
+      sourceReference=checkOfficialReference(body,game,identities,timestamp);
       try{return parseBoxScore(body,game);}catch(error){
         const allowed=['Expected two box-score teams','Invalid or duplicate box-score team','Invalid or duplicate player','Missing statistics array','Duplicate statistic','Missing or invalid raw counter','Rebounds do not reconcile','Invalid shooting counters','Points do not reconcile','Box-score points do not reconcile with final score'];
         const failure=new Error(allowed.includes(error.message)?error.message:'Malformed box-score structure');failure.code='HIGHLIGHTLY_SOURCE_DATA';throw failure;
@@ -108,14 +111,21 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
       if(budgetError(error)){budgetExhausted=true;break;}
       if(error.code!=='HIGHLIGHTLY_SOURCE_DATA')throw error;
       const old=oldGames.get(game.id),preserved=old?.statsState==='available';
-      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',refreshIssue:{code:'source-data-error',reason:error.message,attemptedAt:timestamp,retryAfterUTC:new Date(Date.parse(dayUTC)+86400000).toISOString().slice(0,10),preservedPreviousBoxScore:preserved}});
+      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',refreshIssue:{code:'source-data-error',identityObservations:observations,...(sourceReference?{officialReference:sourceReference}:{}),reason:error.message,attemptedAt:timestamp,retryAfterUTC:new Date(Date.parse(dayUTC)+86400000).toISOString().slice(0,10),preservedPreviousBoxScore:preserved}});
       await saveProgress(snapshot());continue;
     }
     const rawLines=parseBoxScore(body,game),missing=rawLines.filter(l=>!identities.players.some(p=>p.providerId===l.providerId));
     const checkedAt=receipts.at(-1)?.fetchedAt||timestamp;
+    observations=missingIdentityObservations(body,game,identities,checkedAt);
+    const officialReference=checkOfficialReference(body,game,identities,timestamp);
+    if(officialReference&&officialReference.status!=='verified'){
+      const old=oldGames.get(game.id),preserved=old?.statsState==='available',identityBlocked=officialReference.status==='unverifiable'&&missing.length>0;
+      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:identityBlocked?'unmapped-players':'source-data-error',...(identityBlocked?{unmappedPlayerCount:missing.length,identityRevision}:{}),attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityObservations:observations,officialReference}});
+      await saveProgress(snapshot());continue;
+    }
     if(missing.length){
       const old=oldGames.get(game.id),preserved=old?.statsState==='available';
-      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:'unmapped-players',unmappedPlayerCount:missing.length,attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityRevision}});
+      incoming.set(game.id,{...(preserved?old:game),type:game.type,classification:game.classification,statsState:preserved?'available':'missing',boxScoreCheckedAt:checkedAt,refreshIssue:{code:'unmapped-players',identityObservations:observations,unmappedPlayerCount:missing.length,attemptedAt:timestamp,preservedPreviousBoxScore:preserved,identityRevision}});
     }else{
       const normalized=normalizeBoxScore(body,game,identities.players,timestamp);
       for(let i=lines.length-1;i>=0;i--)if(lines[i].gameId===game.id)lines.splice(i,1);

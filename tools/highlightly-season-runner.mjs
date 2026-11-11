@@ -38,11 +38,11 @@ export async function runHostedBackfill({now=()=>Date.now(),clientOverride=null,
   const reservation=await readJSON('.github/highlightly-quota.json');
   requireValue(reservation.dayUTC===new Date(now()).toISOString().slice(0,10)&&reservation.runId===String(process.env.GITHUB_RUN_ID)&&reservation.reservedRequests===90,'Current run does not own the committed quota reservation');
   const authorization=await readPrivateJSON('.local/highlightly-publication.json');
-  await privateDirectory('.local');let lock;
+  await privateDirectory('.local');let lock,ledger;
   try{
     lock=await fs.open('.local/highlightly.lock','wx',0o600);
     await fs.rm(READY,{force:true});
-    const ledger=await readPrivateJSON('.local/highlightly-request-ledger.json');
+    ledger=await readPrivateJSON('.local/highlightly-request-ledger.json');
     const client=clientOverride||makeHighlightlyClient({key:process.env.HIGHLIGHTLY_API_KEY,maxRequests:90,dailyLimit:90,intervalMs:6100,ledger,saveLedger:value=>atomicPrivateJSON('.local/highlightly-request-ledger.json',value),now});
     const result=await runSeasonBackfill({client,cache:makeDiskCache(),now,
       previous:await readPrivateJSON('.local/highlightly-candidate.json'),
@@ -52,7 +52,10 @@ export async function runHostedBackfill({now=()=>Date.now(),clientOverride=null,
       saveProgress:async candidate=>{await fs.rm(READY,{force:true});await atomicPrivateJSON('.local/highlightly-candidate.json',candidate);await atomicJSON(CHECKPOINT,publicHighlightlySnapshot(candidate,authorization));await persist([CHECKPOINT]);await atomicPrivateJSON(READY,{runId:String(process.env.GITHUB_RUN_ID),dayUTC:reservation.dayUTC});}
     });
     console.log(JSON.stringify(result.snapshot.backfillProgress));return result;
-  }finally{if(lock){await lock.close();await fs.unlink('.local/highlightly.lock');}}
+  }finally{
+    if(ledger)console.log(JSON.stringify({quotaObservation:{dayUTC:ledger.dayUTC||reservation.dayUTC,recordedRequests:ledger.requests.length,serverLimit:ledger.serverLimit??null,serverRemaining:ledger.serverRemaining??null,blocked:ledger.blocked===true,reservedRequests:90}}));
+    if(lock){await lock.close();await fs.unlink('.local/highlightly.lock');}
+  }
 }
 export async function publishCheckpoint({now=()=>Date.now()}={}){
   const ready=await readPrivateJSON(READY);
