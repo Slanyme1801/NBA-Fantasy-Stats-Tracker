@@ -20,9 +20,9 @@
   function startCarousel(rows){
     const root=el('dashboardCarousel'),slide=el('dashboardSlide');
     const motion=window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    let index=0,paused=!!motion?.matches,hovered=false,focused=false,timer=null;
+    let index=0,paused=!!motion?.matches,hovered=false,focused=false,touching=false,timer=null;
     const clear=()=>{if(timer!==null)window.clearTimeout(timer);timer=null;};
-    const schedule=()=>{clear();if(!paused&&!hovered&&!focused&&rows.length>1&&window.setTimeout)timer=window.setTimeout(()=>{if(!root.isConnected){clear();return;}if(!document.hidden)show(index+1);else schedule();},8000);};
+    const schedule=()=>{clear();if(!paused&&!hovered&&!focused&&!touching&&rows.length>1&&window.setTimeout)timer=window.setTimeout(()=>{if(!root.isConnected){clear();return;}if(!document.hidden)show(index+1);else schedule();},8000);};
     function show(next){
       index=(next+rows.length)%rows.length;const r=rows[index];
       slide.innerHTML=`<div class="dashboard-spotlight"><span class="dashboard-spotlight-rank">#${index+1}</span><div class="spotlight-portrait">${window.PlayerPhotos?.portrait(r.id,{className:'spotlight-photo'})||''}</div><div class="dashboard-spotlight-info"><button class="text-button dashboard-spotlight-name" data-player="${esc(r.id)}">${esc(r.name)}</button><p>${esc(r.teams.join(' / '))} · ${r.gp} MJ</p>${r.identityPending?'<small>Lien avec l’historique NBA en attente</small>':''}</div><div class="dashboard-spotlight-score"><strong>${fmt(r.fptsPerGame)}</strong><span>MOYENNE FANTASY / MATCH</span><small>sur la période sélectionnée</small></div></div><div class="dashboard-quick-actions"><button class="btn ghost" id="dashboardCompare">Comparer ce joueur</button><a href="#dashboardComplete" class="btn ghost">Voir le top complet ↓</a></div>${matchLine(r.latestMatch)}`;
@@ -34,13 +34,35 @@
     }
     el('dashboardPrevious').onclick=()=>{show(index-1);};
     el('dashboardNext').onclick=()=>{show(index+1);};
+    let gesture=null,suppressClickUntil=0;
+    root.ontouchstart=event=>{
+      if(event.touches.length!==1){gesture=null;touching=false;schedule();return;}
+      const t=event.touches[0];gesture={x:t.clientX,y:t.clientY,at:Date.now(),vertical:false};touching=true;clear();
+    };
+    root.ontouchmove=event=>{
+      if(!gesture)return;
+      if(event.touches.length!==1){gesture=null;return;}
+      const t=event.touches[0],dx=t.clientX-gesture.x,dy=t.clientY-gesture.y;
+      if(Math.abs(dy)>12&&Math.abs(dy)>Math.abs(dx))gesture.vertical=true;
+    };
+    root.ontouchend=event=>{
+      const g=gesture,t=event.changedTouches?.[0];gesture=null;touching=false;
+      if(g&&t&&!g.vertical&&event.touches.length===0&&Date.now()-g.at<1200){
+        const dx=t.clientX-g.x,dy=t.clientY-g.y;
+        if(Math.abs(dx)>=45&&Math.abs(dx)>Math.abs(dy)*1.5){suppressClickUntil=Date.now()+500;show(index+(dx<0?1:-1));return;}
+      }
+      schedule();
+    };
+    root.ontouchcancel=()=>{gesture=null;touching=false;schedule();};
+    const suppressSwipeClick=event=>{if(Date.now()<suppressClickUntil){event.preventDefault();event.stopImmediatePropagation();}};
+    root.addEventListener?.('click',suppressSwipeClick,true);
     root.onmouseenter=()=>{hovered=true;clear();};root.onmouseleave=()=>{hovered=false;schedule();};
     // Suspend while reading/interacting; reduced-motion visitors navigate manually.
     root.onfocusin=()=>{focused=true;clear();};
     root.onfocusout=event=>{if(!root.contains?.(event?.relatedTarget)){focused=false;schedule();}};
     const reduced=()=>{paused=!!motion.matches;schedule();};
     motion?.addEventListener?.('change',reduced);
-    stopCarousel=()=>{clear();motion?.removeEventListener?.('change',reduced);};
+    stopCarousel=()=>{clear();root.removeEventListener?.('click',suppressSwipeClick,true);motion?.removeEventListener?.('change',reduced);};
     show(0);
   }
   function matchLine(match){

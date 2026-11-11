@@ -106,3 +106,24 @@ test('home defaults to latest available night and migrates obsolete saved night 
  await h.context.window.FantasySession.restore({page:'home',dashboardPeriod:'night'});assert.equal(h.buttons.get('available')['aria-pressed'],true);
  h.context.currentData.lines=[];h.context.renderHome();assert.match(h.node('dashboardBody').html,/Aucune performance disponible/);assert.doesNotMatch(h.node('dashboardBody').html,/dashboardCarousel/);
 });
+
+test('touch swipe navigates both directions while taps, vertical scroll and multi-touch do not',()=>{
+ const h=harness();h.context.renderHome();const root=h.node('dashboardCarousel');
+ const start=(x,y)=>root.ontouchstart({touches:[{clientX:x,clientY:y}]});
+ const end=(x,y)=>root.ontouchend({touches:[],changedTouches:[{clientX:x,clientY:y}]});
+ start(200,100);end(100,105);assert.equal(h.node('dashboardSlideCount').textContent,'2 / 10');
+ start(100,100);end(200,105);assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
+ start(100,100);end(102,101);assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
+ start(100,100);root.ontouchmove({touches:[{clientX:110,clientY:150}]});end(20,180);assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
+ start(100,100);root.ontouchcancel();end(0,100);assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
+ root.ontouchstart({touches:[{},{}]});end(0,100);assert.equal(h.node('dashboardSlideCount').textContent,'1 / 10');
+ h.node('dashboardNext').onclick();assert.equal(h.node('dashboardSlideCount').textContent,'2 / 10');
+});
+
+test('mobile header search can fill its row and suggestions remain readable',async()=>{
+ const css=await fs.readFile(new URL('../assets/style.css',import.meta.url),'utf8'),html=await fs.readFile(new URL('../index.html',import.meta.url),'utf8');
+ assert.doesNotMatch(html,/style="flex:1;max-width:340px"/);
+ assert.match(css,/#navSearchWrap\{order:2;flex:0 0 100%;width:100%;max-width:none/);
+ assert.match(css,/min-height:48px;font-size:16px/);
+ assert.match(css,/max-height:min\(340px,50dvh\)/);
+});
