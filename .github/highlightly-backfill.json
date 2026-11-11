@@ -250,6 +250,9 @@
         },
         {
           "fetchedAt": "2026-11-11T11:07:32.834Z"
+        },
+        {
+          "fetchedAt": "2026-11-11T11:07:39.035Z"
         }
       ]
     }
@@ -3262,10 +3265,43 @@
         125,
         132
       ],
+      "boxScoreCheckedAt": "2026-11-11T11:07:39.035Z",
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "unmapped-players",
         "attemptedAt": "2026-11-11T11:06:12.921Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "unmappedPlayerCount": 4,
+        "identityRevision": "48bb58d36d003fc31a3f3f693ecbfca3120d09832d189b6f54b4341518a752d8",
+        "identityObservations": [
+          {
+            "gameId": 1547072,
+            "teamId": 24,
+            "providerId": 66489662,
+            "name": "Paolo Banchero",
+            "fetchedAt": "2026-11-11T11:07:39.035Z"
+          },
+          {
+            "gameId": 1547072,
+            "teamId": 24,
+            "providerId": 60995867,
+            "name": "Desmond Bane",
+            "fetchedAt": "2026-11-11T11:07:39.035Z"
+          },
+          {
+            "gameId": 1547072,
+            "teamId": 24,
+            "providerId": 66483542,
+            "name": "Jalen Suggs",
+            "fetchedAt": "2026-11-11T11:07:39.035Z"
+          },
+          {
+            "gameId": 1547072,
+            "teamId": 23,
+            "providerId": 73099082,
+            "name": "Asa Newell",
+            "fetchedAt": "2026-11-11T11:07:39.035Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=1",
@@ -21991,7 +22027,7 @@
     "verifiedRegularBoxScores": 22,
     "verifiedBoxScores": 22,
     "sourceFailureGames": 0,
-    "unmappedGames": 3,
+    "unmappedGames": 4,
     "unclassifiedGames": 0,
     "pendingGames": 138,
     "inventoryTotal": 405,
