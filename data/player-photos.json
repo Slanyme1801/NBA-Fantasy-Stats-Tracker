@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 79,
-    "transparentCount": 76,
+    "coveredCount": 81,
+    "transparentCount": 78,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2163,6 +2163,56 @@
       },
       "rightsStatus": "Téléchargement proposé publiquement par la source ; licence de republication et droits photographiques originaux non établis. Crédit conservé.",
       "publicationStatus": "Photo publiée avec crédit de la source ; droits photographiques originaux non certifiés."
+    },
+    "2544": {
+      "nbaId": 2544,
+      "name": "LeBron James",
+      "path": "assets/player-photos/2544-civil.png",
+      "alt": "LeBron James en costume, tenant un sac.",
+      "source": "https://www.pngaaa.com/detail/4171507",
+      "originalUrl": "https://image.pngaaa.com/507/4171507.png",
+      "author": "Photographe original non indiqué ; fichier proposé par PNGaaa.",
+      "license": "Usage non commercial déclaré par PNGaaa ; droits photographiques originaux non audités.",
+      "licenseUrl": "https://www.pngaaa.com/detail/4171507",
+      "rightsStatus": "Téléchargement proposé publiquement pour usage non commercial par la source ; chaîne des droits photographiques non certifiée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 672,
+      "height": 1849,
+      "sha256": "bc0dcaf2dca8800e361dd2310d63dc69e3fd4f316f467cea9dd823e33dad0ceb",
+      "transformations": "Aucune modification ; PNG original téléchargé.",
+      "selection": "Photo en tenue civile, identité et canal alpha contrôlés visuellement.",
+      "clubAudit": {
+        "date": "2026-11-11",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "76ers",
+        "source": "https://www.pngaaa.com/detail/4171507"
+      }
+    },
+    "1627749": {
+      "nbaId": 1627749,
+      "name": "Dejounte Murray",
+      "path": "assets/player-photos/1627749-action.png",
+      "alt": "Dejounte Murray en tenue New Orleans, les bras fléchis.",
+      "source": "https://uniqrenders.com/athletes/basketball/dejounte-murray-new-orleans-pelicans-nba-usa-american-basketball-players-8405",
+      "originalUrl": "https://uniqrenders.com/Uploads/17-4-2025/8405/dejounte-murray-new-orleans-pelicans-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "Détourage : Uniqrenders ; photographe original non indiqué.",
+      "license": "Téléchargement public Uniqrenders ; licence photo originale non précisée",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/dejounte-murray-new-orleans-pelicans-nba-usa-american-basketball-players-8405",
+      "rightsStatus": "Téléchargement proposé publiquement par la source ; licence de republication et droits photographiques originaux non établis. Crédit conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1719,
+      "height": 1794,
+      "sha256": "cdb37bf80904f877479df573b582dd6facce5498c28377fe5ec6b655306a939d",
+      "transformations": "Aucune ; original PNG transparent conservé.",
+      "selection": "Pose naturelle bras fléchis ; identité, alpha et tenue New Orleans vérifiés.",
+      "clubAudit": {
+        "date": "2026-11-11",
+        "status": "current-club",
+        "currentTeam": "pelicans",
+        "source": "https://www.nba.com/players"
+      }
     }
   }
 }
