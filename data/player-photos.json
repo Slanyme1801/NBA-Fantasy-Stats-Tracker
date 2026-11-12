@@ -5,8 +5,8 @@
     "targetCount": 341,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA ; effectif des rookies actifs NBA 2026–27 ajouté le 12 novembre 2026",
     "status": "partial",
-    "coveredCount": 150,
-    "transparentCount": 147,
+    "coveredCount": 154,
+    "transparentCount": 151,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -3927,6 +3927,106 @@
         "status": "head-only-no-jersey",
         "currentTeam": "clippers",
         "source": "NBA rookie totals 2026-27 ID1642394 LAC ; tête finale sans tenue."
+      }
+    },
+    "1643558": {
+      "nbaId": 1643558,
+      "name": "Jaden Bradley",
+      "path": "assets/player-photos/1643558-expressive-head.png",
+      "alt": "Tête de Jaden Bradley, bouche ouverte et regard vers le panier, sans tenue visible",
+      "source": "https://commons.wikimedia.org/wiki/File:Jaden_Bradley.jpg",
+      "originalUrl": "https://live.staticflickr.com/65535/52706131810_9438555cd3_o.jpg",
+      "author": "Chris Gillespie / Gamecock Central",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "rightsStatus": "Photographie publiée par Gamecock Central sur Flickr sous CC BY 2.0, licence vérifiée sur Commons. Crédit du photographe conservé pour cette adaptation.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1330,
+      "height": 1182,
+      "sha256": "a0769c15ff12b916b1fdcb2e165d13edeeea34650531cbf57b6f833c6cda7ce3",
+      "transformations": "Extraction de la tête par imagegen depuis original Flickr 1600×1066 du 22 février 2023. Suppression du corps, de la tenue et du fond ; crédit textuel remplace celui situé en bas de la photo. Visage source environ 190×210 pixels. Agrandissement et détails reconstruits par IA, pas une restitution pixel exacte.",
+      "selection": "Expression réelle pendant un layup : bouche ouverte et regard levé. Contrôle secondaire nécessaire : détails de peau réinterprétés par IA.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "head-only-no-jersey",
+        "currentTeam": "raptors",
+        "source": "NBA rookie totals 2026-27 ID1643558 TOR ; tenue ancienne entièrement supprimée."
+      }
+    },
+    "1643520": {
+      "nbaId": 1643520,
+      "name": "Koa Peat",
+      "path": "assets/player-photos/1643520-expressive-head.png",
+      "alt": "Visage expressif de Koa Peat, bouche ouverte, sans tenue visible",
+      "source": "https://www.flickr.com/photos/mgoblog/55188678500/",
+      "originalUrl": "https://live.staticflickr.com/65535/55188678500_5c50df23a3_o.jpg",
+      "author": "MGoBlog",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "rightsStatus": "Photographie publiée sous CC BY 4.0, crédit et modifications conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1347,
+      "height": 1168,
+      "sha256": "8236cb1335362a0401f780e4dd61d29944e579c2755282fadd7d20390192b527",
+      "transformations": "Détourage tête seule par imagegen depuis photographie originale : retrait fond, autres personnes, cou et maillot ; expression bouche ouverte préservée. Les détails fins et la texture ont été réinterprétés par IA, sans revendication de fidélité pixel exacte.",
+      "selection": "Expression réelle pendant Michigan-Arizona le 4 avril 2026 ; source nette 5000×3333, visage détaillé.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "head-only-no-jersey",
+        "currentTeam": "PHX",
+        "source": "https://hoopsnightly.com/players/koa-peat"
+      }
+    },
+    "1643576": {
+      "nbaId": 1643576,
+      "name": "Maliq Brown",
+      "path": "assets/player-photos/1643576-expressive-head.png",
+      "alt": "Visage de Maliq Brown bouche ouverte, sans tenue visible",
+      "source": "https://www.flickr.com/photos/99765040@N02/55148534635/",
+      "originalUrl": "https://live.staticflickr.com/65535/55148534635_91e0059711_o.jpg",
+      "author": "TigerNet.com",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "rightsStatus": "Photographie publiée sous CC BY 4.0, crédit et modifications conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1501,
+      "height": 1047,
+      "sha256": "6e7589ec883b520a8e734d78fe3477388ec75979d2634e2f21e3dcd18d1bf969",
+      "transformations": "Tête seule détourée par imagegen depuis la photographie complète ; fond, autres personnes, cou et maillot retirés. Expression conservée, détails fins du visage et des tresses réinterprétés par IA ; pas de revendication de netteté native supplémentaire.",
+      "selection": "Expression naturelle bouche ouverte en défense, Duke-Clemson le 13 mars 2026. Source 3200×1675, visage reconnaissable mais détail natif plus limité que le PNG final.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "head-only-no-jersey",
+        "currentTeam": "SAS",
+        "source": "https://bandwagon.fyi/players/maliq-brown"
+      }
+    },
+    "1641759": {
+      "nbaId": 1641759,
+      "name": "Dillon Mitchell",
+      "path": "assets/player-photos/1641759-expressive-head.png",
+      "alt": "Visage de Dillon Mitchell regardant vers le haut, bouche ouverte, sans tenue visible",
+      "source": "https://www.flickr.com/photos/nyperson/54890338647/",
+      "originalUrl": "https://live.staticflickr.com/65535/54890338647_ee3c7c6050_o.jpg",
+      "author": "L. Manzari",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "rightsStatus": "Photographie publiée sous CC BY 4.0, crédit et modifications conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1362,
+      "height": 1155,
+      "sha256": "a18ef5eff5cd7265243b8952757daac0fb03536886779e66bd107bfe9f65a5db",
+      "transformations": "Détourage tête seule par imagegen : retrait fond, cou, corps et autres joueurs, maintien du regard levé et de la bouche ouverte. Détails de peau, cheveux et dentition réinterprétés par IA ; aucune revendication de fidélité pixel exacte.",
+      "selection": "Expression réelle regard levé bouche ouverte, Michigan-St. John's le 25 octobre 2025. Source 5472×3648 ; détail photographique original légèrement doux.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "head-only-no-jersey",
+        "currentTeam": "BOS",
+        "source": "https://hoopsnightly.com/players/dillon-mitchell"
       }
     }
   }
