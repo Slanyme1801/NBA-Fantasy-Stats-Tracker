@@ -2,11 +2,11 @@
   "version": 1,
   "updatedAt": "2026-11-11",
   "scope": {
-    "targetCount": 284,
-    "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
+    "targetCount": 341,
+    "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA ; effectif des rookies actifs NBA 2026–27 ajouté le 12 novembre 2026",
     "status": "partial",
-    "coveredCount": 147,
-    "transparentCount": 144,
+    "coveredCount": 150,
+    "transparentCount": 147,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -983,31 +983,26 @@
     "1626157": {
       "nbaId": 1626157,
       "name": "Karl-Anthony Towns",
-      "path": "assets/player-photos/1626157-expressive-head.png",
-      "alt": "Karl-Anthony Towns — léger sourire en coin, regard baissé, tête seule.",
-      "source": "https://pngdownload.io/png-image/karl-anthony-towns-nba-player-new-york-knicks-basketball-transparent-png/",
-      "originalUrl": "https://pngdownload.io/png-image/karl-anthony-towns-nba-player-new-york-knicks-basketball-transparent-png/",
-      "author": "Auteur original non identifié ; source PNGDownload.io",
-      "license": "CC BY-NC 4.0 (déclarée par la source)",
-      "licenseUrl": "https://pngdownload.io/license/",
+      "path": "assets/player-photos/1626157-drost-expressive-head.png",
+      "alt": "Karl-Anthony Towns, bouche ouverte en action, tête seule issue d’une photographie différente de 2022.",
+      "source": "https://www.flickr.com/photos/edrost88/51916370969/",
+      "originalUrl": "https://live.staticflickr.com/65535/51916370969_e3e6b7eea6_o.jpg",
+      "author": "Erik Drost (EDrost88)",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "rightsStatus": "Licence CC BY 2.0 indiquée par le photographe sur Flickr ; attribution et modifications conservées.",
       "mime": "image/png",
       "transparent": true,
       "width": 1254,
       "height": 1254,
-      "sha256": "d3f3d9e594a100e1ce53c2270530d87a0c9f1863b3b4e59ec27d92238aa93d47",
-      "transformations": "Extraction tête seule par imagegen depuis la photo publiée ; corps, cou et maillot retirés. Expression et angle conservés ; détails fins réinterprétés, non pixel-identique.",
-      "selection": "Expression naturelle de match, sourire en coin et regard baissé ; pas portrait officiel neutre.",
-      "currentTeam": "knicks",
-      "teamVerifiedAt": "2026-11-11",
-      "teamSource": "https://www.nba.com/players",
-      "sourceLicense": "https://pngdownload.io/license/",
-      "sourceTerms": "https://pngdownload.io/terms-of-use/",
-      "rightsStatus": "Licence non-commerciale déclarée par source ; droits photographiques originaux non audités.",
+      "sha256": "3a4e7b4e2bbab8fe38a2fa0d21a97edd4636e4707879bd8f428be26fb1c6c168",
+      "transformations": "Recadrage de référence QA 700×700 depuis l’original 5504×8256 ; puis isolation tête seule par imagegen. Fond, bras et tenue retirés, contour inférieur tronqué à la zone visible sans cou ajouté. Détails fins et cheveux réinterprétés par IA ; expression, angle et grain photographique conservés au mieux, non pixel-identique.",
+      "selection": "Nouvelle photographie différente de l’ancienne source PNGDownload, expression réelle bouche ouverte en action. Visage source environ 500 pixels, grain présent mais détails discernables ; contrôle comparatif et miniature 140 pixels effectué. Fine frange colorée visible au grand format.",
       "clubAudit": {
         "date": "2026-11-12",
         "status": "head-only-no-jersey",
-        "currentTeam": null,
-        "source": "https://pngdownload.io/png-image/karl-anthony-towns-nba-player-new-york-knicks-basketball-transparent-png/"
+        "currentTeam": "knicks",
+        "source": "https://www.nba.com/player/1626157/karl-anthony-towns"
       }
     },
     "1628973": {
@@ -3858,6 +3853,80 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": "NOP",
         "source": "https://www.nba.com/player/201599/deandre_jordan"
+      }
+    },
+    "1643516": {
+      "nbaId": 1643516,
+      "name": "Morez Johnson Jr.",
+      "path": "assets/player-photos/1643516-head.png",
+      "alt": "Morez Johnson Jr., tête seule, expression concentrée bouche entrouverte.",
+      "source": "https://commons.wikimedia.org/wiki/File:20260211_Morez_Johnson_Jr._03.jpg",
+      "author": "TonyTheTiger",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "rightsStatus": "Photo source déclarée CC0 par son auteur sur Wikimedia Commons.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1452,
+      "height": 1083,
+      "sha256": "50ffeecc58c88d8dd9a12f167024cd677fcd28507eba61dc8731517ada62da14",
+      "transformations": "Détourage tête seule par imagegen : cou, corps, maillot et fond retirés. Expression et angle conservés ; détails fins réinterprétés par IA, non pixel-identique.",
+      "selection": "Expression de concentration en action, bouche entrouverte ; source non officielle de match.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "head-only-no-jersey",
+        "currentTeam": null,
+        "source": "https://commons.wikimedia.org/wiki/File:20260211_Morez_Johnson_Jr._03.jpg"
+      }
+    },
+    "1643553": {
+      "nbaId": 1643553,
+      "name": "Ryan Conwell",
+      "path": "assets/player-photos/1643553-head.png",
+      "alt": "Ryan Conwell, tête levée en action avec protège-dents visible.",
+      "source": "https://www.flickr.com/photos/govholcomb/53631807764/",
+      "originalUrl": "https://live.staticflickr.com/65535/53631807764_1168b97de6_o.jpg",
+      "author": "Stefan Welsh / Governor Eric Holcomb",
+      "license": "Public Domain Mark 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "rightsStatus": "Source Flickr du bureau du gouverneur indiquée Public Domain Work ; crédit photographe EXIF Stefan Welsh conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1254,
+      "height": 1254,
+      "sha256": "1dda4640f7e36580ed08747d0107c3aa8ea23dcd95f397b97f89521524504bb6",
+      "transformations": "Recadrage de référence depuis original3923×5885, puis détourage tête seule par imagegen. Expression, angle et protège-dents conservés ; détails fins réinterprétés, non pixel-identique. Épaule et tenue retirées.",
+      "selection": "Expression réelle en action, regard vers le panier et bouche ouverte ; grain source et petite frange au grand format.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "head-only-no-jersey",
+        "currentTeam": "heat",
+        "source": "https://www.nba.com/player/1643553/ryan-conwell"
+      }
+    },
+    "1642394": {
+      "nbaId": 1642394,
+      "name": "Baba Miller",
+      "path": "assets/player-photos/1642394-expressive-head-v2.png",
+      "alt": "Tête de Baba Miller, bouche entrouverte pendant une action, sans tenue visible",
+      "source": "https://commons.wikimedia.org/wiki/File:Baba_Miller_Joseph_Girard.jpg",
+      "originalUrl": "https://live.staticflickr.com/65535/53554056131_ddae169733_o.jpg",
+      "author": "TigerNet.com / Merrell Mann",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "rightsStatus": "Source Flickr TigerNet, licence CC BY-SA 2.0 vérifiée sur Commons. Adaptation distribuée sous la même licence ; crédit conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1349,
+      "height": 1166,
+      "sha256": "61457aaa210928ef54c33769b40538abc02e9f83eac1ef043c35746dca6f7737",
+      "transformations": "Extraction de la tête et suppression intégrale de la tenue par imagegen depuis la photo originale Flickr 1600×900 du 26 février 2024. Visage source environ 190 pixels ; agrandissement et détails reconstruits par IA, pas des détails photographiques originaux. Angle et bouche entrouverte conservés, aucune nouvelle expression demandée.",
+      "selection": "Expression réelle bouche entrouverte en action. Validé pour miniature avec réserve explicite sur détails reconstruits par IA.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "head-only-no-jersey",
+        "currentTeam": "clippers",
+        "source": "NBA rookie totals 2026-27 ID1642394 LAC ; tête finale sans tenue."
       }
     }
   }
