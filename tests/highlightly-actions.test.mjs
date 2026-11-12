@@ -43,8 +43,36 @@ test('committed identity supplement validates against the currently published id
  const manifest=JSON.parse(await fs.readFile('data/manifest.json','utf8'));
  const current=JSON.parse(await fs.readFile(manifest.file,'utf8'));
  const r=runnerInputs(current,extra);
- assert.ok(r.identities.players.length>=current.players.length);
- for(const p of current.players)assert.ok(r.identities.players.some(x=>x.nbaId===p.nbaId&&x.providerId===p.providerId));
+ // The complete provider registry includes players whose NBA link is still
+ // unknown. Only the verified subset belongs in the NBA identity map.
+ assert.ok(r.candidate.players.length>=current.players.length);
+ assert.deepEqual(r.identities.players,r.candidate.players.filter(p=>p.nbaId!=null));
+ for(const p of current.players){
+  const retained=r.candidate.players.find(x=>x.providerId===p.providerId);
+  assert.ok(retained);assert.equal(retained.playerKey,`highlightly:${p.providerId}`);
+  if(p.nbaId!=null)assert.equal(retained.nbaId,p.nbaId);
+ }
+ assert.deepEqual(JSON.parse(JSON.stringify(r.candidate.games)),current.games);
+ assert.deepEqual(r.candidate.lines.map(({nbaId,...line})=>line),current.lines.map(({nbaId,...line})=>line));
+});
+
+test('provider-only identities and their statistics survive hosted preparation without invented NBA links',()=>{
+ for(const unknownCount of [1,3]){
+  const current=migrateHighlightlySeason(snapshot()),unknownIds=new Set(current.players.slice(0,unknownCount).map(p=>p.providerId));
+  for(const p of current.players)if(unknownIds.has(p.providerId))p.nbaId=null;
+  for(const line of current.lines)if(unknownIds.has(line.providerId))line.nbaId=null;
+  current.positions.entries=current.positions.entries.filter(p=>current.players.some(x=>x.nbaId===p.nbaId));
+  const before=structuredClone(current),extra={provider:'Highlightly',season:'2026-27',players:[{...player(4),name:current.players[0].name}]};
+  for(const supplement of [null,extra]){
+   const r=runnerInputs(current,supplement);
+   assert.deepEqual(r.candidate.players.slice(0,current.players.length),current.players);
+   assert.deepEqual(r.candidate.lines,current.lines);assert.deepEqual(r.candidate.games,current.games);
+   assert.deepEqual(r.identities.players,r.candidate.players.filter(p=>p.nbaId!=null));
+   for(const id of unknownIds)assert.equal(r.identities.players.some(p=>p.providerId===id),false);
+   assert.equal(new Set(r.candidate.players.map(p=>p.providerId)).size,r.candidate.players.length);
+   assert.deepEqual(current,before);
+  }
+ }
 });
 
 test('runner upgrades provider-only identities and all existing lines without rekeying or name joins',()=>{
