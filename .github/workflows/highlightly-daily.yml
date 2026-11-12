@@ -19,7 +19,7 @@ jobs:
   refresh:
     if: github.ref == 'refs/heads/main' && (vars.HIGHLIGHTLY_DAILY_ENABLED == 'true' || (github.event_name == 'workflow_dispatch' && inputs.validation_only))
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -105,5 +105,5 @@ jobs:
         if: always()
         run: |
           echo 'The committed UTC reservation is never released or reduced, even after failure.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'No raw response cache, private profile, key or private artifact is uploaded.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Each verified game is checkpointed to GitHub before the next provider call. Missing identities/source errors remain visible; coverage is never called complete without verification.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'No plaintext raw response cache, private profile, key or private artifact is uploaded. Received response bodies are retained only in authenticated encrypted quarantine excluded from Pages.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Each response is durably quarantined before validation and the next provider call; each verified game is separately checkpointed. Rejected responses remain recoverable, not published statistics. Coverage is never called complete without verification.' >> "$GITHUB_STEP_SUMMARY"

@@ -8,6 +8,7 @@ import {makeHighlightlyClient} from './highlightly.mjs';
 import {runSeasonBackfill,validateInventoryState} from './highlightly-backfill.mjs';
 import {publicHighlightlySnapshot} from './highlightly-public.mjs';
 import {publicPendingBoxes} from './highlightly-pending.mjs';
+import {createQuarantineWriter,isQuarantinePath} from './highlightly-quarantine.mjs';
 import {publishLocal} from './publish.mjs';
 
 export const CHECKPOINT='.github/highlightly-backfill.json';
@@ -23,7 +24,7 @@ export function publicInventory(state,now=new Date().toISOString()){
   validateInventoryState(projected,now);return projected;
 }
 export function persistGitCheckpoint(paths,{execute=spawnSync}={}){
-  requireValue(paths.length>0&&paths.every(p=>[CHECKPOINT,INVENTORY,PENDING].includes(p)),'Unapproved durable checkpoint path');
+  requireValue(paths.length>0&&paths.every(p=>([CHECKPOINT,INVENTORY,PENDING].includes(p)||isQuarantinePath(p))),'Unapproved durable checkpoint path');
   const git=args=>{const r=execute('git',args,{encoding:'utf8',timeout:120000});if(r.status!==0)throw new Error('Durable Git checkpoint failed; stop before spending another provider call');return r;};
   git(['add','--',...paths]);
   const changed=execute('git',['diff','--cached','--quiet'],{encoding:'utf8'});
@@ -35,7 +36,7 @@ export function persistGitCheckpoint(paths,{execute=spawnSync}={}){
   // Never automatically retry an uncertain push or force-push over another writer.
   git(['push','origin','HEAD:main']);
 }
-export async function runHostedBackfill({now=()=>Date.now(),clientOverride=null,persist=persistGitCheckpoint,hosted=process.env.GITHUB_ACTIONS==='true'}={}){
+export async function runHostedBackfill({now=()=>Date.now(),clientOverride=null,archiveOverride=null,persist=persistGitCheckpoint,hosted=process.env.GITHUB_ACTIONS==='true'}={}){
   requireValue(hosted,'Hosted GitHub Actions execution required');
   const reservation=await readJSON('.github/highlightly-quota.json');
   requireValue(reservation.dayUTC===new Date(now()).toISOString().slice(0,10)&&reservation.runId===String(process.env.GITHUB_RUN_ID)&&reservation.reservedRequests===90,'Current run does not own the committed quota reservation');
@@ -45,7 +46,18 @@ export async function runHostedBackfill({now=()=>Date.now(),clientOverride=null,
     lock=await fs.open('.local/highlightly.lock','wx',0o600);
     await fs.rm(READY,{force:true});
     ledger=await readPrivateJSON('.local/highlightly-request-ledger.json');
-    const client=clientOverride||makeHighlightlyClient({key:process.env.HIGHLIGHTLY_API_KEY,maxRequests:90,dailyLimit:90,intervalMs:6100,ledger,saveLedger:value=>atomicPrivateJSON('.local/highlightly-request-ledger.json',value),now});
+    const writeArchive=archiveOverride||createQuarantineWriter({key:process.env.HIGHLIGHTLY_API_KEY,persist,now});
+    requireValue(typeof writeArchive==='function','Hosted response quarantine is required');
+    const archiveResponse=async record=>{
+      const priorReady=await readPrivateJSON(READY).catch(e=>{if(e.code==='ENOENT')return null;throw e;});
+      await fs.rm(READY,{force:true});
+      await writeArchive(record);
+      if(priorReady)await atomicPrivateJSON(READY,priorReady);
+    };
+    const client=clientOverride?async(endpoint,params)=>{
+      const body=await clientOverride(endpoint,params);
+      await archiveResponse({endpoint,params,status:200,fetchedAt:new Date(now()).toISOString(),bodyBytes:Buffer.from(JSON.stringify(body))});return body;
+    }:makeHighlightlyClient({key:process.env.HIGHLIGHTLY_API_KEY,maxRequests:90,dailyLimit:90,intervalMs:6100,ledger,saveLedger:value=>atomicPrivateJSON('.local/highlightly-request-ledger.json',value),archiveResponse,now});
     const result=await runSeasonBackfill({client,cache:makeDiskCache(),now,
       previous:await readPrivateJSON('.local/highlightly-candidate.json'),
       identities:await readPrivateJSON('.local/highlightly-identities.json'),types:await readPrivateJSON('.local/highlightly-game-types.json'),

@@ -76,7 +76,24 @@ export function providerPlayers(body,game,knownPlayers,now){
   }));
   validateProviderRegistry({provider:PROVIDER,season:SEASON,players});return players;
 }
-export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLimit=90,intervalMs=6100,ledger,saveLedger,sleep=ms=>new Promise(r=>setTimeout(r,ms)),now=()=>Date.now()}){
+// Read the complete response before interpretation, with an explicit memory bound.
+// Native fetch exposes a stream; json-only fallback exists solely for injected test clients.
+export const MAX_HIGHLIGHTLY_RESPONSE_BYTES=8*1024*1024;
+async function completeResponseBytes(response){
+  const chunks=[];let size=0,reason=null;
+  const append=value=>{const bytes=Buffer.from(value),remaining=MAX_HIGHLIGHTLY_RESPONSE_BYTES-size;chunks.push(bytes.subarray(0,remaining));size+=Math.min(remaining,bytes.length);if(bytes.length>remaining)reason='response-too-large';};
+  if(response.body?.getReader){
+    const reader=response.body.getReader();
+    try{while(true){const {done,value}=await reader.read();if(done)break;append(value);if(reason){await reader.cancel().catch(()=>{});break;}}}catch{reason='stream-incomplete';}finally{reader.releaseLock();}
+  }else{
+    try{if(typeof response.arrayBuffer==='function')append(await response.arrayBuffer());
+    else if(typeof response.text==='function')append(Buffer.from(await response.text(),'utf8'));
+    else append(Buffer.from(JSON.stringify(await response.json()),'utf8'));}catch{reason='stream-incomplete';}
+  }
+  return {bodyBytes:Buffer.concat(chunks,size),capture:{complete:reason===null,reason}};
+}
+export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLimit=90,intervalMs=6100,ledger,saveLedger,archiveResponse=null,sleep=ms=>new Promise(r=>setTimeout(r,ms)),now=()=>Date.now()}){
+  check(archiveResponse===null||typeof archiveResponse==='function','Invalid response archive callback');
   check(typeof key==='string'&&key.length>0,'HIGHLIGHTLY_API_KEY is absent. No connection attempted.');
   check(id(maxRequests)&&maxRequests<=100&&id(dailyLimit)&&dailyLimit<=100&&Number.isFinite(intervalMs)&&intervalMs>=6100,'Invalid request limits');
   const dayOf=t=>new Date(t).toISOString().slice(0,10);
@@ -121,6 +138,16 @@ export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLim
         if(dayOf(syncDay())!==requestDay){ledger.blocked=true;await persist();}
         throw new Error('Highlightly network/timeout failure; no automatic retry');
       }
+      const captured=await completeResponseBytes(response),responseBytes=captured.bodyBytes;
+      const quotaHeaders={};let quotaHeadersTruncated=false;
+      for(const name of ['x-ratelimit-requests-limit','x-ratelimit-requests-remaining']){
+        const value=response.headers?.get(name);if(value!==null&&value!==undefined){const text=String(value);quotaHeaders[name]=text.slice(0,16384);if(text.length>16384)quotaHeadersTruncated=true;}
+      }
+      if(archiveResponse){
+        try{await archiveResponse({endpoint,params:structuredClone(params),status:response.status??(response.ok?200:500),fetchedAt:new Date(readClock()).toISOString(),bodyBytes:responseBytes,quotaHeaders,quotaHeadersTruncated,capture:captured.capture});}
+        catch{persistenceFailed=true;throw new Error('Highlightly response archive failed; no further requests');}
+      }
+      if(!captured.capture.complete){persistenceFailed=true;throw new Error('Incomplete or oversized Highlightly response; stopped without automatic retry');}
       const received=syncDay();
       // A response spanning midnight does not identify which day's counters it describes.
       if(ledger.dayUTC!==requestDay){ledger.blocked=true;await persist();throw new Error('Highlightly quota day changed during request; budget blocked conservatively');}
@@ -144,7 +171,7 @@ export function makeHighlightlyClient({key,fetcher=fetch,maxRequests=20,dailyLim
       if(response.status===429)ledger.blocked=true;
       if(Object.keys(headers).length||response.status===429)await persist();
       check(response.ok,'Highlightly HTTP request failed; no automatic retry');
-      let body;try{body=await response.json();}catch{throw new Error('Invalid Highlightly JSON');}
+      let body;try{body=JSON.parse(responseBytes.toString('utf8'));}catch{throw new Error('Invalid Highlightly JSON');}
       return endpoint==='/matches'?parseMatches(body,params.offset):body;
     }finally{busy=false;}
   };

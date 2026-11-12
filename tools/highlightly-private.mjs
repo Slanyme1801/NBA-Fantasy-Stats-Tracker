@@ -47,9 +47,10 @@ export function makeCachedLoader({client,cache,now=()=>Date.now(),refreshFrom=nu
       (date<new Date(now()-7*86400000).toISOString().slice(0,10)&&record.body.data.length>0&&record.body.data.every(g=>g.state?.description==='Finished'))||
       now()-Date.parse(record.fetchedAt)<5*60000);
     if(reusable){validate(record.body);await onRequest({key,endpoint,date,fetchedAt:record.fetchedAt,reused:true});return record.body;}
-    const body=await client(endpoint,params);validate(body);
+    const body=await client(endpoint,params);
     const fetchedAt=new Date(now()).toISOString();
     await cache.put(key,{version:1,provider:PROVIDER,key,fetchedAt,refreshRevision:revision,checksum:digest(body),body});
+    validate(body);
     await onRequest({key,endpoint,date,fetchedAt,reused:false});return body;
   };
 }

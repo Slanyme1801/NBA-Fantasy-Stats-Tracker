@@ -35,22 +35,22 @@ test('uncertain or failed push stops immediately without automatic Git retry',()
  for(const status of [1,null]){const calls=[];assert.throws(()=>persistGitCheckpoint([CHECKPOINT],{execute:(_,args)=>{calls.push(args);return {status:args[0]==='push'?status:args.includes('--quiet')?1:0,stdout:CHECKPOINT+'\n'};}}),/stop before spending/);assert.equal(calls.filter(args=>args[0]==='push').length,1);assert.equal(calls.at(-1)[0],'push');}
 });
 test('runner awaits durable inventory and whole-game checkpoint before next provider call',async()=>isolated(async()=>{
- await setup();const events=[];const result=await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{events.push(endpoint);return endpoint==='/matches'?page([match(2),match(3)]):box();},persist:async paths=>{await new Promise(resolve=>setTimeout(resolve,1));events.push(paths[0]);}});
+ await setup();const events=[];const result=await runHostedBackfill({hosted:true,archiveOverride:async()=>{},now:()=>Date.parse(now),clientOverride:async endpoint=>{events.push(endpoint);return endpoint==='/matches'?page([match(2),match(3)]):box();},persist:async paths=>{await new Promise(resolve=>setTimeout(resolve,1));events.push(paths[0]);}});
  assert.deepEqual(events,['/matches',INVENTORY,CHECKPOINT,'/box-score/2',CHECKPOINT,'/box-score/3',CHECKPOINT,CHECKPOINT]);assert.equal(result.snapshot.games.length,3);assert.equal(result.snapshot.lines.length,7);await assert.rejects(fs.stat('.local/highlightly.lock'),{code:'ENOENT'});
 }));
 test('runner persistence failure prevents next provider request and leaves recoverable normalized state',async()=>isolated(async()=>{
  await setup();const calls=[];let persists=0;
- await assert.rejects(runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{calls.push(endpoint);return endpoint==='/matches'?page([match(2),match(3)]):box();},persist:async()=>{if(++persists===3)throw Error('SYNTHETIC uncertain push');}}),/uncertain push/);
+ await assert.rejects(runHostedBackfill({hosted:true,archiveOverride:async()=>{},now:()=>Date.parse(now),clientOverride:async endpoint=>{calls.push(endpoint);return endpoint==='/matches'?page([match(2),match(3)]):box();},persist:async()=>{if(++persists===3)throw Error('SYNTHETIC uncertain push');}}),/uncertain push/);
  assert.deepEqual(calls,['/matches','/box-score/2']);const durable=JSON.parse(await fs.readFile(CHECKPOINT,'utf8'));assert.equal(durable.games.find(g=>g.id===2).statsState,'available');assert.equal(durable.games.find(g=>g.id===3).statsState,'missing');assert.equal(durable.publicationPolicy,'authorized-public-normalized');await assert.rejects(publishCheckpoint({now:()=>Date.parse(now)}),{code:'ENOENT'});await assert.rejects(fs.stat('.local/highlightly.lock'),{code:'ENOENT'});
 }));
 test('fresh worker reconstructed from checkpoint skips completed game despite empty private cache',async()=>isolated(async()=>{
- const current=await setup();const result=await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{if(endpoint==='/matches')return page([match(2),match(3)]);if(endpoint==='/box-score/3')throw Object.assign(Error('SYNTHETIC quota'),{code:'HIGHLIGHTLY_BUDGET'});return box();},persist:async()=>{}});
+ const current=await setup();const result=await runHostedBackfill({hosted:true,archiveOverride:async()=>{},now:()=>Date.parse(now),clientOverride:async endpoint=>{if(endpoint==='/matches')return page([match(2),match(3)]);if(endpoint==='/box-score/3')throw Object.assign(Error('SYNTHETIC quota'),{code:'HIGHLIGHTLY_BUDGET'});return box();},persist:async()=>{}});
  const checkpoint=JSON.parse(await fs.readFile(CHECKPOINT,'utf8')),inputs=runnerInputs(resumeSnapshot(current,checkpoint));await fs.rm('.local',{recursive:true,force:true});await setup();await write('.local/highlightly-candidate.json',inputs.candidate);await write('.local/highlightly-identities.json',inputs.identities);await write('.local/highlightly-game-types.json',inputs.types);
- const calls=[];const resumed=await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{calls.push(endpoint);return box();},persist:async()=>{}});assert.deepEqual(calls,['/box-score/3']);assert.equal(resumed.snapshot.games.length,3);assert.equal(resumed.snapshot.lines.length,result.snapshot.lines.length+2);
+ const calls=[];const resumed=await runHostedBackfill({hosted:true,archiveOverride:async()=>{},now:()=>Date.parse(now),clientOverride:async endpoint=>{calls.push(endpoint);return box();},persist:async()=>{}});assert.deepEqual(calls,['/box-score/3']);assert.equal(resumed.snapshot.games.length,3);assert.equal(resumed.snapshot.lines.length,result.snapshot.lines.length+2);
 }));
 test('publication of incomplete checkpoint retains prior verified games and rejects loss',async()=>isolated(async()=>{
  const current=await setup();const bytes=Buffer.from(JSON.stringify(current));await fs.mkdir('data/releases',{recursive:true});await fs.writeFile('data/releases/current.json',bytes);await write('data/manifest.json',{file:'data/releases/current.json',sha256:checksum(bytes)});
- await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{if(endpoint==='/matches')return page();throw Object.assign(Error('SYNTHETIC quota'),{code:'HIGHLIGHTLY_BUDGET'});},persist:async()=>{}});
+ await runHostedBackfill({hosted:true,archiveOverride:async()=>{},now:()=>Date.parse(now),clientOverride:async endpoint=>{if(endpoint==='/matches')return page();throw Object.assign(Error('SYNTHETIC quota'),{code:'HIGHLIGHTLY_BUDGET'});},persist:async()=>{}});
  const manifest=await publishCheckpoint({now:()=>Date.parse(now)}),released=JSON.parse(await fs.readFile(manifest.file,'utf8'));assert.equal(released.games.find(g=>g.id===1).statsState,'available');assert.equal(released.games.find(g=>g.id===2).statsState,'missing');assert.equal(released.scope.completeSeason,false);
  const bad=structuredClone(released);bad.games=bad.games.filter(g=>g.id!==1);bad.lines=bad.lines.filter(l=>l.gameId!==1);await write(CHECKPOINT,bad);await assert.rejects(publishCheckpoint({now:()=>Date.parse(now)}),/remove an already verified/);
 }));
@@ -63,13 +63,35 @@ test('publication marker is bound to current run and day',async()=>isolated(asyn
 }));
 
 test('provider-primary checkpoint survives fresh worker and gains NBA mapping without downloading again',async()=>isolated(async()=>{
- await setup();const events=[];const first=await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{events.push(endpoint);if(endpoint==='/matches')return page();const b=box();b[0].boxScores[0].player={id:999,name:'Synthetic New Player'};return b;},persist:async paths=>{events.push(paths[0]);}});
+ await setup();const events=[];const first=await runHostedBackfill({hosted:true,archiveOverride:async()=>{},now:()=>Date.parse(now),clientOverride:async endpoint=>{events.push(endpoint);if(endpoint==='/matches')return page();const b=box();b[0].boxScores[0].player={id:999,name:'Synthetic New Player'};return b;},persist:async paths=>{events.push(paths[0]);}});
  assert.equal(events.includes(PENDING),false);assert.equal(first.pendingState.games.length,0);assert.equal(first.snapshot.lines.find(l=>l.providerId===999).nbaId,null);
  const checkpoint=JSON.parse(await fs.readFile(CHECKPOINT,'utf8'));await fs.rm('.local',{recursive:true,force:true});await setup();const inputs=runnerInputs(checkpoint,{provider:'Highlightly',season:'2026-27',players:[{nbaId:9,providerId:999,name:'Synthetic New Player',source:'SYNTHETIC independently reviewed identity',verifiedAt:now}]});
  await write('.local/highlightly-candidate.json',inputs.candidate);await write('.local/highlightly-identities.json',inputs.identities);await write('.local/highlightly-game-types.json',inputs.types);
- const result=await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async()=>{throw Error('Provider forbidden');},persist:async()=>{}});
+ const result=await runHostedBackfill({hosted:true,archiveOverride:async()=>{},now:()=>Date.parse(now),clientOverride:async()=>{throw Error('Provider forbidden');},persist:async()=>{}});
  assert.equal(result.snapshot.games.find(g=>g.id===2).statsState,'available');assert.equal(result.snapshot.lines.find(l=>l.providerId===999).nbaId,9);await assert.rejects(fs.stat(PENDING),{code:'ENOENT'});
 }));
 test('normalized pending path is explicitly permitted for durable Git checkpoints',()=>{
  const calls=[];persistGitCheckpoint([PENDING],{execute:(_,args)=>{calls.push(args);return {status:args.includes('--quiet')?1:0,stdout:PENDING+'\n'};}});assert.deepEqual(calls[0],['add','--',PENDING]);assert.deepEqual(calls.at(-1),['push','origin','HEAD:main']);
 });
+test('hosted execution cannot silently omit response archival even with an injected client',async()=>isolated(async()=>{
+ await setup();const old=process.env.HIGHLIGHTLY_API_KEY;delete process.env.HIGHLIGHTLY_API_KEY;let calls=0;
+ try{await assert.rejects(runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async()=>{calls++;return page();},persist:async()=>{}}));assert.equal(calls,0);}finally{if(old!==undefined)process.env.HIGHLIGHTLY_API_KEY=old;}
+}));
+test('hosted archives each complete response before inventory/source validation and checkpoint',async()=>isolated(async()=>{
+ await setup();const key='SYNTHETIC QUARANTINE TEST KEY',old=process.env.HIGHLIGHTLY_API_KEY;process.env.HIGHLIGHTLY_API_KEY=key;
+ const events=[];try{
+  await runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{events.push(endpoint);return endpoint==='/matches'?page():box();},persist:async paths=>events.push(paths[0])});
+  assert.equal(events[0],'/matches');assert.match(events[1],/^\.github\/highlightly-quarantine\/[a-f0-9-]+\.json$/);assert.equal(events[2],INVENTORY);
+  const boxIndex=events.indexOf('/box-score/2');assert.match(events[boxIndex+1],/^\.github\/highlightly-quarantine\/[a-f0-9-]+\.json$/);assert.equal(events[boxIndex+2],CHECKPOINT);
+  const archiveFiles=await fs.readdir('.github/highlightly-quarantine');assert.equal(archiveFiles.length,2);for(const name of archiveFiles){const contents=await fs.readFile(`.github/highlightly-quarantine/${name}`,'utf8');assert.equal(contents.includes(key),false);assert.equal(contents.includes('Successful Field Goals'),false);}
+ }finally{if(old===undefined)delete process.env.HIGHLIGHTLY_API_KEY;else process.env.HIGHLIGHTLY_API_KEY=old;}
+}));
+test('uncertain archive push clears publication marker and prevents next provider call',async()=>isolated(async()=>{
+ await setup();const calls=[];await assert.rejects(runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{calls.push(endpoint);return endpoint==='/matches'?page([match(2),match(3),match(4)]):box();},archiveOverride:async record=>{if(record.endpoint==='/box-score/3')throw Error('SYNTHETIC uncertain archive push');},persist:async()=>{}}),/uncertain archive push/);
+ assert.deepEqual(calls,['/matches','/box-score/2','/box-score/3']);await assert.rejects(publishCheckpoint({now:()=>Date.parse(now)}),{code:'ENOENT'});
+ const checkpoint=JSON.parse(await fs.readFile(CHECKPOINT,'utf8'));assert.equal(checkpoint.games.find(g=>g.id===2).statsState,'available');assert.equal(checkpoint.games.find(g=>g.id===3).statsState,'missing');
+}));
+test('confirmed archive preserves prior ready checkpoint when a later collection step fails',async()=>isolated(async()=>{
+ await setup();const calls=[];await assert.rejects(runHostedBackfill({hosted:true,now:()=>Date.parse(now),clientOverride:async endpoint=>{calls.push(endpoint);if(endpoint==='/matches')return page([match(2),match(3)]);if(endpoint==='/box-score/3')throw Error('SYNTHETIC disconnected before response');return box();},archiveOverride:async()=>{},persist:async()=>{}}),/disconnected/);
+ const marker=JSON.parse(await fs.readFile('.local/highlightly-checkpoint-ready.json','utf8'));assert.equal(marker.runId,'123');assert.equal(calls.length,3);
+}));
