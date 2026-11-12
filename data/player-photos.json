@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 117,
-    "transparentCount": 114,
+    "coveredCount": 122,
+    "transparentCount": 119,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -3112,6 +3112,131 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": "sixers",
         "source": "https://www.nba.com/player/1629014"
+      }
+    },
+    "203924": {
+      "nbaId": 203924,
+      "name": "Jerami Grant",
+      "path": "assets/player-photos/203924-head.png",
+      "alt": "Visage expressif de Jerami Grant, sans maillot visible.",
+      "source": "https://uniqrenders.com/athletes/basketball/jerami-grant-portland-trail-blazers-nba-usa-american-basketball-players-1867",
+      "originalUrl": "https://uniqrenders.com/Uploads/19-2-2023/1867/jerami-grant-portland-trail-blazers-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "Détourage source : Uniqrenders ; photographe original non indiqué. Recadrage tête seule par IA.",
+      "license": "Téléchargement public Uniqrenders ; licence photo originale non précisée",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/jerami-grant-portland-trail-blazers-nba-usa-american-basketball-players-1867",
+      "rightsStatus": "Téléchargement proposé publiquement par Uniqrenders ; droits photographiques originaux non audités. Crédit et provenance conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1164,
+      "height": 1351,
+      "sha256": "7b322dd802860dc8b24cf70c22465ffb4dc3ffae0643cad02fe39afd9d58a65f",
+      "transformations": "Recadrage tête seule et suppression du fond par imagegen ; ancien maillot entièrement exclu. Détails fins reconstruits à l’agrandissement.",
+      "selection": "Tête seule, sans maillot visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "grizzlies",
+        "source": "https://www.nba.com/player/203924"
+      }
+    },
+    "1629673": {
+      "nbaId": 1629673,
+      "name": "Jordan Poole",
+      "path": "assets/player-photos/1629673-head.png",
+      "alt": "Visage expressif de Jordan Poole, sans maillot visible.",
+      "source": "https://uniqrenders.com/athletes/basketball/jordan-poole-washington-wizards-nba-usa-american-basketball-players-7836",
+      "originalUrl": "https://uniqrenders.com/Uploads/14-3-2025/7836/jordan-poole-washington-wizards-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "Détourage source : Uniqrenders ; photographe original non indiqué. Recadrage tête seule par IA.",
+      "license": "Téléchargement public Uniqrenders ; licence photo originale non précisée",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/jordan-poole-washington-wizards-nba-usa-american-basketball-players-7836",
+      "rightsStatus": "Téléchargement proposé publiquement par Uniqrenders ; droits photographiques originaux non audités. Crédit et provenance conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1295,
+      "height": 1214,
+      "sha256": "ca103e578b04dbcfc33f54a07ab70ba66ad7bfa48766dca5b6072cc57d4f7fe2",
+      "transformations": "Recadrage tête seule et suppression du fond par imagegen ; ancien maillot entièrement exclu. Détails fins reconstruits à l’agrandissement.",
+      "selection": "Tête seule, sans maillot visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "pelicans",
+        "source": "https://www.nba.com/player/1629673"
+      }
+    },
+    "1642852": {
+      "nbaId": 1642852,
+      "name": "Derik Queen",
+      "path": "assets/player-photos/1642852-head.png",
+      "alt": "Visage expressif de Derik Queen, sans maillot visible.",
+      "source": "https://commons.wikimedia.org/wiki/File:Derik_Queen_(54424016534)_(cropped).jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/20/Derik_Queen_%2854424016534%29_%28cropped%29.jpg",
+      "author": "Pat Siebert / Maryland GovPics ; recadrage tête seule et détourage par IA.",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "rightsStatus": "Photographie publiée sous CC BY 2.0 par Maryland GovPics ; licence du fichier source confirmée par FlickreviewR. Crédit, licence et transformations conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1085,
+      "height": 1449,
+      "sha256": "3255a40fb5631459b3ea10e62753de3d0d81afd98366d8266390700ba22a7e00",
+      "transformations": "Recadrage tête seule et suppression du fond par imagegen ; tenue de baseball exclue. Détails fins reconstruits à l’agrandissement.",
+      "selection": "Tête seule, sans maillot visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "pelicans",
+        "source": "https://www.nba.com/player/1642852"
+      }
+    },
+    "1642882": {
+      "nbaId": 1642882,
+      "name": "Julian Reese",
+      "path": "assets/player-photos/1642882-head.png",
+      "alt": "Visage expressif de Julian Reese, sans maillot visible.",
+      "source": "https://commons.wikimedia.org/wiki/File:Julian_Reese_(54424016534)_(cropped).jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cd/Julian_Reese_%2854424016534%29_%28cropped%29.jpg",
+      "author": "Pat Siebert / Maryland GovPics ; recadrage tête seule et détourage par IA.",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "rightsStatus": "Photographie publiée sous CC BY 2.0 par Maryland GovPics ; licence du fichier source confirmée par FlickreviewR. Crédit, licence et transformations conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1278,
+      "height": 1230,
+      "sha256": "df6f8bae5c00495652095b0ea93e5ffbf6ead5e5ee2c57079e2983c651eecc37",
+      "transformations": "Recadrage tête seule et suppression du fond par imagegen ; tenue de baseball exclue. Détails fins reconstruits à l’agrandissement.",
+      "selection": "Tête seule, sans maillot visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "pelicans",
+        "source": "https://www.nba.com/player/1642882"
+      }
+    },
+    "1626181": {
+      "nbaId": 1626181,
+      "name": "Norman Powell",
+      "path": "assets/player-photos/1626181-head.png",
+      "alt": "Visage expressif de Norman Powell, sans maillot visible.",
+      "source": "https://uniqrenders.com/athletes/basketball/norman-powell-los-angeles-clippers-nba-usa-american-basketball-players-587",
+      "originalUrl": "https://uniqrenders.com/Uploads/21-10-2022/587/norman-powell-los-angeles-clippers-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "Détourage source : Uniqrenders ; photographe original non indiqué. Recadrage tête seule par IA.",
+      "license": "Téléchargement public Uniqrenders ; licence photo originale non précisée",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/norman-powell-los-angeles-clippers-nba-usa-american-basketball-players-587",
+      "rightsStatus": "Téléchargement proposé publiquement par Uniqrenders ; droits photographiques originaux non audités. Crédit et provenance conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1272,
+      "height": 1237,
+      "sha256": "d5c775fa8e0946fcbca773d4d2c4bea33202763d7bdfeb02b235347d0d9103e0",
+      "transformations": "Recadrage tête seule et suppression du fond par imagegen ; ancien maillot entièrement exclu. Détails fins reconstruits à l’agrandissement.",
+      "selection": "Tête seule, sans maillot visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "bulls",
+        "source": "https://www.nba.com/player/1626181"
       }
     }
   }
