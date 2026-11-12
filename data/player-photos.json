@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 89,
-    "transparentCount": 86,
+    "coveredCount": 91,
+    "transparentCount": 88,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2412,6 +2412,56 @@
         "status": "current-club",
         "currentTeam": "magic",
         "source": "https://www.nba.com/player/202696/nikola-vucevic"
+      }
+    },
+    "1641705": {
+      "nbaId": 1641705,
+      "name": "Victor Wembanyama",
+      "path": "assets/player-photos/1641705-action.png",
+      "alt": "Victor Wembanyama en tenue des Spurs, balle en main, lors de la NBA Cup 2025.",
+      "source": "https://commons.wikimedia.org/wiki/File:Victor_Wembanyama_San_Antonio_Spurs_2025_NBA_Cup.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/21/Victor_Wembanyama_San_Antonio_Spurs_2025_NBA_Cup.jpg",
+      "author": "Daiei Onoguchi / FireBirdFilm",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "rightsStatus": "Photographie déclarée œuvre propre par son auteur sur Wikimedia Commons, sous CC BY 4.0. Détourage par outil IA ; attribution et modification signalées.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1060,
+      "height": 1484,
+      "sha256": "5be335b324774765c3ad38075d77d404f9c5207806a114c926f8fe38a7d6c069",
+      "transformations": "Fond supprimé et cadrage resserré par outil IA imagegen ; détails légèrement réinterprétés.",
+      "selection": "Pose de dribble en maillot du club actuel.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "current-club",
+        "currentTeam": "spurs",
+        "source": "https://www.nba.com/player/1641705/victor-wembanyama"
+      }
+    },
+    "203076": {
+      "nbaId": 203076,
+      "name": "Anthony Davis",
+      "path": "assets/player-photos/203076-civil.png",
+      "alt": "Anthony Davis en costume bleu, photographié de profil.",
+      "source": "https://www.vhv.rs/viewpic/hJbhoom_anthony-davis-png-picture-anthony-davis-haircut-transparent/",
+      "originalUrl": "https://www.vhv.rs/dpng/f/484-4847981_anthony-davis-png.png",
+      "author": "Photographe original non indiqué ; PNG distribué par VHV.",
+      "license": "Usage personnel ou non commercial proposé par VHV ; droits originaux non certifiés",
+      "licenseUrl": "https://www.vhv.rs/terms/",
+      "rightsStatus": "VHV propose le téléchargement pour les projets personnels ou non commerciaux mais précise ne concéder aucune licence sur les contenus. Droits photographiques originaux non audités ; crédit et provenance conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1594,
+      "height": 1605,
+      "sha256": "22b5f26c27a61c0d4b2dffd722a1f55ec532dba36818ab99eef4aa1650832159",
+      "transformations": "Aucune ; fichier PNG transparent original conservé.",
+      "selection": "Portrait civil de profil, sans maillot ni affiliation sportive visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": null,
+        "source": "Inspection visuelle du PNG original : costume bleu, sans maillot."
       }
     }
   }
