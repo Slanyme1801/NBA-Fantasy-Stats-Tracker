@@ -107,7 +107,7 @@ function decorateProfileExperience(head,id){
   head.querySelector('.profile-identity').insertAdjacentHTML('afterbegin',`<p class="experience-overline">${words[0]}</p><p class="experience-title">${words[1]}</p>`);
   head.insertAdjacentHTML('beforeend',`<div class="experience-caption"><span>${words[2]}</span><span class="experience-serial">${edition==='goat'?'01 / 01 · LE GOAT':edition==='dual'?'MVP × LÉGENDE':edition==='mvp'?'COLLECTION MVP':'COLLECTION LÉGENDES'}</span></div>`);
   head.insertAdjacentHTML('afterend',`<nav class="experience-chapters" aria-label="Chapitres de la fiche"><a href="#currentProfile"><small>01</small> Le présent</a><a href="#profileArchives"><small>02</small> Les archives</a><span class="experience-editorial">Présentation éditoriale · statistiques inchangées</span>${edition!=='legend'?'<button type="button" class="experience-motion" aria-pressed="false" onclick="toggleProfileMotion(this)">Mode calme</button>':''}</nav>`);
-  const archive=el('view').querySelector('.cards');if(archive)archive.id='profileArchives';
+  const archive=el('view').querySelector(':scope > .cards:not(.compact-cards)');if(archive)archive.id='profileArchives';
 }
 renderPlayer=function(){
   setProfileTheme(CURRENT.player_id);
