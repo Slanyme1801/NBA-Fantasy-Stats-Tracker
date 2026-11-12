@@ -12,3 +12,8 @@ test('all accents support white button text and panel text remains high contrast
  for(const [fg,bg] of [['292319','fffaf0'],['61533b','fffaf0'],['172b43','f9fbff'],['43566d','f9fbff'],['f7e4b8','211438']])assert.ok(contrast(fg,bg)>=4.5);
 });
 test('full-page rules style sections tables navigation and reset motion without touching calculations',async()=>{const css=await fs.readFile(new URL('../assets/dashboard.css',import.meta.url),'utf8');for(const x of ['header.top','#view .panel','#view .card','#view th','#view td','#view summary'])assert.ok(css.includes(x));assert.match(css,/body\[data-profile-club="bos"\]/);assert.match(css,/prefers-reduced-motion:reduce/);});
+test('default theme variables have lower specificity than club and edition palettes',async()=>{
+ const css=await fs.readFile(new URL('../assets/dashboard.css',import.meta.url),'utf8');
+ assert.ok(css.includes('body:where([data-profile-edition]:not([data-profile-edition=""])){--edition-accent'));
+ assert.ok(!css.includes('body[data-profile-edition]:not([data-profile-edition=""]){--edition-accent'));
+});
