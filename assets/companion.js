@@ -63,6 +63,7 @@ function setProfileTheme(id){
   document.body?.setAttribute?.('data-profile-edition',theme.edition);
   document.body?.setAttribute?.('data-profile-club',theme.club);
   document.body?.setAttribute?.('data-profile-motion','playing');
+  document.body?.setAttribute?.('data-profile-minimal',String(String(id)==='1630166'));
 }
 function profileNicknameFor(id){
   const key=String(id);
@@ -161,12 +162,20 @@ function decorateProfileExperience(head,id){
 }
 renderPlayer=function(){
   setProfileTheme(CURRENT.player_id);
+  if(renderMinimalAvdija(CURRENT.player_id))return;
   previousPlayer();const head=el('view').querySelector('.player-head');head.innerHTML=`<div class="profile-identity">${head.innerHTML}</div>`;head.insertAdjacentHTML('afterbegin',`<div class="profile-portrait">${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span></div>`);
   decorateGoatProfile(head,CURRENT.player_id);
   decorateEditionProfile(head,CURRENT.player_id);
   const p=CURRENT.eligibility;head.insertAdjacentHTML('afterend',`<div class="eligibility"><b>ESPN 2026–27:</b> ${p?esc(p.positions.join(' / ')):'Non importé'}</div><div id="currentProfile"></div>`);renderCurrentProfile();
   decorateProfileExperience(head,CURRENT.player_id);
 };
+function renderMinimalAvdija(id){
+  if(String(id)!=='1630166')return false;
+  const a=C.aggregate(currentData,id,{weights:META.scoring});
+  const available=a.gp>0&&typeof a.fptsPerGame==='number'&&Number.isFinite(a.fptsPerGame);
+  el('view').innerHTML=`<section class="minimal-player"><button type="button" class="minimal-back" onclick="go('home')" aria-label="Retour à l’accueil">← Accueil</button><h1>Voldemort</h1><p class="minimal-average-label">AVG actuel</p><p class="minimal-average">${available?fmt(a.fptsPerGame):'Indisponible'}</p></section>`;
+  return true;
+}
 function aggregateTable(a){
   const keys=['pts','fgm','fga','fg3m','fg3a','ftm','fta','reb','ast','stl','blk','tov'];
   return `<div class="scroll" tabindex="0" aria-label="Moyennes de l’échantillon importé et totaux bruts"><table><thead><tr><th>2026–27${partialCoverage(currentData)?' échantillon':''}</th>${keys.map(k=>`<th>${k.toUpperCase()}</th>`).join('')}<th>FPTS</th></tr></thead><tbody><tr><td>Moyenne / match</td>${keys.map(k=>`<td>${fmt(a.averages[k])}</td>`).join('')}<td class="fpts">${fmt(a.fptsPerGame)}</td></tr><tr><td>Totaux bruts · ${a.gp} GP</td>${keys.map(k=>`<td>${a.totals?fmt(a.totals[k],0):'—'}</td>`).join('')}<td>${fmt(a.totalFpts)}</td></tr></tbody></table></div><p class="small muted">FG ${fmt(a.percentages.fg)}% · 3PT ${fmt(a.percentages.three)}% · FT ${fmt(a.percentages.ft)}% · pourcentages calculés sur les tirs cumulés réussis/tentés ; — signifie indisponible ou aucune tentative.</p>`;
