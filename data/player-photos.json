@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 95,
-    "transparentCount": 92,
+    "coveredCount": 99,
+    "transparentCount": 96,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2561,6 +2561,106 @@
         "date": "2026-11-12",
         "status": "civilian-no-club-uniform",
         "currentTeam": "warriors",
+        "source": "Photo source inspectée puis visage isolé sans tenue ; club actuel selon carte projet 2026-27."
+      }
+    },
+    "203944": {
+      "nbaId": 203944,
+      "name": "Julius Randle",
+      "path": "assets/player-photos/203944-cutout.png",
+      "alt": "Visage de Julius Randle sans maillot visible.",
+      "source": "https://commons.wikimedia.org/wiki/File:Jalen_Brunson_-_52977333593_(cropped).jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/0/00/Jalen_Brunson_-_52977333593_%28cropped%29.jpg",
+      "author": "Erik Drost ; détourage par IA.",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "rightsStatus": "Source publiée sous licence CC BY 2.0 sur Wikimedia Commons ; crédit, licence et adaptation conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1313,
+      "height": 1198,
+      "sha256": "2558fef9c0a45d9720a314f00aa137cc11f7b6c7cefbfab245e6cdf9c85d3221",
+      "transformations": "Recadrage tête seule, suppression du fond et exclusion complète de l’ancien maillot par imagegen. Détails fins reconstruits lors de l’agrandissement.",
+      "selection": "Tête seule expressive, aucun vêtement visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "nets",
+        "source": "https://www.nba.com/player/203944"
+      }
+    },
+    "1630217": {
+      "nbaId": 1630217,
+      "name": "Desmond Bane",
+      "path": "assets/player-photos/1630217-cutout.png",
+      "alt": "Desmond Bane souriant en tenue d’échauffement du Magic.",
+      "source": "https://commons.wikimedia.org/wiki/File:Desmond_Bane,_Magic_vs_Raptors.png",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Desmond_Bane%2C_Magic_vs_Raptors.png",
+      "author": "RJBTS ; détourage par IA.",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "rightsStatus": "Source publiée sous licence CC BY 4.0 sur Wikimedia Commons ; crédit, licence et adaptation conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 897,
+      "height": 1752,
+      "sha256": "500b7c656f0bfdb15b296e093c4c420038f3208880ed8138fb59efbe4ff9db9d",
+      "transformations": "Suppression du fond par imagegen, cadrage et tenue Magic conservés. Détails fins reconstruits lors de l’agrandissement.",
+      "selection": "Échauffement Orlando, photographie du 5 février 2026.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "current-club",
+        "currentTeam": "magic",
+        "source": "https://www.nba.com/gamenotes/magic.pdf"
+      }
+    },
+    "1631096": {
+      "nbaId": 1631096,
+      "name": "Chet Holmgren",
+      "path": "assets/player-photos/1631096-face-edited.png",
+      "alt": "Visage de Chet Holmgren sans tenue visible",
+      "source": "https://commons.wikimedia.org/wiki/File:Chet_Holmgren.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Chet_Holmgren.jpg",
+      "author": "Steve Cheng, Bruin Report Online",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+      "rightsStatus": "Licence CC BY 2.0 confirmée sur Commons par revue Flickr du 2 décembre 2021 ; crédit et modifications conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1089,
+      "height": 1444,
+      "sha256": "977c89bc91713478e3349e0d67a1ce3161f03e1f6bf22514a4a17a510b805cb6",
+      "transformations": "Extraction du visage sans tenue et détourage par imagegen ; détails fins réinterprétés lors de l’agrandissement. Photo originale du 23 novembre 2021, pas une prise de vue récente.",
+      "selection": "Tête seule issue d’une photo authentique, expression conservée, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "thunder",
+        "source": "Photo source inspectée puis visage isolé sans tenue ; club actuel selon carte projet 2026-27."
+      }
+    },
+    "1642843": {
+      "nbaId": 1642843,
+      "name": "Cooper Flagg",
+      "path": "assets/player-photos/1642843-face-edited.png",
+      "alt": "Visage de Cooper Flagg sans tenue visible",
+      "source": "https://commons.wikimedia.org/wiki/File:Duke_at_UNC,_Mar_2025,_Flagg.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/13/Duke_at_UNC%2C_Mar_2025%2C_Flagg.jpg",
+      "author": "Hameltion",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "rightsStatus": "Photographie déclarée œuvre personnelle par Hameltion, publiée sous CC0 1.0 sur Wikimedia Commons ; crédit conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1141,
+      "height": 1379,
+      "sha256": "aef49a4afef9d07792f0f4c4c7205e5bc3203e9e279059a9bb46ec9e29964dd4",
+      "transformations": "Extraction du visage sans tenue et détourage par imagegen ; résolution agrandie, flou de la source conservé, légères variations possibles. Photo originale du 8 mars 2025, pas une prise de vue récente.",
+      "selection": "Tête seule issue d’une photo authentique, expression conservée, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "mavericks",
         "source": "Photo source inspectée puis visage isolé sans tenue ; club actuel selon carte projet 2026-27."
       }
     }
