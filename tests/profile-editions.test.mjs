@@ -5,7 +5,7 @@ import vm from 'node:vm';
 const source=await fs.readFile(new URL('../assets/companion.js',import.meta.url),'utf8');
 const body=source.slice(source.indexOf('function profileNicknameFor('),source.indexOf('function toggleProfileMotion('));
 const ctx={};vm.createContext(ctx);vm.runInContext(body,ctx);
-function head(){const writes=[];return {writes,classList:{toggle:(...x)=>writes.push(['class',...x])},querySelector:selector=>({insertAdjacentHTML:(where,html)=>writes.push([selector,where,html])})};}
+function head(){const writes=[];return {writes,classList:{toggle:(...x)=>writes.push(['class',...x])},querySelector:selector=>({querySelector:()=>null,insertAdjacentHTML:(where,html)=>writes.push([selector,where,html])})};}
 test('editorial editions match the exact user selection, with one combined treatment for dual players',()=>{
  const groups={dual:[201939,203999,203954,1628983],legend:[203110,203081,1626164,1628369],mvp:[201142,201935,203507,201566,201565]};
  for(const [edition,ids] of Object.entries(groups))for(const id of ids){const h=head();ctx.decorateEditionProfile(h,id);assert.deepEqual(h.writes.slice(0,2),[['class','edition-profile',true],['class','edition-'+edition,true]]);assert.match(JSON.stringify(h.writes),/Sélection éditoriale du site/);assert.match(JSON.stringify(h.writes),/barème fantasy inchangé/);assert.equal(h.writes.length,5);}

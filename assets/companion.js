@@ -108,13 +108,21 @@ function profileNicknameFor(id){
     '201565':['D-Rose','D-Rose dans les highlights, moi dans mes sentiments. 🌹']
   }[key]||null;
 }
+function setProfileDisplayName(identity,nickname){
+  const heading=identity.querySelector('h2');
+  if(!heading||!nickname)return;
+  const officialName=heading.textContent;
+  heading.textContent=nickname[0];
+  heading.insertAdjacentHTML('afterend',`<p class="profile-official-name">${esc(officialName)}</p>`);
+}
 function decorateGoatProfile(head,id){
   if(String(id)!=='2544')return;
   head.classList.toggle('goat-profile',true);
   const identity=head.querySelector('.profile-identity');
   identity.insertAdjacentHTML('afterbegin','<div class="goat-kicker"><span aria-hidden="true">♛</span> LE KING · ÉDITION GOAT</div>');
   const nickname=profileNicknameFor(id);
-  identity.insertAdjacentHTML('beforeend',`<p class="profile-nickname">${nickname[0]}</p><p class="goat-tagline">${nickname[1]}</p><div class="goat-seal"><span aria-hidden="true">✦</span> Aura : légendaire <span aria-hidden="true">✦</span></div><p class="goat-disclaimer">Le traitement royal est offert. Aucun bonus dans le barème.</p>`);
+  setProfileDisplayName(identity,nickname);
+  identity.insertAdjacentHTML('beforeend',`<p class="goat-tagline">${nickname[1]}</p><div class="goat-seal"><span aria-hidden="true">✦</span> Aura : légendaire <span aria-hidden="true">✦</span></div><p class="goat-disclaimer">Le traitement royal est offert. Aucun bonus dans le barème.</p>`);
   head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend','<span class="goat-crown" aria-hidden="true">♛</span>');
   const introRoute=typeof routeGeneration==='number'?routeGeneration:0;
   if(decorateGoatProfile.introRoute!==introRoute){
@@ -140,7 +148,8 @@ function decorateEditionProfile(head,id){
   const identity=head.querySelector('.profile-identity');
   identity.insertAdjacentHTML('afterbegin',`<div class="edition-kicker"><span aria-hidden="true">${copy.symbol}</span> ${copy.label}</div>`);
   const nickname=profileNicknameFor(id);
-  identity.insertAdjacentHTML('beforeend',`<p class="profile-nickname">${nickname[0]}</p><p class="edition-tagline">${nickname[1]}</p><span class="edition-seal">${copy.seal}</span><p class="edition-note">Sélection éditoriale du site · barème fantasy inchangé.</p>`);
+  setProfileDisplayName(identity,nickname);
+  identity.insertAdjacentHTML('beforeend',`<p class="edition-tagline">${nickname[1]}</p><span class="edition-seal">${copy.seal}</span><p class="edition-note">Sélection éditoriale du site · barème fantasy inchangé.</p>`);
   head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend',`<span class="edition-emblem" aria-hidden="true">${copy.symbol}</span>`);
 }
 function toggleProfileMotion(button){
