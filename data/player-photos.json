@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 88,
-    "transparentCount": 85,
+    "coveredCount": 89,
+    "transparentCount": 86,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2387,6 +2387,31 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": "cavaliers",
         "source": "https://freepngimg.com/png/85377-houston-hair-james-harden-rockets-facial-nba"
+      }
+    },
+    "202696": {
+      "nbaId": 202696,
+      "name": "Nikola Vučević",
+      "path": "assets/player-photos/202696-magic.png",
+      "alt": "Nikola Vučević en maillot bleu Orlando, tenant un ballon.",
+      "source": "https://www.pngkey.com/maxpic/u2y3a9u2o0u2u2i1/",
+      "originalUrl": "https://www.pngkey.com/png/full/945-9451771_nba-player-png.png",
+      "author": "Photographe original non indiqué ; fichier proposé par PNGkey.",
+      "license": "Téléchargement et utilisation non commerciale proposés par PNGkey ; droits photographiques originaux non audités.",
+      "licenseUrl": "https://www.pngkey.com/maxpic/u2y3a9u2o0u2u2i1/",
+      "rightsStatus": "Source proposant téléchargement gratuit et insertion sur blog/site, hors usage commercial ; chaîne des droits photographiques non certifiée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 308,
+      "height": 1035,
+      "sha256": "e5f08514f19de95d1626e2ec06a273a44d7f5083962040b8bb38c1d3bab5f097",
+      "transformations": "Aucune modification ; fichier PNG original téléchargé.",
+      "selection": "Photo corps entier en maillot Orlando, identité et alpha contrôlés. Photo ancienne du même club actuel, pas un portrait de la saison 2026-27.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "current-club",
+        "currentTeam": "magic",
+        "source": "https://www.nba.com/player/202696/nikola-vucevic"
       }
     }
   }
