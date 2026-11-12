@@ -36,17 +36,33 @@ function statusPanel(compact=false){
 }
 let activePage='home',routeGeneration=0;
 const previousGo=go;
-go=function(page){activePage=page;routeGeneration++;if(page==='trades')renderTrades();else previousGo(page);['home','board','compare','trades','data'].forEach(p=>el('tab-'+p).classList.toggle('active',p===page));};
+go=function(page){setProfileTheme(null);activePage=page;routeGeneration++;if(page==='trades')renderTrades();else previousGo(page);['home','board','compare','trades','data'].forEach(p=>el('tab-'+p).classList.toggle('active',p===page));};
 const previousHome=renderHome;
 renderHome=function(){previousHome();el('mainSearch').setAttribute('aria-label','Rechercher des joueurs NBA');const hero=el('view').querySelector('.hero');hero.insertAdjacentHTML('beforeend',`<div class="hero-actions"><button class="btn" onclick="go('trades')">Évaluer un trade</button><button class="btn ghost" onclick="go('board')">Explorer les classements</button></div>`);};
 const previousFooter=metaFooter;
 metaFooter=function(){return `<div class="scoring-badge">${scoreLabel()} · <button class="text-button" onclick="go('data')">Données et barème</button></div>`;};
 const previousPlayer=renderPlayer;
 openPlayer=async function(id){
-  id=canonicalPlayerId(id);if(id===null)return;
+  id=canonicalPlayerId(id);if(id===null)return;setProfileTheme(null);
   const generation=++routeGeneration;activePage='player';['home','board','compare','trades','data'].forEach(p=>el('tab-'+p).classList.remove('active'));el('view').innerHTML='<p role="status">Chargement du joueur…</p>';
   const player=await api(playerPath(id));if(generation!==routeGeneration)return;CURRENT=player;sortState={key:'season',dir:'asc'};renderPlayer();window.scrollTo(0,0);
 };
+// Club palettes verified on the NBA player pages on 2026-11-12.
+function profileThemeFor(id){
+  const key=String(id);
+  if(key==='2544')return {edition:'goat',club:''};
+  const clubs={'203110':'gsw','203081':'por','1626164':'phx','1628369':'bos','201939':'gsw','203999':'den','203954':'phi','1628983':'okc'};
+  if(['201939','203999','203954','1628983'].includes(key))return {edition:'dual',club:clubs[key]};
+  if(['203110','203081','1626164','1628369'].includes(key))return {edition:'legend',club:clubs[key]};
+  if(['201142','201935','203507','201566','201565'].includes(key))return {edition:'mvp',club:''};
+  return {edition:'',club:''};
+}
+function setProfileTheme(id){
+  const theme=profileThemeFor(id);
+  // Empty attributes clear every prior theme on navigation and while profiles load.
+  document.body?.setAttribute?.('data-profile-edition',theme.edition);
+  document.body?.setAttribute?.('data-profile-club',theme.club);
+}
 function decorateGoatProfile(head,id){
   if(String(id)!=='2544')return;
   head.classList.toggle('goat-profile',true);
@@ -76,6 +92,7 @@ function decorateEditionProfile(head,id){
   head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend',`<span class="edition-emblem" aria-hidden="true">${copy.symbol}</span>`);
 }
 renderPlayer=function(){
+  setProfileTheme(CURRENT.player_id);
   previousPlayer();const head=el('view').querySelector('.player-head');head.innerHTML=`<div class="profile-identity">${head.innerHTML}</div>`;head.insertAdjacentHTML('afterbegin',`<div class="profile-portrait">${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span></div>`);
   decorateGoatProfile(head,CURRENT.player_id);
   decorateEditionProfile(head,CURRENT.player_id);
