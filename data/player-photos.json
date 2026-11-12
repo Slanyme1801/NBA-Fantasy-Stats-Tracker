@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 91,
-    "transparentCount": 88,
+    "coveredCount": 92,
+    "transparentCount": 89,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2462,6 +2462,31 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": null,
         "source": "Inspection visuelle du PNG original : costume bleu, sans maillot."
+      }
+    },
+    "1627759": {
+      "nbaId": 1627759,
+      "name": "Jaylen Brown",
+      "path": "assets/player-photos/1627759-civil.png",
+      "alt": "Jaylen Brown souriant, en tenue civile noire, lors de sa visite à la NASA.",
+      "source": "https://commons.wikimedia.org/wiki/File:Jaylen_Brown_has_a_Ball_Visiting_Hubble_(amf-3ea5ffb7-f274-4288-94cf-e79c05f3199d).jpg",
+      "originalUrl": "https://assets.science.nasa.gov/dynamicimage/assets/science/missions/hubble/people/public-figures/publicfigures20.jpg",
+      "author": "NASA ; détourage réalisé par IA.",
+      "license": "Domaine public (NASA, États-Unis) ; adaptation par IA",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/File:Jaylen_Brown_has_a_Ball_Visiting_Hubble_(amf-3ea5ffb7-f274-4288-94cf-e79c05f3199d).jpg",
+      "rightsStatus": "Photographie NASA identifiée comme domaine public sur Wikimedia Commons. Crédit conservé. Adaptation par IA, sans affiliation ni caution de la NASA.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 810,
+      "height": 1940,
+      "sha256": "41732944244a37f36c06dd6ad53c8ca133848565e6f06f90b3673b23bbf90abb",
+      "transformations": "Suppression du fond et recadrage par imagegen ; détails fins reconstruits lors de l’agrandissement.",
+      "selection": "Portrait civil souriant, en pied, sans maillot. Source du 8 avril 2019.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": null,
+        "source": "Inspection source NASA et résultat : pull et pantalon noirs, sans maillot."
       }
     }
   }
