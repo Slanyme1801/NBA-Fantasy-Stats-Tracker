@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 92,
-    "transparentCount": 89,
+    "coveredCount": 95,
+    "transparentCount": 92,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2487,6 +2487,81 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": null,
         "source": "Inspection source NASA et résultat : pull et pantalon noirs, sans maillot."
+      }
+    },
+    "203507": {
+      "nbaId": 203507,
+      "name": "Giannis Antetokounmpo",
+      "path": "assets/player-photos/203507-face-edited.png",
+      "alt": "Visage de Giannis Antetokounmpo, sans tenue visible",
+      "source": "https://www.pngaaa.com/detail/1657681",
+      "originalUrl": "https://image.pngaaa.com/681/1657681.png",
+      "author": "Photographe original non précisé ; image proposée par PNGaaa",
+      "license": "Usage non commercial indiqué par PNGaaa",
+      "licenseUrl": "https://www.pngaaa.com/detail/1657681",
+      "rightsStatus": "Téléchargement non commercial proposé par la source ; droits photographiques originaux non audités. Crédit conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1285,
+      "height": 1224,
+      "sha256": "6e05e0971857b0a3d549c471b9c0907aafa38461b6ca5858ec0148c519ceb91e",
+      "transformations": "Extraction du visage et suppression complète du corps, du col et du maillot par outil IA imagegen. Transparence ajoutée ; détails fins réinterprétés lors du redimensionnement. Ce fichier ne représente pas une photo civile et ne certifie pas une prise de vue récente.",
+      "selection": "Tête seule issue d’une photo authentique, expression conservée, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "heat",
+        "source": "Photo source inspectée puis visage isolé sans tenue ; club actuel selon carte projet 2026-27."
+      }
+    },
+    "1629636": {
+      "nbaId": 1629636,
+      "name": "Darius Garland",
+      "path": "assets/player-photos/1629636-head.png",
+      "alt": "Visage expressif de Darius Garland, bouche ouverte, sans maillot visible.",
+      "source": "https://commons.wikimedia.org/wiki/File:Darius_Garland,_Photographed_by_DeAndre_Patrick.jpg",
+      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Darius_Garland%2C_Photographed_by_DeAndre_Patrick.jpg",
+      "author": "DeAndre Patrick ; recadrage et détourage par IA.",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "rightsStatus": "Photographie publiée par son auteur sous CC BY-SA4.0 ; adaptation distribuée sous la même licence. Crédit, licence et transformations conservés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1263,
+      "height": 1245,
+      "sha256": "173be31b84ad08a768e46139c780f4e1faf8f7211258c08d792b8ad0aa10d872",
+      "transformations": "Recadrage tête seule et suppression du fond par imagegen. Corps et ancien maillot exclus ; détails fins reconstruits lors de l’agrandissement.",
+      "selection": "Visage expressif ; aucun vêtement ni maillot visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "clippers",
+        "source": "https://www.nba.com/player/1629636/darius-garland"
+      }
+    },
+    "204001": {
+      "nbaId": 204001,
+      "name": "Kristaps Porziņģis",
+      "path": "assets/player-photos/204001-face-edited.png",
+      "alt": "Visage de Kristaps Porziņģis sans tenue visible",
+      "source": "https://uniqrenders.com/athletes/basketball/kristaps-porzingis-boston-celtics-nba-latvia-latvian-basketball-players-7935",
+      "originalUrl": "https://uniqrenders.com/Uploads/19-3-2025/7935/kristaps-porzingis-boston-celtics-nba-latvia-latvian-basketball-players-uniqrenders.com.png",
+      "author": "Photographe original non précisé ; rendu proposé par Uniqrenders",
+      "license": "Téléchargement public Uniqrenders ; licence photo originale non précisée.",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/kristaps-porzingis-boston-celtics-nba-latvia-latvian-basketball-players-7935",
+      "rightsStatus": "Téléchargement proposé publiquement par la source ; droits photographiques originaux non audités. Crédit conservé.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1199,
+      "height": 1312,
+      "sha256": "d1286e897eb93a2de47e86e4d45e46f50b1da1c0f5d4f456bca8543edb228d1b",
+      "transformations": "Extraction du visage et suppression complète du corps, du col et du maillot par outil IA imagegen. Transparence ajoutée ; détails fins réinterprétés lors du redimensionnement. Ce fichier ne représente pas une photo civile et ne certifie pas une prise de vue récente.",
+      "selection": "Tête seule issue d’une photo authentique, expression conservée, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "warriors",
+        "source": "Photo source inspectée puis visage isolé sans tenue ; club actuel selon carte projet 2026-27."
       }
     }
   }
