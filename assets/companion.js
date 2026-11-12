@@ -47,8 +47,17 @@ openPlayer=async function(id){
   const generation=++routeGeneration;activePage='player';['home','board','compare','trades','data'].forEach(p=>el('tab-'+p).classList.remove('active'));el('view').innerHTML='<p role="status">Chargement du joueur…</p>';
   const player=await api(playerPath(id));if(generation!==routeGeneration)return;CURRENT=player;sortState={key:'season',dir:'asc'};renderPlayer();window.scrollTo(0,0);
 };
+function decorateGoatProfile(head,id){
+  if(String(id)!=='2544')return;
+  head.classList.toggle('goat-profile',true);
+  const identity=head.querySelector('.profile-identity');
+  identity.insertAdjacentHTML('afterbegin','<div class="goat-kicker"><span aria-hidden="true">♛</span> LE KING · ÉDITION GOAT</div>');
+  identity.insertAdjacentHTML('beforeend','<p class="goat-tagline">Le débat est fermé. Les stats restent ouvertes.</p><div class="goat-seal"><span aria-hidden="true">✦</span> Aura : légendaire <span aria-hidden="true">✦</span></div><p class="goat-disclaimer">Le traitement royal est offert. Aucun bonus dans le barème.</p>');
+  head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend','<span class="goat-crown" aria-hidden="true">♛</span>');
+}
 renderPlayer=function(){
   previousPlayer();const head=el('view').querySelector('.player-head');head.innerHTML=`<div class="profile-identity">${head.innerHTML}</div>`;head.insertAdjacentHTML('afterbegin',`<div class="profile-portrait">${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span></div>`);
+  decorateGoatProfile(head,CURRENT.player_id);
   const p=CURRENT.eligibility;head.insertAdjacentHTML('afterend',`<div class="eligibility"><b>ESPN 2026–27:</b> ${p?esc(p.positions.join(' / ')):'Non importé'}</div><div id="currentProfile"></div>`);renderCurrentProfile();
 };
 function aggregateTable(a){

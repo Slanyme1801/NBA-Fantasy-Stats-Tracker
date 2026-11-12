@@ -66,3 +66,27 @@
 
 /* Horizontal swipes stay in the carousel; vertical scroll and pinch zoom remain native. */
 #dashboardCarousel{touch-action:pan-y pinch-zoom}
+
+/* LeBron-only royal entrance. The original PNG stays untouched and transparent. */
+.player-head.goat-profile{position:relative;isolation:isolate;overflow:hidden;padding:32px clamp(20px,4vw,56px);gap:clamp(24px,5vw,72px);margin:24px 0 20px;border-radius:24px;background:radial-gradient(ellipse at 22% 45%,rgba(255,206,84,.24),transparent 48%),linear-gradient(120deg,#10234c 0%,#29204c 62%,#17408b 100%);color:#fff;box-shadow:0 12px 32px rgba(23,40,80,.14)}
+.goat-profile::before{content:'23';position:absolute;right:2%;bottom:-.22em;font-size:clamp(160px,26vw,340px);font-weight:900;line-height:1;letter-spacing:-.09em;color:rgba(255,222,140,.065);z-index:-1;pointer-events:none}
+.goat-profile .profile-portrait{position:relative;width:240px;height:280px;flex-basis:240px;padding:26px 4px 0;overflow:visible}
+.goat-profile .profile-portrait::before{content:'';position:absolute;inset:18% 5% 4%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,204,76,.3),transparent 70%);filter:blur(12px);z-index:-1;animation:goat-glow 5s ease-in-out infinite alternate}
+.goat-profile .profile-portrait .profile-photo{height:100%;max-height:254px;object-fit:contain;object-position:center bottom;background:transparent;filter:drop-shadow(0 5px 18px rgba(255,210,100,.25))}
+.goat-crown{position:absolute;top:-3px;left:50%;transform:translateX(-50%) rotate(-10deg);font-size:42px;line-height:1;color:#ffdb78;text-shadow:0 3px 16px rgba(255,205,80,.35);pointer-events:none}
+.goat-kicker{display:flex;align-items:center;gap:9px;flex-wrap:wrap;color:#ffdc84;font-weight:800;font-size:12px;letter-spacing:.15em}
+.goat-profile .profile-identity h2{color:#fff;font-size:clamp(32px,4.8vw,60px);line-height:1.08;letter-spacing:-.035em;margin:2px 0 8px}
+.goat-profile .profile-identity .sub{color:#d5deef;font-size:13px}
+.goat-tagline{font-size:clamp(17px,2vw,23px);font-weight:600;line-height:1.4;margin:12px 0 6px;color:#fff4d7}
+.goat-seal{display:inline-flex;align-items:center;align-self:flex-start;gap:10px;border:1px solid rgba(255,220,132,.35);border-radius:999px;padding:8px 14px;color:#ffdf91;background:rgba(255,220,132,.07);font-size:12px;font-weight:700;letter-spacing:.04em}
+.goat-disclaimer{color:#c2cde1;font-size:12px;line-height:1.5;margin:7px 0 0}
+@keyframes goat-glow{from{opacity:.6;transform:scale(.94)}to{opacity:1;transform:scale(1.06)}}
+@media(max-width:760px){.player-head.goat-profile{padding:24px 18px;gap:18px;flex-direction:column;text-align:center}.goat-profile .profile-portrait{width:190px;height:230px;flex-basis:auto;padding-top:24px}.goat-profile .profile-portrait .profile-photo{max-height:206px}.goat-profile .profile-identity{width:100%}.goat-profile .profile-identity h2{font-size:38px}.goat-kicker{justify-content:center;font-size:11px}.goat-seal{align-self:center}.goat-profile::before{font-size:220px;right:-12px}.goat-tagline{margin-top:8px}}
+@media(prefers-reduced-motion:reduce){.goat-profile .profile-portrait::before{animation:none}}
+/* A light royal entrance and floating crown, scoped to the King. */
+.goat-profile .profile-identity{animation:goat-arrive .7s ease-out both}
+.goat-profile .profile-portrait{animation:goat-arrive .85s ease-out both}
+.goat-profile .goat-crown{animation:goat-crown-float 4s ease-in-out infinite}
+@keyframes goat-arrive{from{opacity:0;translate:0 16px}to{opacity:1;translate:0 0}}
+@keyframes goat-crown-float{0%,100%{translate:0 0}50%{translate:0 -6px}}
+@media(prefers-reduced-motion:reduce){.goat-profile .profile-identity,.goat-profile .profile-portrait,.goat-profile .goat-crown{animation:none}}
