@@ -55,9 +55,30 @@ function decorateGoatProfile(head,id){
   identity.insertAdjacentHTML('beforeend','<p class="goat-tagline">Le débat est fermé. Les stats restent ouvertes.</p><div class="goat-seal"><span aria-hidden="true">✦</span> Aura : légendaire <span aria-hidden="true">✦</span></div><p class="goat-disclaimer">Le traitement royal est offert. Aucun bonus dans le barème.</p>');
   head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend','<span class="goat-crown" aria-hidden="true">♛</span>');
 }
+// Editorial selections requested by the owner, not a live award or retirement feed.
+function decorateEditionProfile(head,id){
+  const key=String(id);
+  const dual=['201939','203999','203954','1628983'];
+  const legends=['203110','203081','1626164','1628369'];
+  const mvps=['201142','201935','203507','201566','201565'];
+  const edition=dual.includes(key)?'dual':legends.includes(key)?'legend':mvps.includes(key)?'mvp':null;
+  if(!edition)return;
+  const copy={
+    mvp:{label:'ÉDITION MVP',symbol:'✦',line:'Le talent fait le spectacle. Les chiffres font le reste.',seal:'Le niveau au-dessus'},
+    legend:{label:'ÉDITION LÉGENDE',symbol:'★',line:'Le style reste. Les stats racontent.',seal:'Une signature à part'},
+    dual:{label:'MVP × LÉGENDE',symbol:'✧',line:'Deux statuts. Une seule fiche. Double dose d’aura.',seal:'DOUBLE ÉDITION'}
+  }[edition];
+  head.classList.toggle('edition-profile',true);
+  head.classList.toggle('edition-'+edition,true);
+  const identity=head.querySelector('.profile-identity');
+  identity.insertAdjacentHTML('afterbegin',`<div class="edition-kicker"><span aria-hidden="true">${copy.symbol}</span> ${copy.label}</div>`);
+  identity.insertAdjacentHTML('beforeend',`<p class="edition-tagline">${copy.line}</p><span class="edition-seal">${copy.seal}</span><p class="edition-note">Sélection éditoriale du site · barème fantasy inchangé.</p>`);
+  head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend',`<span class="edition-emblem" aria-hidden="true">${copy.symbol}</span>`);
+}
 renderPlayer=function(){
   previousPlayer();const head=el('view').querySelector('.player-head');head.innerHTML=`<div class="profile-identity">${head.innerHTML}</div>`;head.insertAdjacentHTML('afterbegin',`<div class="profile-portrait">${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span></div>`);
   decorateGoatProfile(head,CURRENT.player_id);
+  decorateEditionProfile(head,CURRENT.player_id);
   const p=CURRENT.eligibility;head.insertAdjacentHTML('afterend',`<div class="eligibility"><b>ESPN 2026–27:</b> ${p?esc(p.positions.join(' / ')):'Non importé'}</div><div id="currentProfile"></div>`);renderCurrentProfile();
 };
 function aggregateTable(a){

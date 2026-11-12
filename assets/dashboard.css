@@ -90,3 +90,32 @@
 @keyframes goat-arrive{from{opacity:0;translate:0 16px}to{opacity:1;translate:0 0}}
 @keyframes goat-crown-float{0%,100%{translate:0 0}50%{translate:0 -6px}}
 @media(prefers-reduced-motion:reduce){.goat-profile .profile-identity,.goat-profile .profile-portrait,.goat-profile .goat-crown{animation:none}}
+
+/* Three editorial editions; LeBron's royal GOAT presentation stays unique. */
+.player-head.edition-profile{position:relative;isolation:isolate;overflow:hidden;margin:24px 0 20px;padding:28px clamp(20px,4vw,48px);gap:clamp(20px,4vw,48px);border-radius:20px}
+.edition-profile .profile-portrait{position:relative;width:190px;height:220px;flex-basis:190px;padding:18px 8px 0;overflow:visible;animation:edition-arrive .6s ease-out both}
+.edition-profile .profile-portrait .profile-photo{max-height:202px;object-fit:contain;background:transparent;object-position:center bottom}
+.edition-profile .profile-identity{animation:edition-arrive .7s ease-out both}
+.edition-profile .profile-identity h2{font-size:clamp(30px,4vw,48px);line-height:1.12;margin:3px 0 8px;letter-spacing:-.025em}
+.edition-profile .profile-identity .sub{font-size:13px;line-height:1.5}
+.edition-kicker{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:800;letter-spacing:.15em;flex-wrap:wrap}
+.edition-tagline{font-size:clamp(17px,2vw,21px);line-height:1.45;margin:12px 0 4px;font-weight:600}
+.edition-seal{align-self:flex-start;font-size:11px;font-weight:800;letter-spacing:.1em;padding:7px 12px;border-radius:6px}
+.edition-note{font-size:12px;line-height:1.5;margin:8px 0 0}
+.edition-emblem{position:absolute;right:4px;top:4px;font-size:31px;line-height:1;pointer-events:none}
+/* MVP: bright trophy gold and precise angular details, not the GOAT crown. */
+.player-head.edition-mvp{color:#382700;background:linear-gradient(115deg,#fff8df,#efcf7c);border-bottom:4px solid #a57313;box-shadow:0 8px 24px rgba(99,69,9,.1)}
+.edition-mvp::before{content:'MVP';position:absolute;right:0;bottom:-.18em;z-index:-1;font-size:clamp(100px,17vw,210px);font-weight:900;line-height:1;color:rgba(110,71,0,.07);pointer-events:none}
+.edition-mvp .profile-identity h2{color:#382700}.edition-mvp .profile-identity .sub,.edition-mvp .edition-note{color:#665227}.edition-mvp .edition-kicker,.edition-mvp .edition-emblem{color:#79520a}.edition-mvp .edition-seal{background:#654509;color:#fff4cf}
+/* Legends: navy arena banner with a red signature stripe. */
+.player-head.edition-legend{color:#fff;background:linear-gradient(125deg,#182d50,#263d5d);border-left:6px solid #d74151}
+.edition-legend::before{content:'';position:absolute;right:-45px;top:-50px;width:160px;height:380px;transform:rotate(28deg);background:linear-gradient(90deg,transparent 10%,rgba(227,69,83,.18) 10% 35%,transparent 35% 45%,rgba(255,255,255,.06) 45% 55%,transparent 55%);z-index:-1;pointer-events:none}
+.edition-legend .profile-identity h2{color:#fff}.edition-legend .profile-identity .sub,.edition-legend .edition-note{color:#ccd8ea}.edition-legend .edition-kicker,.edition-legend .edition-emblem{color:#ffb7bd}.edition-legend .edition-seal{border:1px solid #dc8290;color:#ffe5e8;background:rgba(200,16,46,.15)}
+/* Double edition: two contrasting light fields and an iridescent diamond motif. */
+.player-head.edition-dual{color:#fff;background:radial-gradient(ellipse at 12% 45%,rgba(50,180,241,.24),transparent 48%),radial-gradient(ellipse at 95% 20%,rgba(186,104,238,.28),transparent 58%),linear-gradient(115deg,#153450,#342453);border-bottom:3px solid #e6cb83;box-shadow:0 10px 26px rgba(30,30,78,.15)}
+.edition-dual::before{content:'×';position:absolute;right:2%;bottom:-.25em;z-index:-1;font-size:clamp(180px,28vw,350px);font-weight:300;line-height:1;color:rgba(221,233,255,.08);pointer-events:none}
+.edition-dual .profile-identity h2{color:#fff}.edition-dual .profile-identity .sub,.edition-dual .edition-note{color:#d3def0}.edition-dual .edition-kicker{color:#ffe1a1}.edition-dual .edition-seal{color:#192b46;background:linear-gradient(100deg,#aee8ff,#f4d593);border-radius:999px}.edition-dual .edition-emblem{color:#ffe4ac;font-size:40px;animation:edition-spark 4s ease-in-out infinite}
+@keyframes edition-arrive{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+@keyframes edition-spark{0%,100%{opacity:.65;scale:.95}50%{opacity:1;scale:1.08}}
+@media(max-width:760px){.player-head.edition-profile{padding:24px 18px;gap:16px;flex-direction:column;text-align:center}.edition-profile .profile-portrait{width:160px;height:184px;flex-basis:auto;padding-top:14px}.edition-profile .profile-portrait .profile-photo{max-height:170px}.edition-profile .profile-identity{width:100%}.edition-profile .profile-identity h2{font-size:32px}.edition-kicker{justify-content:center}.edition-seal{align-self:center}.edition-emblem{font-size:27px}.edition-dual .edition-emblem{font-size:34px}}
+@media(prefers-reduced-motion:reduce){.edition-profile .profile-identity,.edition-profile .profile-portrait,.edition-dual .edition-emblem{animation:none}}
