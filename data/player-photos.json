@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 144,
-    "transparentCount": 141,
+    "coveredCount": 147,
+    "transparentCount": 144,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -3787,6 +3787,81 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": null,
         "source": "Contrôle visuel du résultat comparé à la photographie source."
+      }
+    },
+    "203501": {
+      "nbaId": 203501,
+      "name": "Tim Hardaway Jr.",
+      "path": "assets/player-photos/203501-face-edited.png",
+      "alt": "Visage de Tim Hardaway Jr. sans tenue visible",
+      "source": "https://uniqrenders.com/athletes/basketball/tim-hardaway-jr-dallas-mavericks-nba-usa-american-basketball-players-358",
+      "originalUrl": "https://uniqrenders.com/Uploads/4-10-2022/358/tim-hardaway-jr-dallas-mavericks-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "Photographe original non indiqué ; détourage proposé par Uniqrenders",
+      "license": "Téléchargement public proposé par Uniqrenders ; licence originale non précisée",
+      "licenseUrl": "https://uniqrenders.com/athletes/basketball/tim-hardaway-jr-dallas-mavericks-nba-usa-american-basketball-players-358",
+      "rightsStatus": "Source de téléchargement public ; droits sur la photographie originale non certifiés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1287,
+      "height": 1222,
+      "sha256": "6a3101c5d1aaa7f3803779a506064418145645feef81c2639cbf1d790f0063f5",
+      "transformations": "Extraction du visage seul et retrait du cou, du maillot et du fond par outil IA imagegen. Expression et orientation conservées ; détails fins légèrement réinterprétés, fine frange colorée ponctuelle. Aucun maillot ajouté. Ne constitue pas une photographie actuelle en tenue civile.",
+      "selection": "Expression naturelle photographiée ; visage seul sans ancien club visible.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": null,
+        "source": "Contrôle visuel du résultat comparé à la photographie source."
+      }
+    },
+    "1628379": {
+      "nbaId": 1628379,
+      "name": "Luke Kennard",
+      "path": "assets/player-photos/1628379-head.png",
+      "alt": "Luke Kennard, visage sans tenue visible",
+      "source": "https://uniqrenders.com/athletes/basketball/luke-kennard-memphis-grizzlies-nba-usa-american-basketball-players-7616",
+      "originalUrl": "https://uniqrenders.com/Uploads/4-3-2025/7616/luke-kennard-memphis-grizzlies-nba-usa-american-basketball-players-uniqrenders.com.png",
+      "author": "UniqRenders ; photographe original non précisé",
+      "license": "Usage personnel non commercial selon la source",
+      "licenseUrl": "https://uniqrenders.com",
+      "rightsStatus": "Téléchargement proposé par UniqRenders ; droits originaux de la photographie non certifiés. Même réserve que les autres images de cette source.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1293,
+      "height": 1217,
+      "sha256": "ad83221f4d8141944c54bb0af43091c39e03899244ae9aa3bea648c98a8565e8",
+      "transformations": "Recadrage tête seule et détourage imagegen ; détails fins réinterprétés par IA. Ancien maillot Memphis entièrement supprimé, aucun maillot remplacé.",
+      "selection": "Visage sans tenue visible issu d’une photo de match.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "PHX",
+        "source": "https://www.nba.com/suns/news/suns-sign-guard-luke-kennard"
+      }
+    },
+    "201599": {
+      "nbaId": 201599,
+      "name": "DeAndre Jordan",
+      "path": "assets/player-photos/201599-head.png",
+      "alt": "DeAndre Jordan, visage sans tenue visible",
+      "source": "https://uniqrenders.com/athletes/basketball/deandre-jordan-denver-nuggets-nba-canada-canadian-basketball-players-7592",
+      "originalUrl": "https://uniqrenders.com/Uploads/3-3-2025/7592/deandre-jordan-denver-nuggets-nba-canada-canadian-basketball-players-uniqrenders.com.png",
+      "author": "UniqRenders ; photographe original non précisé",
+      "license": "Usage personnel non commercial selon la source",
+      "licenseUrl": "https://uniqrenders.com",
+      "rightsStatus": "Téléchargement proposé par UniqRenders ; droits originaux de la photographie non certifiés. Même réserve que les autres images de cette source.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1274,
+      "height": 1234,
+      "sha256": "b1f93bda919810f3b7bd01d63fd35167c3590dfe5345970e062f18ea0457edd4",
+      "transformations": "Recadrage tête seule et détourage imagegen ; détails fins réinterprétés par IA. Ancien maillot Denver entièrement supprimé, aucun maillot remplacé.",
+      "selection": "Visage sans tenue visible issu d’une photo de match.",
+      "clubAudit": {
+        "date": "2026-11-12",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "NOP",
+        "source": "https://www.nba.com/player/201599/deandre_jordan"
       }
     }
   }
