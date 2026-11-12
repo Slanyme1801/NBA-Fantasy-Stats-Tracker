@@ -6899,7 +6899,7 @@
         99
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -6930,7 +6930,7 @@
         105
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -6961,7 +6961,7 @@
         136
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -6992,7 +6992,7 @@
         111
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7023,7 +7023,7 @@
         98
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7054,7 +7054,7 @@
         108
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7085,7 +7085,7 @@
         98
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7116,7 +7116,7 @@
         112
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7147,7 +7147,7 @@
         125
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7178,7 +7178,7 @@
         117
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7209,7 +7209,7 @@
         124
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7240,7 +7240,7 @@
         108
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7271,7 +7271,7 @@
         90
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7302,7 +7302,7 @@
         103
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7333,7 +7333,7 @@
         107
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7364,7 +7364,7 @@
         115
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7395,7 +7395,7 @@
         135
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7426,7 +7426,7 @@
         100
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7457,7 +7457,7 @@
         93
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7488,7 +7488,7 @@
         97
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7519,7 +7519,7 @@
         118
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7550,7 +7550,7 @@
         113
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7581,7 +7581,7 @@
         125
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7612,7 +7612,7 @@
         117
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7643,7 +7643,7 @@
         112
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7674,7 +7674,7 @@
         120
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7705,7 +7705,7 @@
         102
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7736,7 +7736,7 @@
         104
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7767,7 +7767,7 @@
         105
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7798,7 +7798,7 @@
         107
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7829,7 +7829,7 @@
         113
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7860,7 +7860,7 @@
         116
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7891,7 +7891,7 @@
         117
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7922,7 +7922,7 @@
         109
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7953,7 +7953,7 @@
         132
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -7984,7 +7984,7 @@
         111
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8015,7 +8015,7 @@
         116
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8046,7 +8046,7 @@
         117
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8077,7 +8077,7 @@
         104
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8108,7 +8108,7 @@
         100
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8139,7 +8139,7 @@
         132
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8170,7 +8170,7 @@
         119
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8201,7 +8201,7 @@
         95
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8232,7 +8232,7 @@
         100
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8263,7 +8263,7 @@
         128
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8294,7 +8294,7 @@
         121
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8325,7 +8325,7 @@
         115
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8356,7 +8356,7 @@
         118
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -8387,7 +8387,7 @@
         124
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9002,7 +9002,7 @@
         85
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9033,7 +9033,7 @@
         123
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9064,7 +9064,7 @@
         110
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9095,7 +9095,7 @@
         115
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9126,7 +9126,7 @@
         107
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9157,7 +9157,7 @@
         103
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9188,7 +9188,7 @@
         101
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9219,7 +9219,7 @@
         115
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9250,7 +9250,7 @@
         98
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9281,7 +9281,7 @@
         124
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9312,7 +9312,7 @@
         123
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9343,7 +9343,7 @@
         123
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9374,7 +9374,7 @@
         145
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9405,7 +9405,7 @@
         123
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9436,7 +9436,7 @@
         108
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -9467,7 +9467,7 @@
         108
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "request-budget",
         "attemptedAt": "2026-11-12T09:44:11.203Z",
         "preservedPreviousBoxScore": false
       },
@@ -79514,7 +79514,7 @@
     "inventoryTotal": 407,
     "inventoryComplete": true,
     "inventoryDayUTC": "2026-11-12",
-    "budgetExhausted": false,
+    "budgetExhausted": true,
     "attemptedAt": "2026-11-12T09:44:11.203Z"
   },
   "refreshSchedule": {
