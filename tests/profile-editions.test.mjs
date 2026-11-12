@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 const source=await fs.readFile(new URL('../assets/companion.js',import.meta.url),'utf8');
-const body=source.slice(source.indexOf('function decorateEditionProfile('),source.indexOf('renderPlayer=function(){'));
+const body=source.slice(source.indexOf('function decorateEditionProfile('),source.indexOf('function toggleProfileMotion('));
 const ctx={};vm.createContext(ctx);vm.runInContext(body,ctx);
 function head(){const writes=[];return {writes,classList:{toggle:(...x)=>writes.push(['class',...x])},querySelector:selector=>({insertAdjacentHTML:(where,html)=>writes.push([selector,where,html])})};}
 test('editorial editions match the exact user selection, with one combined treatment for dual players',()=>{

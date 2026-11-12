@@ -62,6 +62,7 @@ function setProfileTheme(id){
   // Empty attributes clear every prior theme on navigation and while profiles load.
   document.body?.setAttribute?.('data-profile-edition',theme.edition);
   document.body?.setAttribute?.('data-profile-club',theme.club);
+  document.body?.setAttribute?.('data-profile-motion','playing');
 }
 function decorateGoatProfile(head,id){
   if(String(id)!=='2544')return;
@@ -91,12 +92,30 @@ function decorateEditionProfile(head,id){
   identity.insertAdjacentHTML('beforeend',`<p class="edition-tagline">${copy.line}</p><span class="edition-seal">${copy.seal}</span><p class="edition-note">Sélection éditoriale du site · barème fantasy inchangé.</p>`);
   head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend',`<span class="edition-emblem" aria-hidden="true">${copy.symbol}</span>`);
 }
+function toggleProfileMotion(button){
+  const paused=button.getAttribute('aria-pressed')!=='true';
+  button.setAttribute('aria-pressed',String(paused));
+  button.textContent=paused?'Relancer les effets':'Mode calme';
+  document.body.setAttribute('data-profile-motion',paused?'paused':'playing');
+}
+function decorateProfileExperience(head,id){
+  const {edition,club}=profileThemeFor(id);if(!edition)return;
+  const names={gsw:'GOLDEN STATE',por:'PORTLAND',phx:'PHOENIX',bos:'BOSTON',den:'DENVER',phi:'PHILADELPHIE',okc:'OKLAHOMA CITY'};
+  const words={goat:['LE TRÔNE','Une seule couronne.','LeBron n’entre pas dans le cadre. Le cadre s’adapte.'],mvp:['LE TROPHÉE','Le niveau au-dessus.','Une vitrine pour le talent. Un dossier pour les chiffres.'],legend:['LA SIGNATURE',names[club]||'LE CLUB','Une identité. Des couleurs. Une empreinte.'],dual:['LA CONVERGENCE','Deux dimensions.','L’aura du club rencontre l’éclat du trophée.']}[edition];
+  const emblem=edition==='goat'?'<path d="M15 62 8 25l24 17L50 9l18 33 24-17-7 37Z"/><path d="M18 73h64v12H18z"/>':'<path d="M30 12h40v24c0 18-9 27-20 27s-20-9-20-27Z"/><path d="M30 20H12v12c0 16 15 20 23 20M70 20h18v12c0 16-15 20-23 20" fill="none" stroke="currentColor" stroke-width="6"/><path d="M45 60h10v15h17v12H28V75h17Z"/>';
+  head.insertAdjacentHTML('afterbegin',`<div class="experience-scenery" aria-hidden="true"><div class="experience-arch"></div><div class="experience-beam beam-left"></div><div class="experience-beam beam-right"></div><div class="experience-orbit orbit-one"></div><div class="experience-orbit orbit-two"></div><div class="experience-floor"></div><div class="experience-curtain curtain-left"></div><div class="experience-curtain curtain-right"></div><span class="experience-giant">${edition==='goat'?'KING':edition==='legend'?(club||'LEG').toUpperCase():edition==='dual'?'×':'MVP'}</span>${Array.from({length:9},(_,i)=>`<i class="experience-dust" style="--particle:${i}"></i>`).join('')}<svg class="experience-trophy" viewBox="0 0 100 100" fill="currentColor">${emblem}</svg></div>`);
+  head.querySelector('.profile-identity').insertAdjacentHTML('afterbegin',`<p class="experience-overline">${words[0]}</p><p class="experience-title">${words[1]}</p>`);
+  head.insertAdjacentHTML('beforeend',`<div class="experience-caption"><span>${words[2]}</span><span class="experience-serial">${edition==='goat'?'01 / 01 · LE GOAT':edition==='dual'?'MVP × LÉGENDE':edition==='mvp'?'COLLECTION MVP':'COLLECTION LÉGENDES'}</span></div>`);
+  head.insertAdjacentHTML('afterend',`<nav class="experience-chapters" aria-label="Chapitres de la fiche"><a href="#currentProfile"><small>01</small> Le présent</a><a href="#profileArchives"><small>02</small> Les archives</a><span class="experience-editorial">Présentation éditoriale · statistiques inchangées</span>${edition!=='legend'?'<button type="button" class="experience-motion" aria-pressed="false" onclick="toggleProfileMotion(this)">Mode calme</button>':''}</nav>`);
+  const archive=el('view').querySelector('.cards');if(archive)archive.id='profileArchives';
+}
 renderPlayer=function(){
   setProfileTheme(CURRENT.player_id);
   previousPlayer();const head=el('view').querySelector('.player-head');head.innerHTML=`<div class="profile-identity">${head.innerHTML}</div>`;head.insertAdjacentHTML('afterbegin',`<div class="profile-portrait">${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span></div>`);
   decorateGoatProfile(head,CURRENT.player_id);
   decorateEditionProfile(head,CURRENT.player_id);
   const p=CURRENT.eligibility;head.insertAdjacentHTML('afterend',`<div class="eligibility"><b>ESPN 2026–27:</b> ${p?esc(p.positions.join(' / ')):'Non importé'}</div><div id="currentProfile"></div>`);renderCurrentProfile();
+  decorateProfileExperience(head,CURRENT.player_id);
 };
 function aggregateTable(a){
   const keys=['pts','fgm','fga','fg3m','fg3a','ftm','fta','reb','ast','stl','blk','tov'];
