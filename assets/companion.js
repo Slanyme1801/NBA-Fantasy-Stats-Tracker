@@ -64,13 +64,62 @@ function setProfileTheme(id){
   document.body?.setAttribute?.('data-profile-club',theme.club);
   document.body?.setAttribute?.('data-profile-motion','playing');
 }
+function profileNicknameFor(id){
+  const key=String(id);
+  if(key==='2544'){
+    const variants=[
+      ['LeSunshine','Mon soleil, même en mode sombre. ☀️'],
+      ['LePookieBear','Mon pookie, ma franchise, ma raison d’ouvrir les stats. 🥹'],
+      ['LeGOAT','Le débat ? Quel débat, mon roi ? 🐐'],
+      ['LeBonBon','Le sucre de mes nuits NBA. 🍬'],
+      ['El Bron','El Bron, mi amor. Le reste peut attendre. ❤️'],
+      ['King James','Mon roi, prends aussi les clés du site. 👑'],
+      ['The Chosen One','L’élu. Et moi, son fan le moins objectif.'],
+      ['Bron-Bron','Un seul Bron ne suffisait pas à mon cœur.'],
+      ['LBJ','Trois lettres, toute ma personnalité.'],
+      ['Captain LeMerica','Sauve le monde après, mon roster d’abord. 🫡']
+    ];
+    if(!profileNicknameFor.current){
+      let last=profileNicknameFor.last;
+      let storage;
+      for(const kind of ['localStorage','sessionStorage']){
+        try{const candidate=kind==='localStorage'?localStorage:sessionStorage;const saved=candidate.getItem('nba-lebron-nickname-v1');candidate.setItem('nba-lebron-nickname-v1',saved??'');storage=candidate;if(saved!==null&&/^\d+$/.test(saved)){const index=Number(saved);if(index>=0&&index<variants.length)last=index;}break;}catch{}
+      }
+      const next=Number.isInteger(last)?(last+1)%variants.length:0;
+      profileNicknameFor.last=next;profileNicknameFor.current=variants[next];
+      try{storage?.setItem('nba-lebron-nickname-v1',String(next));}catch{}
+    }
+    return profileNicknameFor.current;
+  }
+  return {
+    '201939':['Chef Curry','Le Chef cuisine, ta défense fait la vaisselle.'],
+    '203999':['Joker','J’ai revu la passe trois fois. Toujours rien compris.'],
+    '203954':['The Process','Trust the Process. Même mon Excel y croit.'],
+    '1628983':['SGA','Le calme est suspect. Le défenseur aussi l’a remarqué.'],
+    '203110':['Dray','Le débat continue, même après le buzzer.'],
+    '203081':['Dame Time','Ma montre affiche uniquement Dame Time.'],
+    '1626164':['Book','J’ouvre le Book, je saute le chapitre défense.'],
+    '1628369':['JT','JT dans le roster, Boston dans les commentaires.'],
+    '201142':['Slim Reaper','Le contest était beau. Le panier aussi.'],
+    '201935':['The Beard','Encore un step-back et il sort de mon écran.'],
+    '203507':['Greek Freak','Le GPS avait dit de contourner la défense.'],
+    '201566':['The Brodie','Le mode économie d’énergie n’a jamais été installé.'],
+    '201565':['D-Rose','D-Rose dans les highlights, moi dans mes sentiments. 🌹']
+  }[key]||null;
+}
 function decorateGoatProfile(head,id){
   if(String(id)!=='2544')return;
   head.classList.toggle('goat-profile',true);
   const identity=head.querySelector('.profile-identity');
   identity.insertAdjacentHTML('afterbegin','<div class="goat-kicker"><span aria-hidden="true">♛</span> LE KING · ÉDITION GOAT</div>');
-  identity.insertAdjacentHTML('beforeend','<p class="goat-tagline">Le débat est fermé. Les stats restent ouvertes.</p><div class="goat-seal"><span aria-hidden="true">✦</span> Aura : légendaire <span aria-hidden="true">✦</span></div><p class="goat-disclaimer">Le traitement royal est offert. Aucun bonus dans le barème.</p>');
+  const nickname=profileNicknameFor(id);
+  identity.insertAdjacentHTML('beforeend',`<p class="profile-nickname">${nickname[0]}</p><p class="goat-tagline">${nickname[1]}</p><div class="goat-seal"><span aria-hidden="true">✦</span> Aura : légendaire <span aria-hidden="true">✦</span></div><p class="goat-disclaimer">Le traitement royal est offert. Aucun bonus dans le barème.</p>`);
   head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend','<span class="goat-crown" aria-hidden="true">♛</span>');
+  const introRoute=typeof routeGeneration==='number'?routeGeneration:0;
+  if(decorateGoatProfile.introRoute!==introRoute){
+  head.insertAdjacentHTML('afterbegin','<div class="goat-love-intro" aria-hidden="true"><span class="goat-intro-orbit"></span><span class="goat-intro-heart">♡</span><span class="goat-intro-word">OH, LE BRON.</span><span class="goat-intro-sub">notre petit rayon de soleil</span><i></i><i></i><i></i></div>');
+    decorateGoatProfile.introRoute=introRoute;
+  }
 }
 // Editorial selections requested by the owner, not a live award or retirement feed.
 function decorateEditionProfile(head,id){
@@ -89,7 +138,8 @@ function decorateEditionProfile(head,id){
   head.classList.toggle('edition-'+edition,true);
   const identity=head.querySelector('.profile-identity');
   identity.insertAdjacentHTML('afterbegin',`<div class="edition-kicker"><span aria-hidden="true">${copy.symbol}</span> ${copy.label}</div>`);
-  identity.insertAdjacentHTML('beforeend',`<p class="edition-tagline">${copy.line}</p><span class="edition-seal">${copy.seal}</span><p class="edition-note">Sélection éditoriale du site · barème fantasy inchangé.</p>`);
+  const nickname=profileNicknameFor(id);
+  identity.insertAdjacentHTML('beforeend',`<p class="profile-nickname">${nickname[0]}</p><p class="edition-tagline">${nickname[1]}</p><span class="edition-seal">${copy.seal}</span><p class="edition-note">Sélection éditoriale du site · barème fantasy inchangé.</p>`);
   head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend',`<span class="edition-emblem" aria-hidden="true">${copy.symbol}</span>`);
 }
 function toggleProfileMotion(button){
