@@ -115,6 +115,23 @@ function setProfileDisplayName(identity,nickname){
   heading.textContent=nickname[0];
   heading.insertAdjacentHTML('afterend',`<p class="profile-official-name">${esc(officialName)}</p>`);
 }
+function playGoatUserClip(head){
+  if(typeof window==='undefined'||typeof window.matchMedia!=='function')return;
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||navigator.connection?.saveData)return;
+  const portrait=head.querySelector('.profile-portrait');
+  if(!portrait)return;
+  const image=document.createElement('img');
+  image.className='goat-user-clip';image.alt='';image.setAttribute('aria-hidden','true');
+  image.width=320;image.height=376;
+  image.onload=()=>{
+    if(!portrait.isConnected)return;
+    portrait.classList.add('goat-user-clip-playing');
+    setTimeout(()=>{portrait.classList.remove('goat-user-clip-playing');image.remove();},9300);
+  };
+  image.onerror=()=>{portrait.classList.remove('goat-user-clip-playing');image.remove();};
+  image.setAttribute('src','./assets/lebron-entrance.webp');
+  portrait.append(image);
+}
 function decorateGoatProfile(head,id){
   if(String(id)!=='2544')return;
   head.classList.toggle('goat-profile',true);
@@ -126,6 +143,7 @@ function decorateGoatProfile(head,id){
   head.querySelector('.profile-portrait').insertAdjacentHTML('beforeend','<span class="goat-crown" aria-hidden="true">♛</span>');
   const introRoute=typeof routeGeneration==='number'?routeGeneration:0;
   if(decorateGoatProfile.introRoute!==introRoute){
+    playGoatUserClip(head);
   head.insertAdjacentHTML('afterbegin','<div class="goat-love-intro" aria-hidden="true"><span class="goat-intro-orbit"></span><span class="goat-intro-heart">♡</span><span class="goat-intro-word">OH, LE BRON.</span><span class="goat-intro-sub">notre petit rayon de soleil</span><i></i><i></i><i></i></div>');
     decorateGoatProfile.introRoute=introRoute;
   }
@@ -243,6 +261,7 @@ resetScoring=async function(){await previousReset();comparePlayers={};for(const 
 const renderDataWithStatus=renderData;
 renderData=function(){renderDataWithStatus();
  if(window.PlayerPhotos)el('view').insertAdjacentHTML('beforeend',window.PlayerPhotos.credits());
+ el('view').insertAdjacentHTML('beforeend','<section class="panel"><h3>Animation de LeBron</h3><p>Clip fourni par l’utilisateur, crédit visible @viralgreenscreenhub. Fond vert retiré par incrustation chromatique, sans génération ni retouche du visage. Version animée silencieuse, environ 9 secondes ; droits de la vidéo originale non vérifiés.</p></section>');
  const periods=['night','available','7','14','30'].map(period=>{const r=window.FantasyDashboard.dashboardRanking(currentData,{period,weights:META.scoring});const label={night:'Dernière soirée importée',available:'Dernière soirée disponible','7':'7 jours','14':'14 jours','30':'30 jours'}[period];return `<tr><td>${label}</td><td>${r.range.start||'—'} au ${r.range.end||'—'}</td><td>${r.boxedGames} / ${r.importedGames}</td></tr>`;}).join('');
  el('view').insertAdjacentHTML('beforeend',`<section class="panel"><h3>Lecture des chiffres</h3><p>Les classements et moyennes reposent sur l’échantillon disponible, pas nécessairement toute la ligue ou la saison. Seuls les matchs terminés de saison régulière sont retenus. Les lignes absentes restent inconnues, jamais assimilées à zéro ni à une non-participation (DNP). Les DNP et les lignes manquantes sont exclus des moyennes.</p><p>Les totaux historiques marqués ≈ sont reconstitués à partir de moyennes arrondies. Les minutes actuelles sont approximatives lorsque le fournisseur les arrondit à la minute. Tirs et lancers sont présentés sous la forme réussis / tentés ; les pourcentages utilisent les tirs cumulés.</p><p>Les périodes de 7/14/30 jours incluent aujourd’hui en UTC. Les soirées du dashboard suivent les dates de New York. La statline affichée est celle du dernier match disponible de la période, distincte de la moyenne sur cette période. Les courbes montrent les 20 derniers matchs joués disponibles, avec deux échelles séparées ; elles ne sont pas des projections.</p><p>Les éligibilités ESPN proviennent uniquement d’entrées vérifiées. Les postes historiques NBA G/F/C ne les remplacent pas. Un lien NBA manquant n’empêche pas d’utiliser les statistiques du fournisseur.</p><p>Les remplaçants du simulateur de trades sont hypothétiques, pas une liste de joueurs libres en temps réel. Les résultats comparent les sommes de moyennes à nombre égal de places ; ils ne prédisent pas la variation exacte d’une moyenne d’équipe pondérée par les matchs joués.</p><div class="scroll"><table><thead><tr><th>Période</th><th>Dates</th><th>Feuilles disponibles / matchs importés</th></tr></thead><tbody>${periods}</tbody></table></div>${previousFooter()}</section><section class="panel"><h3>Sources des postes ESPN</h3>${currentData.positions.entries.length?`<div class="scroll"><table><thead><tr><th>Identifiant NBA</th><th>Postes</th><th>Source</th><th>Observation</th></tr></thead><tbody>${currentData.positions.entries.map(p=>`<tr><td>${p.nbaId}</td><td>${esc(p.positions.join('/'))}</td><td>${esc(p.source)}</td><td>${displayDate(p.observedAt)}</td></tr>`).join('')}</tbody></table></div>`:'<p>Aucun poste ESPN vérifié importé.</p>'}</section>`);
 };
