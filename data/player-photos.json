@@ -5,8 +5,8 @@
     "targetCount": 284,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA",
     "status": "partial",
-    "coveredCount": 86,
-    "transparentCount": 83,
+    "coveredCount": 88,
+    "transparentCount": 85,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2337,6 +2337,56 @@
         "status": "current-club",
         "currentTeam": "bucks",
         "source": "https://www.nba.com/players"
+      }
+    },
+    "202695": {
+      "nbaId": 202695,
+      "name": "Kawhi Leonard",
+      "path": "assets/player-photos/202695-action.png",
+      "alt": "Kawhi Leonard dribble en maillot rouge Toronto Raptors.",
+      "source": "https://www.pngitem.com/middle/iimwbwi_kawhi-leonard-raptors-png-transparent-png/",
+      "originalUrl": "https://www.pngitem.com/pimgs/b/184-1849213_kawhi-leonard-png.png",
+      "author": "Contributeur PNGItem : Natalie Mcdonald ; photographe original non précisé.",
+      "license": "Personal Use Only ; téléchargement proposé pour projets personnels ou non commerciaux.",
+      "licenseUrl": "https://www.pngitem.com/terms/",
+      "rightsStatus": "PNGItem propose le téléchargement pour projets personnels ou non commerciaux, mais précise ne concéder aucune licence sur les contenus tiers. Droits photographiques originaux non certifiés.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 414,
+      "height": 474,
+      "sha256": "de15e3e979f7ff30165bc7f07c3b19476f04e97eadb8341acf6ef86a130bd032",
+      "transformations": "Aucune ; original PNG transparent conservé.",
+      "selection": "Action dribble ; vrai PNG alpha, identité et maillot Toronto vérifiés. Photo de son ancien passage dans le même club actuel ; aucun remplacement de maillot constaté.",
+      "clubAudit": {
+        "date": "2026-11-11",
+        "status": "current-club",
+        "currentTeam": "raptors",
+        "source": "https://www.nba.com/players"
+      }
+    },
+    "201935": {
+      "nbaId": 201935,
+      "name": "James Harden",
+      "path": "assets/player-photos/201935-face-edited.png",
+      "alt": "Visage souriant de James Harden, sans tenue visible.",
+      "source": "https://freepngimg.com/png/85377-houston-hair-james-harden-rockets-facial-nba",
+      "originalUrl": "https://freepngimg.com/download/moustache/85377-houston-hair-james-harden-rockets-facial-nba.png",
+      "author": "Matthew Long, contributeur indiqué par FreePNGimg ; photographe original non indiqué.",
+      "license": "CC BY-NC 4.0 déclarée par FreePNGimg ; droits photographiques originaux non audités.",
+      "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/",
+      "rightsStatus": "Source proposant la réutilisation non commerciale avec attribution ; chaîne des droits originaux non certifiée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1117,
+      "height": 1408,
+      "sha256": "2722758095ee573fa6834dc67c257a35d482c26190d0693a293cc7eabb46cb31",
+      "transformations": "Retrait du liseré blanc extérieur avec outil IA imagegen ; visage et expression conservés visuellement, détails fins légèrement réinterprétés.",
+      "selection": "Portrait tête seule sans ancien maillot ; retrait du contour blanc vérifié, identité et canal alpha contrôlés.",
+      "clubAudit": {
+        "date": "2026-11-11",
+        "status": "civilian-no-club-uniform",
+        "currentTeam": "cavaliers",
+        "source": "https://freepngimg.com/png/85377-houston-hair-james-harden-rockets-facial-nba"
       }
     }
   }
