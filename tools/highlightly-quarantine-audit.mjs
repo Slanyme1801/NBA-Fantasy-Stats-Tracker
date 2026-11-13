@@ -1,4 +1,5 @@
-// Targeted offline diagnostic. Never print the key or the decrypted response.
+// Targeted offline diagnostic, including reviewed official DNP evidence.
+// Never print the key, an invalid value, or the decrypted response.
 import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';

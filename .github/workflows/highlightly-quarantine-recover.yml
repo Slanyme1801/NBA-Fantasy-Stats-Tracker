@@ -1,0 +1,64 @@
+name: Recover reviewed Highlightly game offline
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/highlightly-quarantine-recover.mjs'
+      - '.github/workflows/highlightly-quarantine-recover.yml'
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: highlightly-daily-publication
+  cancel-in-progress: false
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test code and validate retained public data
+        run: |
+          npm test
+          npm run validate
+      - name: Recover only the reviewed game without any provider request
+        env:
+          HIGHLIGHTLY_QUARANTINE_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
+        run: node tools/highlightly-quarantine-recover.mjs
+      - name: Validate and publish only normalized recovery data
+        id: publish
+        run: |
+          npm run validate
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- .github/highlightly-backfill.json data/manifest.json data/manifest.previous.json data/releases/
+          if git diff --cached --name-only | grep -Ev '^(\.github/highlightly-backfill\.json|data/(manifest(\.previous)?\.json|releases/[a-z0-9.-]+\.json))$'; then exit 1; fi
+          if ! git diff --cached --quiet; then
+            git commit -m 'Recover reviewed Knicks Celtics game from encrypted archive'
+            git push origin HEAD:main
+          fi
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Verify exact recovery commit on Pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          EXPECTED_COMMIT: ${{ steps.publish.outputs.commit }}
+        run: |
+          gh api "repos/$REPOSITORY/pages" --jq 'select(.build_type == "legacy" and .source.branch == "main" and .source.path == "/") | .source.branch' | grep -qx main
+          gh api --method POST "repos/$REPOSITORY/pages/builds" --jq '.status'
+          for attempt in $(seq 1 40); do
+            result=$(gh api "repos/$REPOSITORY/pages/builds/latest")
+            status=$(printf '%s' "$result" | jq -r '.status')
+            commit=$(printf '%s' "$result" | jq -r '.commit')
+            if [ "$commit" = "$EXPECTED_COMMIT" ] && [ "$status" = built ]; then exit 0; fi
+            if [ "$commit" = "$EXPECTED_COMMIT" ] && [ "$status" = errored ]; then exit 1; fi
+            sleep 15
+          done
+          exit 1

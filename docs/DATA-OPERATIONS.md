@@ -245,3 +245,24 @@ Les anomalies fournisseur ont un code stable autorisé, sans message brut. Le co
 Bilan du premier lot réel du 11 novembre : 90 appels, 25 box scores sur 160 matchs réguliers recensés, 656 lignes. Les 576 anciennes lignes sont inchangées. Les diagnostics révèlent 75 matchs non attribués, un échec de validation source et 59 matchs restant à interroger. Ces derniers ne sont pas présentés comme importés. Le complément vérifié prépare la reprise quotidienne suivante ; il ne modifie pas rétroactivement les chiffres publiés sans relire les box scores nécessaires.
 
 Validation locale du changement fournisseur : 220 tests réussis, 656 lignes publiées et métadonnées de 160 matchs conservées lors de la migration, 6 384 comparaisons d’agrégats identiques entre les moteurs avant/après (399 joueurs, saison et 7/14/30 jours, barèmes par défaut/personnalisé, accès NBA/fournisseur). Aucun appel Highlightly consommé par ces vérifications. Les tests d’interface utilisent un environnement DOM simulé ; la vérification visuelle des futurs profils non rapprochés reste distincte.
+# Reviewed offline recovery: Knicks–Celtics, 23 October 2026
+
+The retained box score for Highlightly game 1547577 contains a non-numeric
+minute value for provider player 78180812 (NBA 1642359, Pacôme Dadiet).
+The official NBA box score for game 0022600008 was reviewed on 13 November:
+https://www.nba.com/game/0022600008/box-score . It explicitly records
+Dadiet as DNP, Coach's Decision, with no minutes and zero counters.
+
+The parser's reviewed exception is limited to this game, player, team and
+date. All required counters must still be present, valid integers and zero.
+Any positive activity remains an error. This produces a DNP row with null
+statistics, never a played zero-point game. Other arbitrary minute strings
+remain rejected; ordinary empty rows remain missing.
+
+The dedicated offline recovery job decrypts the pinned archive in memory,
+runs all existing identity, counter, participation and official-reference
+checks, and adds only that previously missing game. It does not request
+provider data, alter the daily reservation or export a raw response. It
+refuses to change existing game/player lines and is a no-op once the game
+has been published. Only validated normalized releases and their checkpoint
+are eligible for a non-forced Git push.

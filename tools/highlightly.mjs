@@ -1,7 +1,7 @@
 // Server/local only. Never import this module into the public application.
 import {COUNTERS, SEASON, emptySeason, validateIdentityMap, validateSeason, validateProviderRegistry} from '../assets/core.mjs';
 import {checkOfficialReference} from './highlightly-reference.mjs';
-import {checkOfficialParticipation} from './highlightly-participation-reference.mjs';
+import {checkOfficialParticipation,hasVerifiedDidNotPlay} from './highlightly-participation-reference.mjs';
 import {classifications} from './provider.mjs';
 export const PROVIDER='Highlightly';
 const check=(ok,message)=>{if(!ok)throw new Error(message);};
@@ -47,11 +47,13 @@ export function parseBoxScore(body,game){
       if(values.size){
         stats=Object.fromEntries(COUNTERS.map(k=>[k,values.get(statisticNames[k])]));
         const minutes=values.get('Total Minutes Played'),off=values.get('Total Offensive Rebounds'),def=values.get('Total Defensive Rebounds');
-        const didNotPlay=explicitDidNotPlay(minutes);
+        const verifiedDnp=hasVerifiedDidNotPlay(game,raw.player.id,team.team.id);
+        const didNotPlay=explicitDidNotPlay(minutes)||(verifiedDnp&&(minutes===0||typeof minutes==='string'));
         check(COUNTERS.every(k=>count(stats[k]))&&(count(minutes)||didNotPlay)&&count(off)&&count(def),'Missing or invalid raw counter');
         check(stats.reb===off+def,'Rebounds do not reconcile');
         check(stats.fgm<=stats.fga&&stats.fg3m<=stats.fg3a&&stats.fg3m<=stats.fgm&&stats.fg3a<=stats.fga&&stats.ftm<=stats.fta&&stats.fgm-stats.fg3m<=stats.fga-stats.fg3a,'Invalid shooting counters');
         check(stats.pts===2*stats.fgm+stats.fg3m+stats.ftm,'Points do not reconcile');
+        if(verifiedDnp)check(didNotPlay&&COUNTERS.every(k=>stats[k]===0)&&off===0&&def===0,'Official DNP conflicts with activity');
         if(didNotPlay){
           check(COUNTERS.every(k=>stats[k]===0)&&off===0&&def===0,'DNP marker conflicts with activity');
           participation='dnp';stats=null;

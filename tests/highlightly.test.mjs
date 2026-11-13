@@ -23,6 +23,17 @@ test('DNP markers cannot hide positive or missing counters, and arbitrary minute
  const b=box();b[0].boxScores[0].statistics.find(s=>s.name==='Total Minutes Played').value='DNP';assert.throws(()=>normalizeBoxScore(b,game(),identities().players,now),/DNP marker conflicts/);
  b[0].boxScores[0].statistics.pop();assert.throws(()=>normalizeBoxScore(b,game(),identities().players,now),/raw counter/);
 });
+test('reviewed Dadiet DNP evidence only resolves the exact game/player/team with complete zero counters',()=>{
+ const b=box();b[0].team.id=2;b[1].team.id=26;
+ const row=structuredClone(b[1].boxScores[0]);row.player.id=78180812;row.statistics.forEach(s=>s.value=s.name==='Total Minutes Played'?'SYNTHETIC_UNRECOGNIZED_LABEL':0);b[1].boxScores.push(row);
+ const g={...game(),id:1547577,start:'2026-10-23T23:00:00Z',home:{id:2,code:'BOS'},away:{id:26,code:'NY'}};
+ const ids=[...identities().players,{...player(3),providerId:78180812,nbaId:1642359}];
+ const out=normalizeBoxScore(b,g,ids,now).find(l=>l.providerId===78180812);assert.equal(out.participation,'dnp');assert.equal(out.stats,null);assert.equal(out.seconds,null);
+ for(const changed of [{...g,id:1547578},{...g,start:'2026-10-24T23:00:00Z'}])assert.throws(()=>normalizeBoxScore(b,changed,ids,now),/raw counter/);
+ const wrong=structuredClone(b);wrong[1].boxScores.at(-1).player.id=999;assert.throws(()=>normalizeBoxScore(wrong,g,ids,now),/raw counter/);
+ for(const field of ['Total Minutes Played','Total Assists']){const conflict=structuredClone(b);conflict[1].boxScores.at(-1).statistics.find(s=>s.name===field).value=1;assert.throws(()=>normalizeBoxScore(conflict,g,ids,now),/Official DNP conflicts/);}
+ const incomplete=structuredClone(b);incomplete[1].boxScores.at(-1).statistics.pop();assert.throws(()=>normalizeBoxScore(incomplete,g,ids,now),/raw counter/);
+});
 test('reject missing/invalid counters, duplicated stats/player/team, and inconsistent points/rebounds/totals',()=>{
   for(const mutate of [b=>b[0].boxScores[0].statistics.pop(),b=>b[0].boxScores[0].statistics[0].value=null,b=>b[0].boxScores[0].statistics[0].value=21,b=>b[0].boxScores[0].statistics.push(b[0].boxScores[0].statistics[0]),b=>b[0].boxScores.push(b[0].boxScores[0]),b=>b[1].team.id=10,b=>b[0].boxScores[0].statistics.at(-1).value=5]){const b=box();mutate(b);assert.throws(()=>normalizeBoxScore(b,game(),identities().players,now));}
   const g=game();g.finalScores[0]=21;assert.throws(()=>normalizeBoxScore(box(),g,identities().players,now),/final score/);
