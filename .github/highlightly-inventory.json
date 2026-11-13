@@ -3,7 +3,7 @@
   "provider": "Highlightly",
   "season": "2026-27",
   "dayUTC": "2026-11-13",
-  "offset": 400,
+  "offset": 420,
   "total": 420,
   "seenIds": [
     1771351,
@@ -405,9 +405,29 @@
     1545880,
     1545879,
     1545878,
-    1545877
+    1545877,
+    1580752,
+    1580751,
+    1580750,
+    1580749,
+    1545810,
+    1545809,
+    1545808,
+    1545782,
+    1545691,
+    1545690,
+    1545689,
+    1545688,
+    1545667,
+    1545652,
+    1545642,
+    1545641,
+    1545640,
+    1545883,
+    1545637,
+    1545634
   ],
-  "complete": false,
+  "complete": true,
   "games": [
     {
       "id": 1564270,
@@ -5214,6 +5234,466 @@
       "away": {
         "id": 40,
         "code": "DAL"
+      }
+    },
+    {
+      "id": 1580752,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-11T02:30:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        102,
+        98
+      ],
+      "classification": null,
+      "home": {
+        "id": 46,
+        "code": "PHX"
+      },
+      "away": {
+        "id": 37,
+        "code": "SA"
+      }
+    },
+    {
+      "id": 1580751,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-11T00:30:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        111,
+        106
+      ],
+      "classification": null,
+      "home": {
+        "id": 43,
+        "code": "GS"
+      },
+      "away": {
+        "id": 32,
+        "code": "SAC"
+      }
+    },
+    {
+      "id": 1580750,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-11T00:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        144,
+        106
+      ],
+      "classification": null,
+      "home": {
+        "id": 2,
+        "code": "BOS"
+      },
+      "away": {
+        "id": 71,
+        "code": "PHI"
+      }
+    },
+    {
+      "id": 1580749,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-11T00:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        124,
+        125
+      ],
+      "classification": null,
+      "home": {
+        "id": 1,
+        "code": "MIA"
+      },
+      "away": {
+        "id": 41,
+        "code": "MIN"
+      }
+    },
+    {
+      "id": 1545810,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-10T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        114,
+        108
+      ],
+      "classification": null,
+      "home": {
+        "id": 50,
+        "code": "WSH"
+      },
+      "away": {
+        "id": 25,
+        "code": "DET"
+      }
+    },
+    {
+      "id": 1545809,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-10T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        117,
+        119
+      ],
+      "classification": null,
+      "home": {
+        "id": 36,
+        "code": "IND"
+      },
+      "away": {
+        "id": 23,
+        "code": "ATL"
+      }
+    },
+    {
+      "id": 1545808,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-10T22:30:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        114,
+        106
+      ],
+      "classification": null,
+      "home": {
+        "id": 34,
+        "code": "TOR"
+      },
+      "away": {
+        "id": 30,
+        "code": "LAC"
+      }
+    },
+    {
+      "id": 1545782,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-09T12:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        117,
+        135
+      ],
+      "classification": null,
+      "home": {
+        "id": 40,
+        "code": "DAL"
+      },
+      "away": {
+        "id": 28,
+        "code": "HOU"
+      }
+    },
+    {
+      "id": 1545691,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-08T23:30:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        109,
+        111
+      ],
+      "classification": null,
+      "home": {
+        "id": 26,
+        "code": "NY"
+      },
+      "away": {
+        "id": 50,
+        "code": "WSH"
+      }
+    },
+    {
+      "id": 1545690,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-08T23:30:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        114,
+        108
+      ],
+      "classification": null,
+      "home": {
+        "id": 49,
+        "code": "BKN"
+      },
+      "away": {
+        "id": 71,
+        "code": "PHI"
+      }
+    },
+    {
+      "id": 1545689,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-08T23:30:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        128,
+        118
+      ],
+      "classification": null,
+      "home": {
+        "id": 1,
+        "code": "MIA"
+      },
+      "away": {
+        "id": 64,
+        "code": "NO"
+      }
+    },
+    {
+      "id": 1545688,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-08T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        113,
+        124
+      ],
+      "classification": null,
+      "home": {
+        "id": 35,
+        "code": "CLE"
+      },
+      "away": {
+        "id": 2,
+        "code": "BOS"
+      }
+    },
+    {
+      "id": 1545667,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-07T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        123,
+        112
+      ],
+      "classification": null,
+      "home": {
+        "id": 36,
+        "code": "IND"
+      },
+      "away": {
+        "id": 41,
+        "code": "MIN"
+      }
+    },
+    {
+      "id": 1545652,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-06T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        90,
+        124
+      ],
+      "classification": null,
+      "home": {
+        "id": 33,
+        "code": "CHA"
+      },
+      "away": {
+        "id": 49,
+        "code": "BKN"
+      }
+    },
+    {
+      "id": 1545642,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-05T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        120,
+        97
+      ],
+      "classification": null,
+      "home": {
+        "id": 71,
+        "code": "PHI"
+      },
+      "away": {
+        "id": 26,
+        "code": "NY"
+      }
+    },
+    {
+      "id": 1545641,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-05T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        109,
+        107
+      ],
+      "classification": null,
+      "home": {
+        "id": 25,
+        "code": "DET"
+      },
+      "away": {
+        "id": 46,
+        "code": "PHX"
+      }
+    },
+    {
+      "id": 1545640,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-05T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        123,
+        132
+      ],
+      "classification": null,
+      "home": {
+        "id": 23,
+        "code": "ATL"
+      },
+      "away": {
+        "id": 42,
+        "code": "MEM"
+      }
+    },
+    {
+      "id": 1545883,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-04T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        104,
+        101
+      ],
+      "classification": null,
+      "home": {
+        "id": 30,
+        "code": "LAC"
+      },
+      "away": {
+        "id": 43,
+        "code": "GS"
+      }
+    },
+    {
+      "id": 1545637,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-04T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        97,
+        109
+      ],
+      "classification": null,
+      "home": {
+        "id": 3,
+        "code": "DEN"
+      },
+      "away": {
+        "id": 45,
+        "code": "UTAH"
+      }
+    },
+    {
+      "id": 1545634,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-10-03T23:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        105,
+        129
+      ],
+      "classification": null,
+      "home": {
+        "id": 34,
+        "code": "TOR"
+      },
+      "away": {
+        "id": 1,
+        "code": "MIA"
       }
     }
   ]
