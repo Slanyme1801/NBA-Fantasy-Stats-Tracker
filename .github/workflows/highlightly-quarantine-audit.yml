@@ -1,0 +1,26 @@
+name: Audit retained Highlightly box score offline
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/highlightly-quarantine-audit.mjs'
+      - '.github/workflows/highlightly-quarantine-audit.yml'
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test offline diagnostic and disclosure bounds
+        run: node --test tests/highlightly-quarantine-audit.test.mjs
+      - name: Inspect only the saved Knicks Celtics response without network or writes
+        env:
+          HIGHLIGHTLY_QUARANTINE_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
+        run: node tools/highlightly-quarantine-audit.mjs
