@@ -5349,31 +5349,17 @@
       ],
       "refreshIssue": {
         "code": "source-data-error",
-        "attemptedAt": "2026-11-11T11:06:12.921Z",
+        "attemptedAt": "2026-11-13T08:49:31.949Z",
         "preservedPreviousBoxScore": false,
-        "identityObservations": [
-          {
-            "gameId": 1547577,
-            "teamId": 2,
-            "providerId": 77140382,
-            "name": "Chris Cenac Jr.",
-            "fetchedAt": "2026-11-11T11:06:12.921Z"
-          },
-          {
-            "gameId": 1547577,
-            "teamId": 26,
-            "providerId": 45941252,
-            "name": "Josh Hart",
-            "fetchedAt": "2026-11-11T11:06:12.921Z"
-          }
-        ],
+        "sourceErrorCode": "counter-invalid",
+        "identityObservations": [],
         "officialReference": {
           "gameId": 1547577,
           "nbaGameId": "0022600008",
           "source": "https://www.nba.com/game/0022600008/box-score",
           "verifiedAt": "2026-11-11T04:43:30.341019+00:00",
-          "checkedAt": "2026-11-11T11:06:12.921Z",
-          "status": "unverifiable",
+          "checkedAt": "2026-11-13T08:49:31.949Z",
+          "status": "verified",
           "checks": [
             {
               "nbaId": 1626157,
@@ -5385,11 +5371,11 @@
             },
             {
               "nbaId": 1628404,
-              "providerId": null,
+              "providerId": 45941252,
               "stat": "stl",
               "expected": 3,
-              "observed": null,
-              "status": "unverifiable"
+              "observed": 3,
+              "status": "verified"
             },
             {
               "nbaId": 203903,
