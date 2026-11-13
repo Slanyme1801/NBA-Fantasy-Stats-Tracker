@@ -192,10 +192,27 @@ function decorateProfileExperience(head,id){
   head.insertAdjacentHTML('afterend',`<nav class="experience-chapters" aria-label="Chapitres de la fiche"><a href="#currentProfile"><small>01</small> Le présent</a><a href="#profileArchives"><small>02</small> Les archives</a><span class="experience-editorial">Présentation éditoriale · statistiques inchangées</span>${edition!=='legend'?'<button type="button" class="experience-motion" aria-pressed="false" onclick="toggleProfileMotion(this)">Mode calme</button>':''}</nav>`);
   const archive=el('view').querySelector(':scope > .cards:not(.compact-cards)');if(archive)archive.id='profileArchives';
 }
+// Small ordinary-profile accents; clubs come only from the latest verified game.
+function ordinaryClubBadge(player){
+  if(player.team_basis!=='latest-verified-import')return '';
+  const aliases={GS:'GSW',GSW:'GSW',NY:'NYK',NYK:'NYK',NO:'NOP',NOR:'NOP',NOP:'NOP',SA:'SAS',SAS:'SAS',PHO:'PHX',PHX:'PHX',UTAH:'UTA',UTA:'UTA',WSH:'WAS',WAS:'WAS',BRK:'BKN',BKN:'BKN'};
+  const raw=String(player.last_team||'').toUpperCase(),club=aliases[raw]||raw;
+  const ids={ATL:1610612737,BOS:1610612738,CLE:1610612739,NOP:1610612740,CHI:1610612741,DAL:1610612742,DEN:1610612743,GSW:1610612744,HOU:1610612745,LAC:1610612746,LAL:1610612747,MIA:1610612748,MIL:1610612749,MIN:1610612750,BKN:1610612751,NYK:1610612752,ORL:1610612753,IND:1610612754,PHI:1610612755,PHX:1610612756,POR:1610612757,SAC:1610612758,SAS:1610612759,OKC:1610612760,TOR:1610612761,UTA:1610612762,MEM:1610612763,WAS:1610612764,DET:1610612765,CHA:1610612766};
+  if(!Object.hasOwn(ids,club))return '';
+  const local=['GSW','POR','PHX','BOS','DEN','PHI','OKC'].includes(club);
+  const source=local?`assets/club-logos/${club.toLowerCase()}.svg`:`https://cdn.nba.com/logos/nba/${ids[club]}/primary/L/logo.svg`;
+  return `<img class="ordinary-club-badge" src="${source}" alt="${esc(club)} — équipe du dernier match disponible" title="${esc(club)} · équipe du dernier match disponible, pas une confirmation de l’effectif actuel" width="32" height="32" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true">`;
+}
+function decorateOrdinaryProfile(head,player){
+  if(profileThemeFor(player.player_id).edition||String(player.player_id)==='1630166')return;
+  head.classList.add('ordinary-profile');
+  head.querySelector('.sub')?.insertAdjacentHTML('beforeend',ordinaryClubBadge(player));
+}
 renderPlayer=function(){
   setProfileTheme(CURRENT.player_id);
   if(renderMinimalAvdija(CURRENT.player_id))return;
   previousPlayer();const head=el('view').querySelector('.player-head');head.innerHTML=`<div class="profile-identity">${head.innerHTML}</div>`;head.insertAdjacentHTML('afterbegin',`<div class="profile-portrait">${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span></div>`);
+  decorateOrdinaryProfile(head,CURRENT);
   decorateGoatProfile(head,CURRENT.player_id);
   decorateEditionProfile(head,CURRENT.player_id);
   head.insertAdjacentHTML('afterend','<div id="currentProfile"></div>');renderCurrentProfile();

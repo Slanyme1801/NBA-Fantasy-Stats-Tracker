@@ -323,3 +323,14 @@ body[data-profile-edition="dual"] .club-watermark{opacity:.14}
 body[data-profile-edition="legend"] .experience-giant,body[data-profile-edition="dual"] .experience-giant{display:none}
 @media(min-width:761px) and (max-width:1050px){.club-watermark{left:15%;top:32px;width:70%;height:500px;max-height:none}}
 @media(max-width:760px){.club-watermark{left:7%;top:24px;width:86%;height:340px;max-height:none;opacity:.13}body[data-profile-edition="dual"] .club-watermark{opacity:.12}}
+
+/* Center the portrait and identity together, keeping the face beside the name. */
+.player-head.ordinary-profile{display:flex;justify-content:center;align-items:center;flex-wrap:nowrap;gap:24px}
+.ordinary-profile .profile-portrait{flex:0 0 160px}
+.ordinary-profile .profile-identity{flex:0 1 auto;min-width:0;max-width:calc(100% - 184px);text-align:left}
+.ordinary-profile .profile-identity h2{overflow-wrap:anywhere}
+.ordinary-profile .sub{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:10px}
+.ordinary-club-badge{display:inline-block;width:32px;height:32px;object-fit:contain;vertical-align:middle;flex:0 0 32px}
+.ordinary-club-badge[hidden]{display:none}
+@media(max-width:760px){.player-head.ordinary-profile{gap:16px}.ordinary-profile .profile-portrait{flex-basis:112px}.ordinary-profile .profile-identity{max-width:calc(100% - 128px)}.ordinary-club-badge{width:28px;height:28px;flex-basis:28px}}
+@media(max-width:420px){.player-head.ordinary-profile{flex-direction:column;gap:12px}.ordinary-profile .profile-portrait{flex-basis:auto}.ordinary-profile .profile-identity{max-width:100%;width:100%;text-align:center}.ordinary-profile .sub{justify-content:center}}
