@@ -5,8 +5,8 @@
     "targetCount": 341,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA ; effectif des rookies actifs NBA 2026–27 ajouté le 12 novembre 2026",
     "status": "partial",
-    "coveredCount": 165,
-    "transparentCount": 162,
+    "coveredCount": 169,
+    "transparentCount": 166,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -277,6 +277,30 @@
         993,
         1344
       ]
+    },
+    "201942": {
+      "nbaId": 201942,
+      "name": "DeMar DeRozan",
+      "path": "assets/player-photos/201942-head-v2.png",
+      "alt": "Visage de DeMar DeRozan, grand sourire, fond transparent.",
+      "source": "https://www.si.com/nba/kings/onsi/sacramento-kings-news/demar-derozan-reacts-passing-tim-duncan-all-time-scoring-list",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop%2Cx_1511%2Cy_563%2Cw_3136%2Ch_1764/c_fill%2Cw_1440%2Car_1440%3A810%2Cf_auto%2Cq_auto%2Cg_auto/images/ImagnImages/mmsport/inside_the_kings/01kkh8hh2jxds30efec0.jpg",
+      "author": "Kelley L Cox / Imagn Images, crédit SI",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://www.si.com/nba/kings/onsi/sacramento-kings-news/demar-derozan-reacts-passing-tim-duncan-all-time-scoring-list",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1319,
+      "height": 1193,
+      "sha256": "7bcce86eaaa647750156d85be4e294a68a8a78078aee3456c6ae6a31e00cdd69",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Expression grand sourire, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
+      }
     },
     "201950": {
       "nbaId": 201950,
@@ -1375,26 +1399,25 @@
     "1627742": {
       "nbaId": 1627742,
       "name": "Brandon Ingram",
-      "path": "assets/player-photos/1627742-head.png",
-      "alt": "Visage de Brandon Ingram, avec bandeau blanc, sans maillot visible.",
-      "source": "https://uniqrenders.com/athletes/basketball/brandon-ingram-new-orleans-pelicans-nba-usa-american-basketball-players-6237",
-      "originalUrl": "https://uniqrenders.com/Uploads/19-11-2024/6237/brandon-ingram-new-orleans-pelicans-nba-usa-american-basketball-players-uniqrenders.com.png",
-      "author": "UniqRenders ; photographe original non précisé",
-      "license": "Usage personnel non commercial selon la source",
-      "licenseUrl": "https://uniqrenders.com",
-      "rightsStatus": "Téléchargement proposé par UniqRenders ; droits originaux de la photographie non certifiés. Même réserve que les autres images de cette source.",
+      "path": "assets/player-photos/1627742-head-v2.png",
+      "alt": "Visage de Brandon Ingram, grand sourire, fond transparent.",
+      "source": "https://www.nba.com/pelicans/news/brandon-ingram-2023-usa-mens-national-team-fiba-world-cup",
+      "originalUrl": "https://cdn.nba.com/teams/uploads/sites/1610612740/2023/07/CP-Brandon-Ingram-Smile-070523.jpg",
+      "author": "NBA / New Orleans Pelicans, photographe non précisé",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://www.nba.com/pelicans/news/brandon-ingram-2023-usa-mens-national-team-fiba-world-cup",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
       "mime": "image/png",
       "transparent": true,
-      "width": 1287,
-      "height": 1222,
-      "sha256": "e812e40069381623ad24467eb2ba2ed8d1c8c89303906c7b88ee5408e836b703",
-      "transformations": "Recadrage tête seule et détourage imagegen ; détails fins réinterprétés par IA. Ancien maillot entièrement supprimé, aucun maillot remplacé.",
-      "selection": "Visage sans tenue visible issu d’une photo de match.",
+      "width": 1308,
+      "height": 1203,
+      "sha256": "0ca30ba9fd72e3a2e7201ff8a75d67d77430c759a51e42813b175f198b0d3c75",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Expression grand sourire, aucune tenue visible.",
       "clubAudit": {
-        "date": "2026-11-12",
-        "status": "civilian-no-club-uniform",
-        "currentTeam": "clippers",
-        "source": "https://www.nba.com/player/1627742"
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
       }
     },
     "1627749": {
@@ -2199,6 +2222,30 @@
         1382
       ]
     },
+    "1628991": {
+      "nbaId": 1628991,
+      "name": "Jaren Jackson Jr.",
+      "path": "assets/player-photos/1628991-head-v2.png",
+      "alt": "Visage de Jaren Jackson Jr., sourire, fond transparent.",
+      "source": "https://hardwoodhoudini.com/jaren-jackson-jr-rumor-positions-celtics-to-resume-their-reign-of-terror-01kfbdrsnb7g",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_fill%2Cw_1200%2Car_4%3A3%2Cf_auto%2Cq_auto%2Cg_auto/images/GettyImages/mmsport/18/01kfbfhj2wes8ana9kbr.jpg",
+      "author": "Joe Murphy / Getty Images, crédit Hardwood Houdini",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://hardwoodhoudini.com/jaren-jackson-jr-rumor-positions-celtics-to-resume-their-reign-of-terror-01kfbdrsnb7g",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1269,
+      "height": 1239,
+      "sha256": "a1a64967d4c556f72c385fd65352410968cd700f0ec05f1eb1416a15078934fa",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Expression sourire, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
+      }
+    },
     "1629008": {
       "nbaId": 1629008,
       "name": "Michael Porter Jr.",
@@ -2376,6 +2423,30 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": "wizards",
         "source": "https://www.nba.com/player/1629027"
+      }
+    },
+    "1629028": {
+      "nbaId": 1629028,
+      "name": "Deandre Ayton",
+      "path": "assets/player-photos/1629028-head-v2.png",
+      "alt": "Visage de Deandre Ayton, éclat de rire, fond transparent.",
+      "source": "https://www.kicker.de/vier-milliarden-dollar-blockbuster-trades-und-die-harden-frage-die-nba-transfers-2023-974345/slideshow",
+      "originalUrl": "https://derivates.kicker.de/image/upload/c_crop%2Cx_0%2Cy_0%2Cw_2859%2Ch_1608/w_2000%2Cq_auto/v1/2023/10/18/c42130d2-9896-4e17-924c-5c1626573bf3.jpeg",
+      "author": "Source kicker, photographe non vérifié : page demandant vérification robot non franchie",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://www.kicker.de/vier-milliarden-dollar-blockbuster-trades-und-die-harden-frage-die-nba-transfers-2023-974345/slideshow",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1261,
+      "height": 1247,
+      "sha256": "84d8edae3f5a188ae0bca6ab8b2703ea8dea817714e26d9154d8a5baf37375c2",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Expression éclat de rire, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
       }
     },
     "1629029": {
@@ -3736,6 +3807,30 @@
         "source": "https://www.nba.com/player/1641705/victor-wembanyama"
       }
     },
+    "1641706": {
+      "nbaId": 1641706,
+      "name": "Brandon Miller",
+      "path": "assets/player-photos/1641706-head-v2.png",
+      "alt": "Visage de Brandon Miller, grand sourire, fond transparent.",
+      "source": "https://www.espn.com/fantasy/basketball/story/_/id/46275212/fantasy-basketball-our-experts-list-five-players-hope-draft-nba-2025-26-season",
+      "originalUrl": "https://a1.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0916%2Fr1546744_2_1296x729_16-9.jpg",
+      "author": "David Jensen / Getty Images selon résultat image indexé ; page ESPN demande vérification robot non franchie",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://www.espn.com/fantasy/basketball/story/_/id/46275212/fantasy-basketball-our-experts-list-five-players-hope-draft-nba-2025-26-season",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1312,
+      "height": 1199,
+      "sha256": "8e2e7a8237911f185ec7f5e9cb7047e81486ad2a3b91bceee827f606dc649946",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Expression grand sourire, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
+      }
+    },
     "1641708": {
       "nbaId": 1641708,
       "name": "Amen Thompson",
@@ -4053,26 +4148,25 @@
     "1642843": {
       "nbaId": 1642843,
       "name": "Cooper Flagg",
-      "path": "assets/player-photos/1642843-face-edited.png",
-      "alt": "Visage de Cooper Flagg sans tenue visible",
-      "source": "https://commons.wikimedia.org/wiki/File:Duke_at_UNC,_Mar_2025,_Flagg.jpg",
-      "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/13/Duke_at_UNC%2C_Mar_2025%2C_Flagg.jpg",
-      "author": "Hameltion",
-      "license": "CC0 1.0",
-      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
-      "rightsStatus": "Photographie déclarée œuvre personnelle par Hameltion, publiée sous CC0 1.0 sur Wikimedia Commons ; crédit conservé.",
+      "path": "assets/player-photos/1642843-head-v2.png",
+      "alt": "Visage de Cooper Flagg, langue tirée, fond transparent.",
+      "source": "https://thesmokingcuban.com/cooper-flagg-obliterates-raging-rookie-of-year-debate-with-one-legendary-game",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop%2Cx_2508%2Cy_468%2Cw_1948%2Ch_1095/c_fill%2Cw_1440%2Car_1440%3A810%2Cf_auto%2Cq_auto%2Cg_auto/images/GettyImages/mmsport/83/01kg6jc54m2gr2tmwfce.jpg",
+      "author": "Ron Jenkins / Getty Images, crédit The Smoking Cuban",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://thesmokingcuban.com/cooper-flagg-obliterates-raging-rookie-of-year-debate-with-one-legendary-game",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
       "mime": "image/png",
       "transparent": true,
-      "width": 1141,
-      "height": 1379,
-      "sha256": "aef49a4afef9d07792f0f4c4c7205e5bc3203e9e279059a9bb46ec9e29964dd4",
-      "transformations": "Extraction du visage sans tenue et détourage par imagegen ; résolution agrandie, flou de la source conservé, légères variations possibles. Photo originale du 8 mars 2025, pas une prise de vue récente.",
-      "selection": "Tête seule issue d’une photo authentique, expression conservée, aucune tenue visible.",
+      "width": 1267,
+      "height": 1241,
+      "sha256": "990c858837f1389ca6941018c67e1390747ec43d954d4dfcd7f92fc0948eeec0",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Expression langue tirée, aucune tenue visible.",
       "clubAudit": {
-        "date": "2026-11-12",
-        "status": "civilian-no-club-uniform",
-        "currentTeam": "mavericks",
-        "source": "Photo source inspectée puis visage isolé sans tenue ; club actuel selon carte projet 2026-27."
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
       }
     },
     "1642845": {
