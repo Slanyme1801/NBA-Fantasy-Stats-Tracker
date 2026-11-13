@@ -5,8 +5,8 @@
     "targetCount": 341,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA ; effectif des rookies actifs NBA 2026–27 ajouté le 12 novembre 2026",
     "status": "partial",
-    "coveredCount": 240,
-    "transparentCount": 237,
+    "coveredCount": 242,
+    "transparentCount": 239,
     "selectionConstraint": "Tête sans maillot visible, tenue civile ou club actuel vérifié ; exceptions choisies explicitement par l’utilisateur documentées individuellement."
   },
   "players": {
@@ -6560,6 +6560,68 @@
         33,
         875,
         1135
+      ]
+    },
+    "1631128": {
+      "nbaId": 1631128,
+      "name": "Christian Braun",
+      "path": "assets/player-photos/1631128-head.png",
+      "alt": "Christian Braun, tête expressive détourée",
+      "source": "https://www.si.com/nba/nuggets/onsi/news/new-details-surface-denver-nuggets-christian-braun-extension-talks",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_75,w_3730,h_2098/c_fill,w_3730,ar_3730:2098,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_nuggets/01k812twax2acadqk7re.jpg",
+      "author": "Isaiah J. Downing-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1291,
+      "height": 1218,
+      "sha256": "cc66e116c6c40be22f433e01db2a1c1977ce770837d2233868f27614a7892354",
+      "transformations": "Détourage tête via imagegen ; détails fins susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        234,
+        29,
+        843,
+        1097
+      ]
+    },
+    "203083": {
+      "nbaId": 203083,
+      "name": "Andre Drummond",
+      "path": "assets/player-photos/203083-head.png",
+      "alt": "Andre Drummond, tête expressive détourée",
+      "source": "https://www.nba.com/sixers/news/andre-drummond-bio-quick-facts",
+      "originalUrl": "https://cdn.nba.com/teams/uploads/sites/1610612755/2024/07/2024-Welcome-Graphics-1920x1080_andre-drummond.jpg",
+      "author": "Philadelphia 76ers ; photographe individuel non identifié",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1292,
+      "height": 1217,
+      "sha256": "78a0ac231330250df076a219a43a944135c7e81e71e00cb57a31d9c79598d7c1",
+      "transformations": "Détourage tête via imagegen ; détails fins susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        194,
+        101,
+        954,
+        1036
       ]
     }
   }
