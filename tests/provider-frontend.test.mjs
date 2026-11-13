@@ -48,7 +48,7 @@ test('profile, rankings, comparison and trades render quoted string IDs and miss
  const a=await app(sample(),{ui:true});await a.run("openPlayer('highlightly:101')");assert.match(a.node('currentProfile').innerHTML,/Historique des matchs · 1 enregistrements/);assert.match(a.node('view').innerHTML,/Unmapped Alpha/);
  assert.doesNotMatch(a.node('currentProfile').innerHTML,/lignes de joueur attendent une liaison/);assert.doesNotMatch(a.node('currentProfile').innerHTML,/await verified player identities/);
  await a.run("openPlayer('highlightly:102')");assert.match(a.node('currentProfile').innerHTML,/Aucune ligne de match complète/);
- a.run("go('board')");a.node('fSeason').value='2026-27';await a.run('loadBoard()');assert.match(a.node('boardTable').innerHTML,/openPlayer\(&quot;highlightly:101&quot;\)/);
+ a.run("go('board')");a.node('fSeason').value='2026-27';await a.run('loadBoard()');assert.match(a.node('boardTable').innerHTML,/data-player="highlightly:101"/);
  await a.run("addComparePlayer('highlightly:101');");await a.run("addComparePlayer('highlightly:102');");assert.match(a.node('compareChips').innerHTML,/removeComparePlayer\(&quot;highlightly:101&quot;\)/);assert.match(a.node('compareBody').innerHTML,/Unmapped Alpha/);
  a.run("removeComparePlayer('highlightly:101')");assert.doesNotMatch(a.node('compareChips').innerHTML,/Unmapped Alpha/);
  a.run("go('trades');tradeState.period='season';addTrade('left','highlightly:101');addTrade('right','highlightly:102')");await a.run('updateTrades()');assert.match(a.node('tradePlayers-left').innerHTML,/removeTrade\('left',&quot;highlightly:101&quot;\)/);assert.match(a.node('tradeSummary').innerHTML,/indisponible ne signifie pas zéro/);

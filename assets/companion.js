@@ -270,9 +270,21 @@ renderCompare=function(){previousCompare();el('compareSearch').setAttribute('ari
 const labeledData=renderData;
 renderData=function(){labeledData();el('view').querySelector('h2').insertAdjacentHTML('afterend',`<p class="badge">${scoreLabel()}</p><p class="small muted" id="pwaStatus">${esc(window.PWA_STATUS||'Cache hors ligne non pris en charge')}</p>`);};
 window.addEventListener('pwa-status',()=>{if(el('pwaStatus'))el('pwaStatus').textContent=window.PWA_STATUS;});
+// Shared sortable ranking table for full seasons and dashboard periods.
+let boardSorting=null;
+const boardColumns=[['rank','#','number'],['name','Joueur','text'],['team','Équipe','text'],['position','Poste','text'],['average','FP / match','number'],['gp','MJ','number'],['total','Total fantasy','number']];
+function validBoardSorting(value){return value&&boardColumns.some(([key])=>key===value.key)&&['asc','desc'].includes(value.dir)?{key:value.key,dir:value.dir}:null;}
+function nextBoardSorting(current,key){const column=boardColumns.find(c=>c[0]===key);if(!column)return null;return {key,dir:current?.key===key?(current.dir==='desc'?'asc':'desc'):(column[2]==='text'?'asc':'desc')};}
+function sortBoardRows(rows,state){const column=boardColumns.find(c=>c[0]===state?.key);if(!column)return rows.slice();return rows.slice().sort((a,b)=>{const av=a[state.key],bv=b[state.key],missingA=av===null||av===undefined||av==='—',missingB=bv===null||bv===undefined||bv==='—';if(missingA!==missingB)return missingA?1:-1;const difference=column[2]==='text'?String(av??'').localeCompare(String(bv??''),'fr',{sensitivity:'base'}):Number(av??0)-Number(bv??0);return (state.dir==='asc'?difference:-difference)||a.rank-b.rank;});}
+function defaultBoardSorting(){const value=el('fSort').value;return {key:value==='name'?'name':value==='gp'?'gp':value==='total_fpts'?'total':'average',dir:value==='name'?'asc':'desc'};}
+function renderBoardRows(rows,empty){const state=boardSorting||defaultBoardSorting();el('boardTable').innerHTML=rows.length?`<table><thead><tr>${boardColumns.map(([key,label])=>`<th scope="col" aria-sort="${state.key===key?(state.dir==='asc'?'ascending':'descending'):'none'}"><button class="text-button" data-board-sort="${key}" aria-label="Trier par ${label}">${label}${state.key===key?(state.dir==='asc'?' ↑':' ↓'):''}</button></th>`).join('')}</tr></thead><tbody>${sortBoardRows(rows,state).slice(0,150).map(r=>`<tr><td>${r.rank}</td><td><button class="text-button" data-player="${esc(r.id)}">${esc(r.name)}</button>${r.identityPending?'<small class="muted"> · Lien avec l’historique NBA en attente</small>':''}</td><td>${esc(r.team)}</td><td>${esc(r.position||'—')}</td><td class="fpts">${fmt(r.average)}</td><td>${r.gp}</td><td>${fmt(r.total)}</td></tr>`).join('')}</tbody></table>`:`<p class="empty">${empty}</p>`;
+  el('boardTable').querySelectorAll('[data-player]').forEach(b=>b.onclick=()=>openPlayer(b.dataset.player));
+  el('boardTable').querySelectorAll('[data-board-sort]').forEach(b=>b.onclick=()=>{const key=b.dataset.boardSort;boardSorting=nextBoardSorting(boardSorting,key);renderBoardRows(rows,empty);el('boardTable').querySelector(`[data-board-sort="${key}"]`)?.focus();window.dispatchEvent(new Event('nba:view'));});
+}
 renderBoard=function(){
   el('view').innerHTML=`<h2>Classements fantasy</h2><p class="small muted">Filtrez les joueurs par saison, équipe et poste.</p><div class="panel"><div class="filters"><label>Saison<select id="fSeason"><option value="">5 saisons historiques</option>${SEASONS.map(s=>`<option>${s}</option>`).join('')}</select></label><label>Trier par<select id="fSort"><option value="weighted_avg">FPTS/M pondérés</option><option value="simple_avg">Moyenne simple de saison</option><option value="season_fpts">FPTS/M de la saison sélectionnée</option><option value="total_fpts">Total des points fantasy</option><option value="gp">Matchs joués</option><option value="name">Nom du joueur</option></select></label><label>Équipe<select id="fTeam"><option value="">Toutes les équipes</option>${META.teams.map(t=>`<option>${t}</option>`).join('')}</select></label><label>Poste<select id="fPos"></select></label><label>Matchs min.<input id="fGp" type="number" min="0" value="0"></label><button class="btn" onclick="loadBoard()">Appliquer les filtres</button></div><p class="small muted" id="boardNote"></p><div class="scroll" id="boardTable"></div></div>`;
-  el('fSeason').onchange=()=>{setBoardPositions();loadBoard();};['fSort','fTeam','fPos','fGp'].forEach(id=>el(id).onchange=loadBoard);setBoardPositions();loadBoard();
+  boardSorting=null;el('fSeason').value=C.SEASON;el('fSort').value='season_fpts';
+  el('fSeason').onchange=()=>{setBoardPositions();loadBoard();};['fTeam','fPos','fGp'].forEach(id=>el(id).onchange=loadBoard);el('fSort').onchange=()=>{boardSorting=null;loadBoard();};setBoardPositions();loadBoard();
   el('view').querySelector('h2').insertAdjacentHTML('afterend',`<p class="badge">${scoreLabel()}</p>`);
 };
 function setBoardPositions(){const current=el('fSeason').value===C.SEASON;el('fPos').innerHTML='<option value="">Tous les postes</option>'+(current?C.POSITIONS:META.positions).map(p=>`<option>${esc(p)}</option>`).join('');el('boardNote').textContent=current?'Postes ESPN disponibles':'Postes historiques NBA';}
@@ -281,15 +293,15 @@ loadBoard=async function(){
   const request=++boardRequest,season=el('fSeason').value,q=new URLSearchParams({season,sort:el('fSort').value,team:el('fTeam').value,position:el('fPos').value,min_gp:el('fGp').value,limit:2000});
   let {results}=await api('/api/leaderboard?'+q);if(request!==boardRequest||activePage!=='board')return;
   if(season&&season!==C.SEASON){const sort=q.get('sort'),field=sort==='gp'?'season_gp':sort==='total_fpts'?'total_fpts':'season_fpts';results.sort((a,b)=>sort==='name'?a.full_name.localeCompare(b.full_name):b[field]-a[field]);}
-  results=results.slice(0,150).map((r,i)=>({...r,rank:i+1}));
-  el('boardTable').innerHTML=results.length?`<table><thead><tr><th>#</th><th>Joueur</th><th>Équipe</th><th>Poste</th><th>FPTS/G</th><th>GP</th><th>Total FPTS${season===C.SEASON?'':' ≈'}</th></tr></thead><tbody>${results.map(r=>`<tr><td>${r.rank}</td><td><button class="text-button" onclick="openPlayer(${playerArg(r.player_id)})">${esc(r.full_name)}</button></td><td>${esc(r.team)}</td><td>${esc(r.position||'—')}</td><td class="fpts">${fmt(season?r.season_fpts:q.get('sort')==='simple_avg'?r.simple_avg:r.weighted_avg)}</td><td>${season?r.season_gp:r.total_gp}</td><td>${fmt(r.total_fpts,0)}</td></tr>`).join('')}</tbody></table>`:`<p class="empty">${season===C.SEASON&&currentData.connection==='not-connected'?'Saison 2026–27 non connectée. Aucun classement de la saison actuelle disponible.':'Aucun échantillon complet ne correspond à ces filtres.'}</p>`;
+  const rows=results.map((r,i)=>({rank:i+1,id:r.player_id,name:r.full_name,team:r.team,position:r.position,average:season?r.season_fpts:q.get('sort')==='simple_avg'?r.simple_avg:r.weighted_avg,gp:season?r.season_gp:r.total_gp,total:r.total_fpts}));
+  renderBoardRows(rows,season===C.SEASON&&currentData.connection==='not-connected'?'Saison 2026–27 non connectée. Aucun classement de la saison actuelle disponible.':'Aucun échantillon complet ne correspond à ces filtres.');
 };
 function networkNotice(){let node=el('networkNotice');if(!node){node=document.createElement('div');node.id='networkNotice';node.setAttribute('role','status');document.body.prepend(node);}node.hidden=navigator.onLine&&window.CurrentLoad.state==='fresh';node.textContent=!navigator.onLine?'Hors ligne · affichage des données déjà enregistrées sur cet appareil. Vérifiez leur date de collecte.':window.CurrentLoad.state==='cached'?'Dernières données vérifiées · échec de l’actualisation. Vérifiez la date de collecte avant d’utiliser la forme actuelle.':'Impossible de charger la saison actuelle. Les statistiques historiques restent disponibles.';}
 window.addEventListener('online',networkNotice);window.addEventListener('offline',networkNotice);networkNotice();
 // A one-use, tab-local snapshot protects the current view during an app update.
 // Saved scoring continues to use its original localStorage key.
 window.FantasySession={
-  capture(){return {page:activePage,playerId:CURRENT?.player_id,
+  capture(){return {page:activePage,playerId:CURRENT?.player_id,boardSorting,
     trade:{...tradeState,left:[...tradeState.left],right:[...tradeState.right]},compare:[...compareIds],
     controls:[...document.querySelectorAll('#view input[id],#view select[id],#view textarea[id],#navSearch')].filter(e=>!['password','file'].includes(e.type)).map(e=>({id:e.id,value:e.value,checked:e.checked})),
     details:[...document.querySelectorAll('#view details')].map(e=>e.open),focus:document.activeElement?.id,scroll:window.scrollY};},
@@ -305,7 +317,7 @@ window.FantasySession={
     if(saved.page==='player'&&valid.has(canonicalPlayerId(saved.playerId)))await openPlayer(saved.playerId);
     else go(['home','board','compare','trades','data'].includes(saved.page)?saved.page:'home');
     const restoreControls=()=>{for(const field of saved.controls||[]){const node=typeof field.id==='string'?el(field.id):null;if(!node||!node.matches('input,select,textarea')||['password','file'].includes(node.type))continue;node.value=String(field.value??'');if(typeof field.checked==='boolean')node.checked=field.checked;}};
-    restoreControls();if(activePage==='board'){setBoardPositions();restoreControls();await loadBoard();}
+    restoreControls();if(activePage==='board'){boardSorting=validBoardSorting(saved.boardSorting);setBoardPositions();restoreControls();await loadBoard();}
     if(activePage==='trades')await updateTrades();
     if(activePage==='compare')loadCompareBody();
     if(activePage==='player')renderSimilar();

@@ -86,8 +86,7 @@
     ++boardRequest; // Invalidate any older asynchronous historical response.
     const result=window.FantasyDashboard.dashboardRanking(currentData,{period,weights:META.scoring,team:el('fTeam').value,position:el('fPos').value,minGames:Number(el('fGp').value),sort:el('fSort').value});
     el('boardNote').textContent=`${rangeLabel(result)} · résultats disponibles`;
-    el('boardTable').innerHTML=result.rows.length?`<table><thead><tr><th>#</th><th>Joueur</th><th>Équipe</th><th>Poste</th><th>FP / match</th><th>MJ</th><th>Total fantasy</th></tr></thead><tbody>${result.rows.slice(0,150).map((r,i)=>`<tr><td>${i+1}</td><td><button class="text-button" data-player="${esc(r.id)}">${esc(r.name)}</button>${r.identityPending?'<small class="muted"> · Lien avec l’historique NBA en attente</small>':''}</td><td>${esc(r.teams.join('/'))}</td><td>${esc(r.positions.join('/')||'—')}</td><td class="fpts">${fmt(r.fptsPerGame)}</td><td>${r.gp}</td><td>${fmt(r.totalFpts)}</td></tr>`).join('')}</tbody></table>`:'<p class="empty">Aucun échantillon complet pour cette période et ces filtres.</p>';
-    el('boardTable').querySelectorAll('[data-player]').forEach(b=>b.onclick=()=>openPlayer(b.dataset.player));
+    renderBoardRows(result.rows.map((r,i)=>({rank:i+1,id:r.id,name:r.name,team:r.teams.join('/'),position:r.positions.join('/'),average:r.fptsPerGame,gp:r.gp,total:r.totalFpts,identityPending:r.identityPending})),'Aucun échantillon complet pour cette période et ces filtres.');
   };
   function openDashboardRankings(period){go('board');el('fSeason').value=C.SEASON;el('fSort').value='season_fpts';el('fDashboardPeriod').value=period;setBoardPositions();loadBoard();window.scrollTo(0,0);}
   const capture=window.FantasySession.capture,restore=window.FantasySession.restore;

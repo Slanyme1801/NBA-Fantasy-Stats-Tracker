@@ -7,6 +7,8 @@ import * as dashboard from '../assets/dashboard.mjs';
 import * as core from '../assets/core.mjs';
 import {fixture,player,line,game} from './fixtures.mjs';
 const source=await fs.readFile(new URL('../assets/dashboard.js',import.meta.url),'utf8');
+const companion=await fs.readFile(new URL('../assets/companion.js',import.meta.url),'utf8');
+const boardHelpers=companion.slice(companion.indexOf('let boardSorting=null;'),companion.indexOf('renderBoard=function(){',companion.indexOf('let boardSorting=null;')));
 function harness(){
  const d=fixture(),today=new Date().toISOString();d.games=[game(1,today)];d.players=Array.from({length:12},(_,i)=>player(i+1));d.lines=d.players.map(p=>line(1,p.nbaId));
  const nodes=new Map(),buttons=new Map();let opened=null,defaultLoads=0;
@@ -14,7 +16,7 @@ function harness(){
  for(const period of ['available','7','14','30'])buttons.set(period,{dataset:{period},setAttribute(k,v){this[k]=v;}});
  const context={window:{FantasyDashboard:dashboard,CurrentLoad:{state:'fresh'},FantasySession:{capture:()=>({page:'home'}),restore:async s=>context.go(s.page)},scrollTo(){}},currentData:d,META:{scoring:core.DEFAULT_SCORING},C:core,esc:s=>String(s).replaceAll('<','&lt;'),fmt:n=>Number(n).toFixed(1),scoreLabel:()=> 'ESPN default',displayDate:s=>s||'Not recorded',el:node,document:{querySelectorAll:()=>[...buttons.values()]},renderHome(){},renderBoard(){node('fSeason').value='';node('fSort').value='weighted_avg';node('fGp').value='0';node('fDashboardPeriod').value='season';},loadBoard:async()=>defaultLoads++,boardRequest:0,setBoardPositions(){},openPlayer:id=>opened=id};
  context.go=p=>{context.page=p;if(p==='home')context.renderHome();else if(p==='board')context.renderBoard();};
- vm.runInNewContext(source,context);return {context,node,buttons,get defaultLoads(){return defaultLoads;},get opened(){return opened;}};
+ vm.createContext(context);vm.runInContext(boardHelpers,context);vm.runInContext(source,context);return {context,node,buttons,get defaultLoads(){return defaultLoads;},get opened(){return opened;}};
 }
 test('home emits top 10, sample/date warnings, accessible period buttons and ranking route',async()=>{
  const h=harness();h.context.renderHome();
