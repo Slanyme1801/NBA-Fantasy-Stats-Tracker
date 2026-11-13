@@ -12,6 +12,8 @@ const uiFr=value=>String(value??'').replace(/Historical position:/g,'Poste histo
 const statLabelFr={pts:'Points (PTS)',fg3m:'Tirs à 3 points réussis (3PM)',fgm:'Tirs réussis (FGM)',fga:'Tirs tentés (FGA)',ftm:'Lancers francs réussis (FTM)',fta:'Lancers francs tentés (FTA)',reb:'Rebonds (REB)',ast:'Passes décisives (AST)',stl:'Interceptions (STL)',blk:'Contres (BLK)',tov:'Balles perdues (TO)'};
 const identityLabel = p => uiFr(p.identity_label || [p.position ? `Historical position: ${p.position}` : '',p.last_team ? `Historical team: ${p.last_team}` : ''].filter(Boolean).join(' · ')).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
+const profilePositionLabel = p => `Poste historique : ${safeText((Object.hasOwn(p,'historical_position')?p.historical_position:p.position)||'—')}`;
+
 async function api(path, opts){
   const r = await window.AppApi(path, opts);
   if(!r.ok) throw new Error((await r.json().catch(()=>({detail:r.statusText}))).detail);
@@ -117,7 +119,7 @@ function renderPlayer(){
   el("view").innerHTML = `
     <div class="player-head">
       <h2>${safeText(p.full_name)}</h2>
-      <span class="sub">${identityLabel(p)}</span>
+      <span class="sub">${profilePositionLabel(p)}</span>
     </div>
     <div class="cards">
       <div class="card hero-stat">
@@ -507,3 +509,4 @@ window.startApp = async () => {
   wireSearch(el("navSearch"), el("navResults"));
   go("home");
 };
+

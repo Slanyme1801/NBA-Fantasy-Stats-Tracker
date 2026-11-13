@@ -193,7 +193,7 @@ renderPlayer=function(){
   previousPlayer();const head=el('view').querySelector('.player-head');head.innerHTML=`<div class="profile-identity">${head.innerHTML}</div>`;head.insertAdjacentHTML('afterbegin',`<div class="profile-portrait">${window.PlayerPhotos?.portrait(CURRENT.player_id,{className:'profile-photo'})||''}<span class="avatar" aria-hidden="true">${esc(CURRENT.full_name.split(' ').map(s=>s[0]).slice(0,2).join(''))}</span></div>`);
   decorateGoatProfile(head,CURRENT.player_id);
   decorateEditionProfile(head,CURRENT.player_id);
-  const p=CURRENT.eligibility;head.insertAdjacentHTML('afterend',`<div class="eligibility"><b>ESPN 2026–27:</b> ${p?esc(p.positions.join(' / ')):'Non importé'}</div><div id="currentProfile"></div>`);renderCurrentProfile();
+  head.insertAdjacentHTML('afterend','<div id="currentProfile"></div>');renderCurrentProfile();
   decorateProfileExperience(head,CURRENT.player_id);
 };
 function renderMinimalAvdija(id){
@@ -330,3 +330,4 @@ const beforeUpdateData=renderData;
 renderData=function(){beforeUpdateData();el('view').insertAdjacentHTML('beforeend','<section class="panel"><h3>Mises à jour de l’application</h3><p id="appVersionStatus" aria-live="polite">Vérification de la version de l’application…</p><button class="btn ghost" onclick="window.AppUpdates.check()">Rechercher des mises à jour</button></section>');window.AppUpdates?.render();};
 const beforeUpdateGo=go;
 go=function(page){beforeUpdateGo(page);window.dispatchEvent(new Event('nba:view'));};
+
