@@ -5,8 +5,8 @@
     "targetCount": 341,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA ; effectif des rookies actifs NBA 2026–27 ajouté le 12 novembre 2026",
     "status": "partial",
-    "coveredCount": 251,
-    "transparentCount": 248,
+    "coveredCount": 270,
+    "transparentCount": 267,
     "selectionConstraint": "Tête sans maillot visible, tenue civile ou club actuel vérifié ; exceptions choisies explicitement par l’utilisateur documentées individuellement."
   },
   "players": {
@@ -6901,6 +6901,595 @@
         51,
         821,
         1053
+      ]
+    },
+    "1630230": {
+      "nbaId": 1630230,
+      "name": "Naji Marshall",
+      "path": "assets/player-photos/1630230-head.png",
+      "alt": "Naji Marshall : tête détourée, expression de match",
+      "source": "https://www.si.com/nba/mavericks/onsi/news/dallas-mavericks-forward-naji-marshall-reveals-reaction-landing-first-overall-pick-cooper-flagg-",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_1238,y_239,w_5273,h_2966/c_fill,w_5273,ar_5273:2966,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/dallas_basketball/01jvfahrnys8d6pxftyh.jpg",
+      "author": "Jerome Miron-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1266,
+      "height": 1242,
+      "sha256": "14859e8e9cc5a0f7fe95d81469804b67125d866ad3d6aba21a8065b13e4d6bd4",
+      "transformations": "Détourage tête via imagegen ; détails fins susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        17,
+        1244,
+        1225
+      ]
+    },
+    "1630173": {
+      "nbaId": 1630173,
+      "name": "Precious Achiuwa",
+      "path": "assets/player-photos/1630173-head.png",
+      "alt": "Precious Achiuwa : tête détourée, expression de match",
+      "source": "https://www.si.com/nba/knicks/onsi/news/new-york-knicks-precious-achiuwa-responds-gilbert-arenas",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_180,w_3200,h_1800/c_fill,w_3200,ar_3200:1800,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/all_knicks/01j3gbnvx4xztrh45dnz.jpg",
+      "author": "Brad Penner-USA TODAY Sports",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1275,
+      "height": 1234,
+      "sha256": "3f33ac605eb9cfcc31d891aef81d21fed8aca1269e7d95626dcc6d7d94d8c1d2",
+      "transformations": "Détourage tête via imagegen ; détails fins susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        21,
+        1239,
+        1213
+      ]
+    },
+    "1641710": {
+      "nbaId": 1641710,
+      "name": "Anthony Black",
+      "path": "assets/player-photos/1641710-head.png",
+      "alt": "Anthony Black : tête détourée, expression en match ou interview",
+      "source": "https://www.si.com/nba/magic/onsi/why-anthony-black-remains-invaluable-to-the-orlando-magic-01m75vzn571t",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_1143,y_544,w_970,h_545/c_fill,w_1440,ar_1440:810,f_auto,q_auto,g_auto/images/ReutersImages/mmsport/the_magic_insider/01m75w3pzmat99x85dm9.jpg",
+      "author": "Sergio Estrada-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1296,
+      "height": 1213,
+      "sha256": "9baba900be914e9055f3c5d4d38ef54b7de6d646b6440cd33bcf3af5212d3f21",
+      "transformations": "Détourage tête via imagegen ; détails fins des traits, tresses et bandeau susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        28,
+        1272,
+        1185
+      ]
+    },
+    "1641713": {
+      "nbaId": 1641713,
+      "name": "GG Jackson",
+      "path": "assets/player-photos/1641713-head.png",
+      "alt": "GG Jackson, bouche ouverte et tête détourée transparente",
+      "source": "https://www.si.com/nba/grizzlies/onsi/three-goals-for-the-memphis-grizzlies-in-the-2026-2027-nba-season-01m4tqj01hwe",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,w_4421,h_2486,x_0,y_0/images/ReutersImages/mmsport/all_grizzlies/01m4tw5v0rd2qvzwqknb.jpg",
+      "author": "Petre Thomas-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1382,
+      "height": 1138,
+      "sha256": "ecb70733e64d3ca953c42fc026243e3025029ef323f3ae16fa315f1d2fa35cdf",
+      "transformations": "Détourage tête via imagegen depuis photographie haute résolution ; détails fins des traits, cheveux et bandeau susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        21,
+        1362,
+        1117
+      ]
+    },
+    "1631212": {
+      "nbaId": 1631212,
+      "name": "Peyton Watson",
+      "path": "assets/player-photos/1631212-head.png",
+      "alt": "Peyton Watson souriant, tête détourée sur fond transparent",
+      "source": "https://www.si.com/nba/nuggets/onsi/news/denver-nuggets-peyton-watson-sends-warning-message-nba-after-first-game-back",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_0,w_3522,h_1981/c_fill,w_3522,ar_3522:1981,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_nuggets/01kmc3v02s07fg8nynta.jpg",
+      "author": "Ron Chenoy-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1312,
+      "height": 1199,
+      "sha256": "d7113cb59af490b63d52d1e0d17ffa9bfb8f031ae508c8d5ad3ace8d0e61099a",
+      "transformations": "Détourage tête via imagegen ; détails fins des traits et cheveux susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        65,
+        37,
+        1171,
+        1115
+      ]
+    },
+    "1630577": {
+      "nbaId": 1630577,
+      "name": "Julian Champagnie",
+      "path": "assets/player-photos/1630577-head.png",
+      "alt": "Julian Champagnie souriant, tête détourée sur fond transparent",
+      "source": "https://www.si.com/nba/spurs/onsi/wemby-champagnie-key-dominant-spurs-offense-in-blowout-over-kings-",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_1039,y_0,w_3339,h_1878/c_fill,w_3339,ar_3339:1878,f_auto,q_auto,g_auto/images/ReutersImages/mmsport/inside_the_spurs/01m607rwhxmaevqzgck5.jpg",
+      "author": "Daniel Dunn-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1310,
+      "height": 1200,
+      "sha256": "82ef626c4d07da6f5351837585efb8049953d717e7cef23ab3bf7fa868bc2396",
+      "transformations": "Détourage tête via imagegen ; détails fins des traits et cheveux susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        24,
+        1296,
+        1176
+      ]
+    },
+    "1630174": {
+      "nbaId": 1630174,
+      "name": "Aaron Nesmith",
+      "path": "assets/player-photos/1630174-head.png",
+      "alt": "Aaron Nesmith criant, tête détourée transparente",
+      "source": "https://www.si.com/nba/pacers/onsi/news/pacers-aaron-nesmith-called-second-coming-of-steph-curry",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_0,w_6273,h_3528/c_fill,w_6273,ar_6273:3528,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/all_pacers/01jvwnm54xamw6q4v864.jpg",
+      "author": "Ken Blaze-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1381,
+      "height": 1139,
+      "sha256": "561dfcd6fb3840e0adf7d605881e3d6d9e327500a8ee11394c865a17a12d0004",
+      "transformations": "Détourage tête via imagegen ; détails fins des traits, dents et tresses susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        19,
+        1367,
+        1104
+      ]
+    },
+    "1627827": {
+      "nbaId": 1627827,
+      "name": "Dorian Finney-Smith",
+      "path": "assets/player-photos/1627827-head.png",
+      "alt": "Dorian Finney-Smith regardant vers le haut, tête détourée transparente",
+      "source": "https://www.si.com/nba/rockets/onsi/dorian-finney-smith-explains-challenging-year-for-rockets",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_791,y_3,w_1626,h_914/c_fill,w_1440,ar_1440:810,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_rockets/01kpv1za32hjh1zrtx0d.jpg",
+      "author": "Troy Taormina-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1283,
+      "height": 1226,
+      "sha256": "425cc990c92687932a4ecc332e827fcd2dc7a34c86ff2edd9eacc8da26ae03ab",
+      "transformations": "Détourage tête via imagegen ; détails fins du visage et des dreadlocks reconstruits ou lissés, non identiques pixel à pixel.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        19,
+        1263,
+        1189
+      ]
+    },
+    "1628998": {
+      "nbaId": 1628998,
+      "name": "Cody Martin",
+      "path": "assets/player-photos/1628998-head.png",
+      "alt": "Cody Martin légèrement souriant, tête détourée transparente",
+      "source": "https://www.si.com/nba/hornets/onsi/news/cody-martin-discusses-frustrating-journey-when-he-will-return",
+      "originalUrl": "https://www.si.com/.image/c_fill,w_1440,ar_1440:810,f_auto,q_auto,g_auto/MjAxMzUwODgxNjUwNjgxODI5/usatsi_21558149_168388579_lowres.jpg",
+      "author": "Photographe non identifié ; source Sports Illustrated",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1296,
+      "height": 1214,
+      "sha256": "c92b65df6c20caeddbe750eee720ffd2c72911387c4f1726b8772224559f8519",
+      "transformations": "Détourage tête via imagegen ; détails fins des cheveux, barbe et traits susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        0,
+        1280,
+        1214
+      ]
+    },
+    "1628420": {
+      "nbaId": 1628420,
+      "name": "Monte Morris",
+      "path": "assets/player-photos/1628420-head.png",
+      "alt": "Monte Morris, expression interrogative, tête détourée",
+      "source": "https://www.si.com/nba/nuggets/onsi/news/nuggets-should-sign-former-fan-favorite-after-being-waived-by-pacers-01kagzgpy0xx/",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_0,w_4629,h_3086/c_fill,w_4629,ar_3:2,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_nuggets/01kah04t70grbqqwapcf.jpg",
+      "author": "Kelley L Cox-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1262,
+      "height": 1246,
+      "sha256": "03023d8c228ab29f4df08da8e1e310ce0a2488e3485e16ff83127871766e808f",
+      "transformations": "Détourage tête via imagegen ; détails fins des traits et cheveux susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        19,
+        1242,
+        1227
+      ]
+    },
+    "1629674": {
+      "nbaId": 1629674,
+      "name": "Neemias Queta",
+      "path": "assets/player-photos/1629674-head.png",
+      "alt": "Neemias Queta, langue au coin de la bouche, tête détourée",
+      "source": "https://www.si.com/nba/celtics/onsi/the-answer-to-the-boston-celtics-center-rotation-and-other-thoughts-after-9-games-01m6xyc2ff5a",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_112,y_409,w_2019,h_1135/c_fill,w_2019,ar_2019:1135,f_auto,q_auto,g_auto/images/ReutersImages/mmsport/inside_the_celtics/01m6xyqyehefw0nzsvbf.jpg",
+      "author": "Winslow Townson-Imagn Images, via Reuters Connect",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1319,
+      "height": 1192,
+      "sha256": "3e57a1cfe54a34204fd9649180e440912c1fb3baa80b4778054e8cfa1cc62000",
+      "transformations": "Détourage tête via imagegen ; détails fins des traits, cheveux et bandeau susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        15,
+        1305,
+        1177
+      ]
+    },
+    "1642377": {
+      "nbaId": 1642377,
+      "name": "Jaylen Wells",
+      "path": "assets/player-photos/1642377-head.png",
+      "alt": "Jaylen Wells, yeux fermés et bouche ouverte, tête détourée",
+      "source": "https://www.si.com/nba/grizzlies/onsi/three-grizzlies-statistics-that-stand-out-so-far-01m6vs1zc21p",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_665,y_0,w_3520,h_1980/c_fill,w_3520,ar_3520:1980,f_auto,q_auto,g_auto/images/ReutersImages/mmsport/all_grizzlies/01m6vstnsfq0we8dtf20.jpg",
+      "author": "Petre Thomas-Imagn Images, via Reuters Connect",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1307,
+      "height": 1203,
+      "sha256": "1dfe1f6e53bcf32b38c75bb19c8f45044ab270a4551d79a19759be388baad616",
+      "transformations": "Détourage tête via imagegen ; détails fins des traits et afro susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        15,
+        1306,
+        1188
+      ]
+    },
+    "1629130": {
+      "nbaId": 1629130,
+      "name": "Duncan Robinson",
+      "path": "assets/player-photos/1629130-head.png",
+      "alt": "Duncan Robinson, bouche ouverte, tête détourée",
+      "source": "https://www.si.com/nba/heat/onsi/heat-veteran-kevin-love-finds-new-target-to-mock-after-heat-win-01jj2qczmcxk",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_0,w_8640,h_4860/c_fill,w_4320,ar_4320:2430,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_heat/01jj2qtrjfta6h576hxb.jpg",
+      "author": "Jim Rassol-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1261,
+      "height": 1247,
+      "sha256": "475024065d13bf34a611df20668da0436c9942a3c58c19389d3314e91801b9f3",
+      "transformations": "Détourage tête via imagegen ; visage légèrement plus frontal, traits lissés/reconstruits et détails fins des cheveux réinterprétés. Non pixel-identique à la source.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        25,
+        1245,
+        1198
+      ]
+    },
+    "1626172": {
+      "nbaId": 1626172,
+      "name": "Kevon Looney",
+      "path": "assets/player-photos/1626172-head.png",
+      "alt": "Kevon Looney, regard attentif vers le haut, tête détourée",
+      "source": "https://www.si.com/nba/warriors/news/kevon-looney-sends-heartfelt-message-to-warriors-01jzg8p3rzkf",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_203,w_5496,h_3091/c_fill,w_3000,ar_3000:1688,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_warriors/01jzg9cw70vw3n0c5hdn.jpg",
+      "author": "Mark J. Rebilas-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1327,
+      "height": 1186,
+      "sha256": "84169bab52fb3b9535759603fd78d6be5819f39938c2ff324f30b82eaf655873",
+      "transformations": "Détourage tête via imagegen ; détails fins des traits et tresses susceptibles de réinterprétation.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        19,
+        1326,
+        1167
+      ]
+    },
+    "1630314": {
+      "nbaId": 1630314,
+      "name": "Brandon Williams",
+      "path": "assets/player-photos/1630314-head.png",
+      "alt": "Brandon Williams, bouche ouverte et regard vers le haut, tête détourée",
+      "source": "https://www.si.com/nba/mavericks/onsi/news/dallas-mavericks-guard-scores-career-high-in-loss-to-memphis-grizzlies-brandon-williams",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_75,w_5199,h_2924/c_fill,w_4000,ar_4000:2250,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/dallas_basketball/01jnsvn09t0bfnqd31z1.jpg",
+      "author": "Jonathan Hui-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1313,
+      "height": 1198,
+      "sha256": "9eb811eaa13beee71cbbb9dc35ba9e69352323655ec12193d6e51fbd2977e0df",
+      "transformations": "Détourage tête via imagegen ; texture et détails fins des cheveux et du visage réinterprétés. Non pixel-identique à la source.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        25,
+        20,
+        1234,
+        1156
+      ]
+    },
+    "1642874": {
+      "nbaId": 1642874,
+      "name": "Danny Wolf",
+      "path": "assets/player-photos/1642874-head.png",
+      "alt": "Danny Wolf, sourire et regard baissé, tête détourée",
+      "source": "https://www.si.com/nba/nets/onsi/news/four-questions-for-nets-forward-danny-wolf-before-his-rookie-season",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_0,w_2992,h_1683/c_fill,w_2992,ar_2992:1683,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_nets/01k1dh783p43pywwbc9y.jpg",
+      "author": "Brad Penner-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1301,
+      "height": 1209,
+      "sha256": "69302df5864fe283417ac42cc18a7fd416a59477886d9e89effb4758516dac05",
+      "transformations": "Détourage tête via imagegen ; détails fins du visage et des cheveux lissés ou réinterprétés. Non pixel-identique à la source.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        8,
+        1300,
+        1201
+      ]
+    },
+    "1628964": {
+      "nbaId": 1628964,
+      "name": "Mo Bamba",
+      "path": "assets/player-photos/1628964-head.png",
+      "alt": "Mo Bamba, grimace de célébration bouche ouverte, tête détourée",
+      "source": "https://www.si.com/nba/76ers/onsi/news/new-orleans-pelicans-add-former-sixers-center-01jp1meqq3ca",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_0,w_4025,h_2264/c_fill,w_4025,ar_4025:2264,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/all_76ers/01jp1mm55vh9v4d2yy2c.jpg",
+      "author": "Bill Streicher-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1296,
+      "height": 1213,
+      "sha256": "eb611324469a13e4702387bec7ff9c1c6cd2cf52bae824b8270b9c1d1b2115af",
+      "transformations": "Détourage tête via imagegen ; détails fins du visage, de la barbe et des cheveux réinterprétés. Non pixel-identique à la source.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        15,
+        1276,
+        1198
+      ]
+    },
+    "202692": {
+      "nbaId": 202692,
+      "name": "Alec Burks",
+      "path": "assets/player-photos/202692-head.png",
+      "alt": "Alec Burks, large sourire, tête détourée",
+      "source": "https://www.si.com/nba/jazz/onsi/news/former-utah-jazz-guard-alec-burks-top-cheap-nba-free-agents",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_0,w_3600,h_2025/c_fill,w_3600,ar_16:9,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_jazz/01k0h9249wsg3re1egnv.jpg",
+      "author": "Reggie Hildred-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1295,
+      "height": 1214,
+      "sha256": "eb1f9b2e83be2cfac8ae2f12a87034f5d52787f886dbb791e0f89a1beb30cc16",
+      "transformations": "Détourage tête via imagegen ; texture et détails fins du visage, des dents et de la barbe réinterprétés. Non pixel-identique à la source.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        26,
+        1275,
+        1188
+      ]
+    },
+    "1631232": {
+      "nbaId": 1631232,
+      "name": "Keion Brooks Jr.",
+      "path": "assets/player-photos/1631232-head.png",
+      "alt": "Keion Brooks Jr., bouche ouverte et regard latéral, tête détourée",
+      "source": "https://www.si.com/college/washington/husky-legends/brooks-continues-to-impress-in-nba-audition-scores-20-for-pelicans-01jrk3ybdtcx",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop,x_0,y_94,w_5961,h_3353/c_fill,w_4000,ar_4000:2250,f_auto,q_auto,g_auto/images/ImagnImages/mmsport/inside_the_huskies/01jrk4b88ccpb5bka98j.jpg",
+      "author": "Benny Sieu-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1271,
+      "height": 1237,
+      "sha256": "be47fdfc51fbb30c77e7ae1dff9f454c5400fad2f10f72dbdbedafa7b017914a",
+      "transformations": "Détourage tête via imagegen ; détails fins du visage, des dents et des cheveux réinterprétés. Non pixel-identique à la source.",
+      "clubAudit": {
+        "status": "head-only-no-jersey",
+        "date": "2026-11-13",
+        "note": "Tête détourée sans maillot visible ; ne constitue pas une photographie en tenue civile."
+      },
+      "provenance": "editorial-source",
+      "rightsVerification": "unverified",
+      "licenseUrl": "",
+      "rightsStatus": "Source photographique documentée ; autorisation de réutilisation et droits photographiques originaux non établis.",
+      "displayBounds": [
+        0,
+        0,
+        1243,
+        1237
       ]
     }
   }
