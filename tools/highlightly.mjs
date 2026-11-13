@@ -7,6 +7,7 @@ export const PROVIDER='Highlightly';
 const check=(ok,message)=>{if(!ok)throw new Error(message);};
 const id=n=>Number.isSafeInteger(n)&&n>0;
 const count=n=>Number.isSafeInteger(n)&&n>=0;
+export const explicitDidNotPlay=value=>typeof value==='string'&&/^(?:DNP(?:\s*[-–]\s*Coach['’]s Decision)?|Did Not Play)$/i.test(value.trim());
 export const statisticNames={pts:'Total Points Scored',fgm:'Successful Field Goals',fga:'Total Field Goals',fg3m:'Successful 3PT Field Goals',fg3a:'Total 3PT Field Goals',ftm:'Successful Free Throws',fta:'Total Free Throws',reb:'Total Rebounds',ast:'Total Assists',tov:'Total Turnovers',stl:'Total Steals',blk:'Total Blocks'};
 export function datesInRange(start,end){
   const valid=d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)&&Number.isFinite(Date.parse(d))&&new Date(d).toISOString().slice(0,10)===d;
@@ -46,11 +47,15 @@ export function parseBoxScore(body,game){
       if(values.size){
         stats=Object.fromEntries(COUNTERS.map(k=>[k,values.get(statisticNames[k])]));
         const minutes=values.get('Total Minutes Played'),off=values.get('Total Offensive Rebounds'),def=values.get('Total Defensive Rebounds');
-        check(COUNTERS.every(k=>count(stats[k]))&&count(minutes)&&count(off)&&count(def),'Missing or invalid raw counter');
+        const didNotPlay=explicitDidNotPlay(minutes);
+        check(COUNTERS.every(k=>count(stats[k]))&&(count(minutes)||didNotPlay)&&count(off)&&count(def),'Missing or invalid raw counter');
         check(stats.reb===off+def,'Rebounds do not reconcile');
         check(stats.fgm<=stats.fga&&stats.fg3m<=stats.fg3a&&stats.fg3m<=stats.fgm&&stats.fg3a<=stats.fga&&stats.ftm<=stats.fta&&stats.fgm-stats.fg3m<=stats.fga-stats.fg3a,'Invalid shooting counters');
         check(stats.pts===2*stats.fgm+stats.fg3m+stats.ftm,'Points do not reconcile');
-        if(minutes>0||COUNTERS.some(k=>stats[k]>0)){participation='played';seconds=minutes*60;}else stats=null;
+        if(didNotPlay){
+          check(COUNTERS.every(k=>stats[k]===0)&&off===0&&def===0,'DNP marker conflicts with activity');
+          participation='dnp';stats=null;
+        }else if(minutes>0||COUNTERS.some(k=>stats[k]>0)){participation='played';seconds=minutes*60;}else stats=null;
       }
       lines.push({gameId:game.id,providerId:raw.player.id,teamId:team.team.id,participation,seconds,minutesPrecision:'rounded-whole-minute',stats,comment:null,provider:PROVIDER});
     }

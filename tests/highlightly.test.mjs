@@ -12,6 +12,17 @@ const game=()=>normalizeMatch(match(),new Map(types().games.map(g=>[g.id,g])));
 const collect=extra=>collectHighlightly({client:async endpoint=>endpoint==='/matches'?envelope():box(),identities:identities(),types:types(),startDate:'2026-11-15',endDate:'2026-11-15',now,...extra});
 test('synthetic Highlightly maps counters, preserves scoring and labels approximate minutes',async()=>{const result=await collect();assert.equal(result.provider,PROVIDER);assert.equal(result.lines[0].seconds,1800);assert.equal(result.lines[0].minutesPrecision,'rounded-whole-minute');assert.equal(aggregate(result,1,{asOf:now}).fptsPerGame,fantasyPoints(stats()));assert.equal(result.scope.completeSeason,false);});
 test('empty player statistics are missing, never DNP',()=>{const b=box();b[0].boxScores.push({player:{id:103},statistics:[]});const lines=normalizeBoxScore(b,game(),[...identities().players,player(3)],now);assert.equal(lines[1].participation,'missing');assert.equal(lines[1].stats,null);});
+test('explicit DNP minutes with complete zero counters are nonparticipation, never a played zero game',()=>{
+ for(const marker of ['DNP','DNP - Coach\'s Decision','DNP – Coach’s Decision','Did Not Play']){
+  const b=box(),row=structuredClone(b[0].boxScores[0]);row.player.id=103;row.statistics.forEach(s=>s.value=s.name==='Total Minutes Played'?marker:0);b[0].boxScores.push(row);
+  const out=normalizeBoxScore(b,game(),[...identities().players,player(3)],now).find(l=>l.providerId===103);assert.equal(out.participation,'dnp');assert.equal(out.stats,null);assert.equal(out.seconds,null);
+ }
+});
+test('DNP markers cannot hide positive or missing counters, and arbitrary minute strings remain rejected',()=>{
+ for(const marker of ['unknown','-','0','00:00','DNP - unverified arbitrary text']){const b=box();b[0].boxScores[0].statistics.find(s=>s.name==='Total Minutes Played').value=marker;assert.throws(()=>normalizeBoxScore(b,game(),identities().players,now),/raw counter/);}
+ const b=box();b[0].boxScores[0].statistics.find(s=>s.name==='Total Minutes Played').value='DNP';assert.throws(()=>normalizeBoxScore(b,game(),identities().players,now),/DNP marker conflicts/);
+ b[0].boxScores[0].statistics.pop();assert.throws(()=>normalizeBoxScore(b,game(),identities().players,now),/raw counter/);
+});
 test('reject missing/invalid counters, duplicated stats/player/team, and inconsistent points/rebounds/totals',()=>{
   for(const mutate of [b=>b[0].boxScores[0].statistics.pop(),b=>b[0].boxScores[0].statistics[0].value=null,b=>b[0].boxScores[0].statistics[0].value=21,b=>b[0].boxScores[0].statistics.push(b[0].boxScores[0].statistics[0]),b=>b[0].boxScores.push(b[0].boxScores[0]),b=>b[1].team.id=10,b=>b[0].boxScores[0].statistics.at(-1).value=5]){const b=box();mutate(b);assert.throws(()=>normalizeBoxScore(b,game(),identities().players,now));}
   const g=game();g.finalScores[0]=21;assert.throws(()=>normalizeBoxScore(box(),g,identities().players,now),/final score/);

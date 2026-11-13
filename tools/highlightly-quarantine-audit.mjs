@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {decryptRecord} from './highlightly-quarantine.mjs';
-import {parseBoxScore,statisticNames} from './highlightly.mjs';
+import {parseBoxScore,statisticNames,explicitDidNotPlay} from './highlightly.mjs';
 export const TARGET_GAME=1547577;
 export const TARGET_ARCHIVE='.github/highlightly-quarantine/7537afd6-9ea2-4d96-92cb-fa1880e5338d.json';
 export const TARGET_SHA256='dc24e8939e8c9364fa9effebcfab7b6cb3bd729b2cdd5b3d3c1fb9b9bb31bdb5';
@@ -12,7 +12,7 @@ const valid=value=>Number.isSafeInteger(value)&&value>=0;
 function valueKind(value){
  if(value===undefined)return 'absent';if(value===null)return 'null';
  if(typeof value==='number')return !Number.isFinite(value)?'non-finite-number':!Number.isInteger(value)?'fractional-number':value<0?'negative-number':'unsafe-integer';
- if(typeof value==='string')return value===''?'empty-string':/^\d+$/.test(value)?'integer-string':'other-string';
+ if(typeof value==='string')return explicitDidNotPlay(value)?'explicit-nonparticipation-label':value===''?'empty-string':/^\d+$/.test(value)?'integer-string':/^\d+:[0-5]\d$/.test(value)?'minutes-seconds-string':'other-string';
  return typeof value;
 }
 export function inspectCounterFailures(body){
