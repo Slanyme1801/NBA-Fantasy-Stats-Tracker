@@ -22,3 +22,17 @@ test('provider identities need exact full names unique in both roster and curren
  assert.equal(rosterClubFor(p,'2026-27',[]),null);assert.equal(rosterClubFor({...p,full_name:'Caris'},'2026-27',[{name:'Caris'}]),null);
  const normalized=rosterSnapshot.entries.map(x=>x[1].normalize('NFC').trim().replace(/\s+/g,' ').toLowerCase());assert.equal(new Set(normalized).size,normalized.length);
 });
+
+test('newer official roster fixes Carson Cooper after Lakers signing without changing history',()=>{
+ const p={player_id:1643721,last_team:'MEM',team_basis:'latest-verified-import',team_as_of:'2026-11-01T00:00:00.000Z'};
+ const before=JSON.stringify(p),html=ctx.ordinaryClubBadge(p);
+ assert.match(html,/1610612747/);assert.match(html,/effectif NBA vérifié/);assert.equal(JSON.stringify(p),before);
+});
+test('same-day or newer verified games cannot be overwritten by an older day-only snapshot',()=>{
+ for(const date of ['2026-11-13T00:00:00Z','2026-11-13T20:00:00Z','2026-11-14T00:00:00Z']){
+  const html=ctx.ordinaryClubBadge({player_id:1643721,last_team:'MEM',team_basis:'latest-verified-import',team_as_of:date});assert.match(html,/1610612763/);assert.match(html,/dernier match disponible/);
+ }
+});
+test('missing or invalid match date never invents temporal precedence',()=>{
+ for(const date of [undefined,'invalid'])assert.match(ctx.ordinaryClubBadge({player_id:1643721,last_team:'MEM',team_basis:'latest-verified-import',team_as_of:date}),/1610612763/);
+});

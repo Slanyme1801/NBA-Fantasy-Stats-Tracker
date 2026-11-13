@@ -194,8 +194,13 @@ function decorateProfileExperience(head,id){
 }
 // Small ordinary-profile accents; prefer the last verified game, then an official active-roster snapshot.
 function ordinaryClubBadge(player){
-  const fromGame=player.team_basis==='latest-verified-import';
-  const roster=!fromGame&&typeof window!=='undefined'?window.CurrentRoster?.clubFor(player):null;
+  const roster=typeof window!=='undefined'?window.CurrentRoster?.clubFor(player):null;
+  const hasGame=player.team_basis==='latest-verified-import';
+  // The snapshot only has day precision: a same-day/newer game stays preferred.
+  // A strictly newer official roster supersedes a pre-transfer game for this logo only.
+  const gameTime=Date.parse(player.team_as_of),rosterTime=Date.parse(roster?.verifiedAt);
+  const rosterIsNewer=Number.isFinite(gameTime)&&Number.isFinite(rosterTime)&&rosterTime>gameTime;
+  const fromGame=hasGame&&!(roster&&rosterIsNewer);
   if(!fromGame&&!roster)return '';
   const aliases={GS:'GSW',GSW:'GSW',NY:'NYK',NYK:'NYK',NO:'NOP',NOR:'NOP',NOP:'NOP',SA:'SAS',SAS:'SAS',PHO:'PHX',PHX:'PHX',UTAH:'UTA',UTA:'UTA',WSH:'WAS',WAS:'WAS',BRK:'BKN',BKN:'BKN'};
   const raw=String(fromGame?player.last_team:roster.club).toUpperCase(),club=aliases[raw]||raw;
