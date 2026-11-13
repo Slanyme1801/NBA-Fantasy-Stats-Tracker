@@ -3,7 +3,7 @@
   "provider": "Highlightly",
   "season": "2026-27",
   "dayUTC": "2026-11-13",
-  "offset": 100,
+  "offset": 200,
   "total": 420,
   "seenIds": [
     1771351,
@@ -105,8 +105,316 @@
     1589809,
     1589808,
     1589807,
-    1589806
+    1589806,
+    1589805,
+    1589804,
+    1589803,
+    1589802,
+    1588057,
+    1588056,
+    1588055,
+    1585451,
+    1585450,
+    1585449,
+    1585448,
+    1585447,
+    1585446,
+    1585445,
+    1585444,
+    1585443,
+    1585442,
+    1583704,
+    1583703,
+    1583702,
+    1583701,
+    1583700,
+    1583699,
+    1583698,
+    1582332,
+    1582331,
+    1582330,
+    1582329,
+    1582328,
+    1582327,
+    1581022,
+    1581021,
+    1581020,
+    1581019,
+    1581018,
+    1581017,
+    1581016,
+    1581015,
+    1581014,
+    1579766,
+    1579765,
+    1579764,
+    1579763,
+    1577347,
+    1577346,
+    1577345,
+    1577344,
+    1577343,
+    1577342,
+    1577341,
+    1577340,
+    1577339,
+    1577338,
+    1577337,
+    1577336,
+    1575085,
+    1575086,
+    1575084,
+    1575083,
+    1575082,
+    1573810,
+    1573809,
+    1573808,
+    1573807,
+    1573806,
+    1573805,
+    1573804,
+    1573803,
+    1572038,
+    1572037,
+    1572036,
+    1572035,
+    1572034,
+    1572033,
+    1572032,
+    1572031,
+    1572030,
+    1569543,
+    1569542,
+    1569541,
+    1569540,
+    1569539,
+    1567220,
+    1567219,
+    1567218,
+    1567217,
+    1567216,
+    1567215,
+    1567214,
+    1567213,
+    1567212,
+    1564270,
+    1564269,
+    1564268,
+    1564267,
+    1560245,
+    1560244,
+    1560243,
+    1560242,
+    1560241
   ],
   "complete": false,
-  "games": []
+  "games": [
+    {
+      "id": 1564270,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-13T02:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        101,
+        96
+      ],
+      "classification": null,
+      "home": {
+        "id": 46,
+        "code": "PHX"
+      },
+      "away": {
+        "id": 33,
+        "code": "CHA"
+      }
+    },
+    {
+      "id": 1564269,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-13T01:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        133,
+        94
+      ],
+      "classification": null,
+      "home": {
+        "id": 41,
+        "code": "MIN"
+      },
+      "away": {
+        "id": 40,
+        "code": "DAL"
+      }
+    },
+    {
+      "id": 1564268,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-13T00:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        140,
+        144
+      ],
+      "classification": null,
+      "home": {
+        "id": 50,
+        "code": "WSH"
+      },
+      "away": {
+        "id": 25,
+        "code": "DET"
+      }
+    },
+    {
+      "id": 1564267,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-13T00:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        123,
+        112
+      ],
+      "classification": null,
+      "home": {
+        "id": 71,
+        "code": "PHI"
+      },
+      "away": {
+        "id": 34,
+        "code": "TOR"
+      }
+    },
+    {
+      "id": 1560245,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-12T03:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        118,
+        108
+      ],
+      "classification": null,
+      "home": {
+        "id": 31,
+        "code": "POR"
+      },
+      "away": {
+        "id": 38,
+        "code": "OKC"
+      }
+    },
+    {
+      "id": 1560244,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-12T02:30:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        115,
+        108
+      ],
+      "classification": null,
+      "home": {
+        "id": 28,
+        "code": "HOU"
+      },
+      "away": {
+        "id": 43,
+        "code": "GS"
+      }
+    },
+    {
+      "id": 1560243,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-12T02:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        108,
+        123
+      ],
+      "classification": null,
+      "home": {
+        "id": 45,
+        "code": "UTAH"
+      },
+      "away": {
+        "id": 24,
+        "code": "ORL"
+      }
+    },
+    {
+      "id": 1560242,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-12T01:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        111,
+        145
+      ],
+      "classification": null,
+      "home": {
+        "id": 64,
+        "code": "NO"
+      },
+      "away": {
+        "id": 49,
+        "code": "BKN"
+      }
+    },
+    {
+      "id": 1560241,
+      "season": "2026-27",
+      "league": "standard",
+      "start": "2026-11-12T01:00:00.000Z",
+      "status": "finished",
+      "type": "unknown",
+      "statsState": "not-fetched",
+      "provider": "Highlightly",
+      "finalScores": [
+        112,
+        123
+      ],
+      "classification": null,
+      "home": {
+        "id": 39,
+        "code": "MIL"
+      },
+      "away": {
+        "id": 4,
+        "code": "LAL"
+      }
+    }
+  ]
 }
