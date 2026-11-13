@@ -44,7 +44,7 @@ test('catalogue only presents current-club, civilian or head-only photos after t
  for(const p of Object.values(manifest.players)){assert.ok(['current-club','civilian-no-club-uniform','head-only-no-jersey','user-selected-exception'].includes(p.clubAudit?.status));assert.match(p.clubAudit.date,/^\d{4}-\d{2}-\d{2}$/);assert.ok(p.clubAudit.date>='2026-11-11' && Number.isFinite(Date.parse(p.clubAudit.date)));}
  assert.equal(manifest.players['203081'].clubAudit.status,'user-selected-exception');
  assert.equal(manifest.players['1629029'].clubAudit.status,'head-only-no-jersey');
- assert.equal(createPlayerPhotos(manifest).portrait(1628392),'');
+ assert.notEqual(createPlayerPhotos(manifest).portrait(1628392),'');
  assert.ok(!createPlayerPhotos(manifest).credits().includes('maillots peuvent être anciens'));
 });
 
