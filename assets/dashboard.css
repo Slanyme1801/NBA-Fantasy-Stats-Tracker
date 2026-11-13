@@ -283,3 +283,36 @@ body[data-profile-minimal="true"] *,body[data-profile-minimal="true"] *::before,
 body[data-profile-motion="paused"] .goat-user-clip{display:none!important}
 body[data-profile-motion="paused"] .goat-user-clip-playing :is(.profile-photo,.avatar,.goat-crown){visibility:visible}
 @media(prefers-reduced-motion:reduce){.goat-user-clip{display:none!important}.goat-user-clip-playing :is(.profile-photo,.avatar,.goat-crown){visibility:visible!important}}
+
+/* Larger full-body editions: expand the layout, never crop or stretch the artwork. */
+body[data-profile-edition]:not([data-profile-edition=""]) .player-head:is(.goat-profile,.edition-profile){grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);min-height:650px;column-gap:40px;padding-top:48px}
+body[data-profile-edition]:not([data-profile-edition=""]) .player-head .profile-portrait{height:500px;max-width:520px;padding:40px 0 0;min-width:0;background:transparent;border:0;border-radius:0;overflow:visible}
+body[data-profile-edition]:not([data-profile-edition=""]) .player-head .profile-portrait .profile-photo{width:100%;height:100%;max-height:460px;object-fit:contain;object-position:center bottom}
+body[data-profile-edition]:not([data-profile-edition=""]) .player-head .profile-identity{min-width:0;overflow-wrap:anywhere}
+body[data-profile-edition="goat"] .player-head .profile-portrait{height:520px;padding-top:40px}
+body[data-profile-edition="goat"] .player-head .profile-portrait .profile-photo{max-height:480px}
+@media(min-width:761px) and (max-width:1050px){
+ body[data-profile-edition]:not([data-profile-edition=""]) .player-head:is(.goat-profile,.edition-profile){grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;gap:24px;padding:40px 28px 0;text-align:center}
+ body[data-profile-edition]:not([data-profile-edition=""]) .player-head .profile-identity{grid-column:1;grid-row:2;width:100%;padding:0}
+ body[data-profile-edition]:not([data-profile-edition=""]) .player-head .profile-identity h2{max-width:none}
+ .experience-caption{grid-column:1;flex-wrap:wrap;justify-content:center}
+ .experience-arch,.experience-orbit{left:calc(50% - 260px);width:520px;height:490px;top:30px;bottom:auto}
+ .experience-floor{left:calc(50% - 250px);width:500px;top:520px;bottom:auto}
+ body[data-profile-edition="dual"] .experience-arch{height:490px;top:30px}
+ body[data-profile-edition="goat"] .experience-arch{height:510px}
+ body[data-profile-edition="goat"] .experience-floor{top:540px}
+}
+@media(max-width:760px){
+ body[data-profile-edition]:not([data-profile-edition=""]) .player-head:is(.goat-profile,.edition-profile){grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;min-height:0;padding:28px 16px 0;gap:20px}
+ body[data-profile-edition]:not([data-profile-edition=""]) .player-head .profile-portrait{height:340px;max-width:360px;padding:30px 0 0}
+ body[data-profile-edition]:not([data-profile-edition=""]) .player-head .profile-portrait .profile-photo{max-height:310px}
+ body[data-profile-edition="goat"] .player-head .profile-portrait{height:380px;padding-top:30px}
+ body[data-profile-edition="goat"] .player-head .profile-portrait .profile-photo{max-height:350px}
+ .experience-arch,.experience-orbit{left:10%;width:80%;height:360px;top:14px;bottom:auto}
+ body[data-profile-edition="dual"] .experience-arch{height:360px;top:14px}
+ body[data-profile-edition="goat"] .experience-arch{height:400px}
+ .experience-floor{left:10%;width:80%;top:350px;bottom:auto}
+ body[data-profile-edition="goat"] .experience-floor{top:390px}
+ .goat-love-intro{height:400px}
+}
+
