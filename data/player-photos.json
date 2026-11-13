@@ -5,8 +5,8 @@
     "targetCount": 341,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA ; effectif des rookies actifs NBA 2026–27 ajouté le 12 novembre 2026",
     "status": "partial",
-    "coveredCount": 169,
-    "transparentCount": 166,
+    "coveredCount": 172,
+    "transparentCount": 169,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -953,6 +953,30 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": "nets",
         "source": "https://www.nba.com/player/203944"
+      }
+    },
+    "203952": {
+      "nbaId": 203952,
+      "name": "Andrew Wiggins",
+      "path": "assets/player-photos/203952-head-v2.png",
+      "alt": "Visage de Andrew Wiggins, grand sourire, fond transparent.",
+      "source": "https://www.businessinsider.com/andrew-wiggins-playoffs-rebounding-wasnt-hard-2022-7",
+      "originalUrl": "https://i.insider.com/62cc5f4b114c1e001873067d?format=jpeg&width=1200",
+      "author": "Darren Yamashita-USA TODAY Sports/Reuters",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://www.businessinsider.com/andrew-wiggins-playoffs-rebounding-wasnt-hard-2022-7",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1312,
+      "height": 1199,
+      "sha256": "0ea8d0a882fe89bc0f4a04eef226457805abb023bcd4550dd10120df6229118a",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Expression : grand sourire, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
       }
     },
     "203954": {
@@ -2474,6 +2498,30 @@
         "status": "head-only-no-jersey",
         "currentTeam": "lakers",
         "source": "https://www.nba.com/players"
+      }
+    },
+    "1629057": {
+      "nbaId": 1629057,
+      "name": "Robert Williams III",
+      "path": "assets/player-photos/1629057-head-v2.png",
+      "alt": "Visage de Robert Williams III, cri de célébration, fond transparent.",
+      "source": "https://ripcityproject.com/posts/robert-williams-iii-injury-update-rollercoaster-season",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop%2Cw_5722%2Ch_3218%2Cx_0%2Cy_71/images/GettyImages/mmsport/34/01j9afeeasxndpjx64wh",
+      "author": "Steph Chambers/Getty Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://ripcityproject.com/posts/robert-williams-iii-injury-update-rollercoaster-season",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1312,
+      "height": 1199,
+      "sha256": "a79bd85eb82f4261b5da245720e94c1d12cf91ae1b6ed654ce039388ef222e30",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Expression : cri de célébration, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
       }
     },
     "1629614": {
@@ -4039,6 +4087,30 @@
       },
       "rightsStatus": "Téléchargement proposé publiquement par la source ; licence de republication et droits photographiques originaux non établis. Crédit conservé.",
       "publicationStatus": "Photo publiée avec crédit de la source ; droits photographiques originaux non certifiés."
+    },
+    "1642264": {
+      "nbaId": 1642264,
+      "name": "Stephon Castle",
+      "path": "assets/player-photos/1642264-head-v2.png",
+      "alt": "Visage de Stephon Castle, éclat de rire, fond transparent.",
+      "source": "https://airalamo.com/stephon-castle-comeback-delivers-emotional-boost-spurs-fans-needed",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop%2Cx_1325%2Cy_288%2Cw_3146%2Ch_1769/c_fill%2Cw_1440%2Car_16%3A9%2Cf_auto%2Cq_auto%2Cg_auto/images/ImagnImages/mmsport/29/01kbzf760y546zej9wt1.jpg",
+      "author": "Dustin Safranek / Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://airalamo.com/stephon-castle-comeback-delivers-emotional-boost-spurs-fans-needed",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1024,
+      "height": 1536,
+      "sha256": "f8ec39bd8089622423d06fecbcd1d378c86eaf739532b5404f23ee9504e50109",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Éclat de rire, yeux fermés ; aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
+      }
     },
     "1642270": {
       "nbaId": 1642270,
