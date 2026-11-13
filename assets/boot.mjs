@@ -1,4 +1,5 @@
 import * as core from './core.mjs';
+import {rosterClubFor} from './rosters.mjs';
 import * as dashboard from './dashboard.mjs';
 import {loadPlayerPhotos} from './photos.mjs';
 import {loadCurrent} from './loader.mjs';
@@ -15,6 +16,7 @@ try {
   if(history.players?.length!==1029 || history.rows?.length!==2867 || history.seasons?.length!==5) throw new Error('Échec de la validation des données historiques');
   window.__DATASET=history;
   window.FantasyCore=core;
+  window.CurrentRoster={clubFor:player=>rosterClubFor(player,core.SEASON,window.CurrentLoad?.data?.players||[])};
   window.FantasyDashboard=dashboard;
   window.CurrentLoad=await loadCurrent({knownIds:history.players.map(p=>p[0])});
   await script('./assets/legacy.js');
@@ -31,3 +33,4 @@ try {
   view.innerHTML='<div class="empty"><h2>Impossible de charger les données</h2><p>La première visite nécessite une connexion. Les données déjà mises en cache restent sur cet appareil.</p><button class="btn" onclick="location.reload()">Réessayer</button></div>';
   console.error(error);
 }
+
