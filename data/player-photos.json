@@ -5,8 +5,8 @@
     "targetCount": 341,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA ; effectif des rookies actifs NBA 2026–27 ajouté le 12 novembre 2026",
     "status": "partial",
-    "coveredCount": 173,
-    "transparentCount": 170,
+    "coveredCount": 176,
+    "transparentCount": 173,
     "selectionConstraint": "Tenue du club actuel 2026-27 vérifiée, ou tenue civile sans maillot de club."
   },
   "players": {
@@ -2806,6 +2806,30 @@
         "source": "Photo inspectée puis visage isolé sans tenue ; aucune équipe revendiquée par cette image."
       }
     },
+    "1629655": {
+      "nbaId": 1629655,
+      "name": "Daniel Gafford",
+      "path": "assets/player-photos/1629655-head-v2.png",
+      "alt": "Visage de Daniel Gafford, sourire en match, fond transparent.",
+      "source": "https://www.monumentalsportsnetwork.com/videos/daniel-gafford-goes-back-school-lend-helping-hand",
+      "originalUrl": "https://image.monumentalsportsnetwork.com/images/2023/11/04/1699066687225_danielgaffordgettyimages1765461124.jpg",
+      "author": "Photographe non identifié ; fichier Monumental Sports Network référencé Getty Images1765461124, crédit individuel non vérifié",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://www.monumentalsportsnetwork.com/videos/daniel-gafford-goes-back-school-lend-helping-hand",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1293,
+      "height": 1216,
+      "sha256": "d8674e61d96d75e9eb798fbac730f95a99d2ae44b0d584f57e05472e89678be6",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Sourire en match, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
+      }
+    },
     "1629661": {
       "nbaId": 1629661,
       "name": "Cameron Johnson",
@@ -2928,6 +2952,30 @@
         "date": "2026-11-12",
         "status": "head-only-no-jersey",
         "source": "https://www.flickr.com/photos/joeglo/51873832857/"
+      }
+    },
+    "1630168": {
+      "nbaId": 1630168,
+      "name": "Onyeka Okongwu",
+      "path": "assets/player-photos/1630168-head-v2.png",
+      "alt": "Visage de Onyeka Okongwu, sourire en match, fond transparent.",
+      "source": "https://soaringdownsouth.com/onyeka-okongwu-leap-nobody-expected",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop%2Cx_653%2Cy_0%2Cw_3643%2Ch_2049/c_fill%2Cw_1440%2Car_1440%3A810%2Cf_auto%2Cq_auto%2Cg_auto/images/ImagnImages/mmsport/131/01kjwycqv4s95f5gfrxv.jpg",
+      "author": "Brett Davis-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://soaringdownsouth.com/onyeka-okongwu-leap-nobody-expected",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1312,
+      "height": 1199,
+      "sha256": "b86b5819c30489f454f8112fb91693eb289a5dc9a92272e3dea7232f6b549bf4",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Sourire en match, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
       }
     },
     "1630169": {
@@ -3660,6 +3708,30 @@
         "status": "civilian-no-club-uniform",
         "currentTeam": "pelicans",
         "source": "https://www.nba.com/pelicans/news/2026-27-opening-night-roster-pelicans-vs-pacers-nba-season"
+      }
+    },
+    "1631099": {
+      "nbaId": 1631099,
+      "name": "Keegan Murray",
+      "path": "assets/player-photos/1631099-head-v2.png",
+      "alt": "Visage de Keegan Murray, sourire en match, fond transparent.",
+      "source": "https://www.si.com/nba/kings/onsi/sacramento-kings-news/sacramento-kings-announce-injury-update-for-keegan-murray-before-lakers-game",
+      "originalUrl": "https://images2.minutemediacdn.com/image/upload/c_crop%2Cx_1790%2Cy_205%2Cw_2648%2Ch_1489/c_fill%2Cw_1440%2Car_16%3A9%2Cf_auto%2Cq_auto%2Cg_auto/images/ImagnImages/mmsport/inside_the_kings/01kjgr30k58hsynqjkk7.jpg",
+      "author": "Mark J. Rebilas-Imagn Images",
+      "license": "Licence de réutilisation non établie ; photographie éditoriale protégée.",
+      "licenseUrl": "https://www.si.com/nba/kings/onsi/sacramento-kings-news/sacramento-kings-announce-injury-update-for-keegan-murray-before-lakers-game",
+      "rightsStatus": "Source et crédit conservés ; aucune licence libre ni cession des droits originaux attestée.",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1306,
+      "height": 1204,
+      "sha256": "94322d7df5f77964eb471e3f43a7328931bea07f602a80dd4cffbefe4e671693",
+      "transformations": "Extraction tête seule et suppression du fond par imagegen ; expression et angle conservés, détails fins réinterprétés par IA.",
+      "selection": "Sourire en match, aucune tenue visible.",
+      "clubAudit": {
+        "date": "2026-11-13",
+        "status": "head-only-no-jersey",
+        "source": "Tête seule extraite, aucun vêtement visible."
       }
     },
     "1631101": {
