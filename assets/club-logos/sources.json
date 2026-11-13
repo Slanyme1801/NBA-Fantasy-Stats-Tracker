@@ -1,0 +1,51 @@
+{
+  "GSW": {
+    "nbaTeamId": 1610612744,
+    "source": "https://cdn.nba.com/logos/nba/1610612744/primary/L/logo.svg",
+    "retrievedAt": "2026-11-13",
+    "bytes": 3171,
+    "rights": "Logotype NBA officiel, marque de son équipe ; aucune licence libre revendiquée."
+  },
+  "POR": {
+    "nbaTeamId": 1610612757,
+    "source": "https://cdn.nba.com/logos/nba/1610612757/primary/L/logo.svg",
+    "retrievedAt": "2026-11-13",
+    "bytes": 2051,
+    "rights": "Logotype NBA officiel, marque de son équipe ; aucune licence libre revendiquée."
+  },
+  "PHX": {
+    "nbaTeamId": 1610612756,
+    "source": "https://cdn.nba.com/logos/nba/1610612756/primary/L/logo.svg",
+    "retrievedAt": "2026-11-13",
+    "bytes": 2459,
+    "rights": "Logotype NBA officiel, marque de son équipe ; aucune licence libre revendiquée."
+  },
+  "BOS": {
+    "nbaTeamId": 1610612738,
+    "source": "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg",
+    "retrievedAt": "2026-11-13",
+    "bytes": 31426,
+    "rights": "Logotype NBA officiel, marque de son équipe ; aucune licence libre revendiquée."
+  },
+  "DEN": {
+    "nbaTeamId": 1610612743,
+    "source": "https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg",
+    "retrievedAt": "2026-11-13",
+    "bytes": 2916,
+    "rights": "Logotype NBA officiel, marque de son équipe ; aucune licence libre revendiquée."
+  },
+  "PHI": {
+    "nbaTeamId": 1610612755,
+    "source": "https://cdn.nba.com/logos/nba/1610612755/primary/L/logo.svg",
+    "retrievedAt": "2026-11-13",
+    "bytes": 3400,
+    "rights": "Logotype NBA officiel, marque de son équipe ; aucune licence libre revendiquée."
+  },
+  "OKC": {
+    "nbaTeamId": 1610612760,
+    "source": "https://cdn.nba.com/logos/nba/1610612760/primary/D/logo.svg",
+    "retrievedAt": "2026-11-13",
+    "bytes": 8885,
+    "rights": "Logotype NBA officiel, marque de son équipe ; aucune licence libre revendiquée."
+  }
+}

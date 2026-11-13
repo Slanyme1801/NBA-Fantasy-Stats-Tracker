@@ -316,3 +316,10 @@ body[data-profile-edition="goat"] .player-head .profile-portrait .profile-photo{
  .goat-love-intro{height:400px}
 }
 
+
+/* Authentic club marks, decorative only: never obscure the identity or statistics. */
+.club-watermark{position:absolute;left:2%;top:30px;width:46%;height:540px;max-height:85%;object-fit:contain;opacity:.16;pointer-events:none;user-select:none;animation:none!important;transition:none!important}
+body[data-profile-edition="dual"] .club-watermark{opacity:.14}
+body[data-profile-edition="legend"] .experience-giant,body[data-profile-edition="dual"] .experience-giant{display:none}
+@media(min-width:761px) and (max-width:1050px){.club-watermark{left:15%;top:32px;width:70%;height:500px;max-height:none}}
+@media(max-width:760px){.club-watermark{left:7%;top:24px;width:86%;height:340px;max-height:none;opacity:.13}body[data-profile-edition="dual"] .club-watermark{opacity:.12}}
