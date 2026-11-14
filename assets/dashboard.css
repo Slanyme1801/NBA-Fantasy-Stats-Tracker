@@ -334,3 +334,34 @@ body[data-profile-edition="legend"] .experience-giant,body[data-profile-edition=
 .ordinary-club-badge[hidden]{display:none}
 @media(max-width:760px){.player-head.ordinary-profile{gap:16px}.ordinary-profile .profile-portrait{flex-basis:112px}.ordinary-profile .profile-identity{max-width:calc(100% - 128px)}.ordinary-club-badge{width:28px;height:28px;flex-basis:28px}}
 @media(max-width:420px){.player-head.ordinary-profile{flex-direction:column;gap:12px}.ordinary-profile .profile-portrait{flex-basis:auto}.ordinary-profile .profile-identity{max-width:100%;width:100%;text-align:center}.ordinary-profile .sub{justify-content:center}}
+
+/* Fit the viewport; wide data tables scroll inside their own wrapper, not the page. */
+#view,.cards>*,.trade-grid>*,.similar-grid>*,.filters>*,.profile-identity,.connection>*{min-width:0}
+.scroll,.dashboard-table-wrap{width:100%;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}
+#view svg{max-width:100%;height:auto}
+#view pre{white-space:pre-wrap;overflow-wrap:anywhere}
+.footer-meta,.connection p,.card .label{overflow-wrap:anywhere}
+select,input{min-width:0;max-width:100%}
+@media(max-width:760px){
+ header.top nav{flex-wrap:wrap;overflow-x:visible}
+ header.top nav button{flex:1 1 auto;min-width:0;white-space:normal}
+ .brand-text{white-space:normal}
+ .cards,.compact-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .trade-grid,.similar-grid,.recent-game-plots{grid-template-columns:minmax(0,1fr)}
+ .trade-result .trade-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .card .value,.chip,.trade-player .text-button{overflow-wrap:anywhere}
+ .filters label{flex:1 1 140px;max-width:100%}
+ .filters select,.filters input{width:100%;max-width:100%;min-width:0}
+ .chip{min-width:0;max-width:100%}
+ .dashboard-carousel-heading{flex-wrap:wrap}
+ .dashboard-table{table-layout:fixed;min-width:0;width:100%}
+ .dashboard-table th,.dashboard-table td{white-space:normal;overflow-wrap:anywhere}
+ .dashboard-table th:first-child,.dashboard-table td:first-child{width:32px}
+ .dashboard-spotlight-info{flex:1 1 120px}
+ .profile-portrait{max-width:100%}
+ .experience-chapters a{min-width:0;overflow-wrap:anywhere}
+}
+@media(max-width:380px){
+ .cards,.compact-cards,.trade-result .trade-grid{grid-template-columns:minmax(0,1fr)}
+ .trade-player{flex-wrap:wrap}
+}
