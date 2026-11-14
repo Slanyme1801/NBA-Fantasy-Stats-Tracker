@@ -1,12 +1,12 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-13",
+  "updatedAt": "2026-11-14",
   "scope": {
     "targetCount": 341,
     "description": "200 meilleurs joueurs par moyenne fantasy pondérée sur 2021-22 à 2025-26, plus effectifs actuels 2026-27 POR PHX GSW OKC MIN MIL NOP MIA ; effectif des rookies actifs NBA 2026–27 ajouté le 12 novembre 2026",
     "status": "partial",
-    "coveredCount": 270,
-    "transparentCount": 267,
+    "coveredCount": 271,
+    "transparentCount": 268,
     "selectionConstraint": "Tête sans maillot visible, tenue civile ou club actuel vérifié ; exceptions choisies explicitement par l’utilisateur documentées individuellement."
   },
   "players": {
@@ -7491,6 +7491,30 @@
         1243,
         1237
       ]
+    },
+    "1642272": {
+      "nbaId": 1642272,
+      "name": "Jared McCain",
+      "path": "assets/player-photos/1642272-head-manual.png",
+      "alt": "Jared McCain souriant, tête détourée sur fond transparent",
+      "source": "https://commons.wikimedia.org/wiki/File:Jared_McCain_Duke_v._Michigan_State.jpg",
+      "author": "Brady Saylor / WestEndGirls (2023)",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "rightsStatus": "Source et image dérivée sous CC BY-SA 4.0 ; crédit, lien de licence et modifications indiqués. Aucun soutien du photographe impliqué.",
+      "provenance": "wikimedia-commons",
+      "mime": "image/png",
+      "transparent": true,
+      "width": 1778,
+      "height": 1778,
+      "sha256": "a6f3ee215b3ad4bf388b58e3ea9c35e73bd86b6190663104e8a6ab68a2a55676",
+      "transformations": "Recadrage tête seule et masque alpha tracé manuellement, léger adoucissement du bord. Aucune génération ni reconstruction : pixels RGB opaques identiques à la source. Quelques cheveux fins exclus.",
+      "selection": "Version manuelle présentée et validée par l’utilisateur le 14 novembre 2026.",
+      "clubAudit": {
+        "date": "2026-11-14",
+        "status": "head-only-no-jersey",
+        "source": "https://commons.wikimedia.org/wiki/File:Jared_McCain_Duke_v._Michigan_State.jpg"
+      }
     }
   }
 }
