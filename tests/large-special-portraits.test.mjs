@@ -2,7 +2,11 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const css=fs.readFileSync(new URL('../assets/dashboard.css',import.meta.url),'utf8');
-const added=css.slice(css.indexOf('/* Larger full-body editions:'));
+// Scope sizing assertions to this section, not unrelated later decorations.
+const sectionStart=css.indexOf('/* Larger full-body editions:');
+assert.ok(sectionStart>=0,'full-body sizing section must exist');
+const sectionEnd=css.indexOf('/*',sectionStart+2);
+const added=css.slice(sectionStart,sectionEnd<0?undefined:sectionEnd);
 test('special portraits gain substantial visible height without affecting ordinary profiles',()=>{
  assert.match(added,/body\[data-profile-edition\]:not\(\[data-profile-edition=""\]\) \.player-head \.profile-portrait\{height:500px;max-width:520px;padding:40px 0 0/);
  assert.match(added,/max-height:460px;object-fit:contain;object-position:center bottom/);
