@@ -10,6 +10,7 @@ import {publicHighlightlySnapshot} from './highlightly-public.mjs';
 import {publicPendingBoxes} from './highlightly-pending.mjs';
 import {createQuarantineWriter,isQuarantinePath} from './highlightly-quarantine.mjs';
 import {publishLocal} from './publish.mjs';
+import {pushCheckpointSafely} from './highlightly-git-push.mjs';
 
 export const CHECKPOINT='.github/highlightly-backfill.json';
 export const PENDING='.github/highlightly-pending-boxes.json';
@@ -33,8 +34,9 @@ export function persistGitCheckpoint(paths,{execute=spawnSync}={}){
   const staged=git(['diff','--cached','--name-only']).stdout.trim().split('\n');
   requireValue(staged.every(p=>paths.includes(p)),'Unexpected staged file; checkpoint refused');
   git(['commit','-m','Save verified Highlightly backfill progress']);
-  // Never automatically retry an uncertain push or force-push over another writer.
-  git(['push','origin','HEAD:main']);
+  // Only explicit non-fast-forward rejection from presentation-only writes can reconcile.
+  // Transport uncertainty and concurrent data/code changes still stop immediately.
+  pushCheckpointSafely({execute});
 }
 export async function runHostedBackfill({now=()=>Date.now(),clientOverride=null,archiveOverride=null,persist=persistGitCheckpoint,hosted=process.env.GITHUB_ACTIONS==='true'}={}){
   requireValue(hosted,'Hosted GitHub Actions execution required');
@@ -84,5 +86,5 @@ export async function publishCheckpoint({now=()=>Date.now()}={}){
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
   try{
     if(process.argv[2]==='publish')await publishCheckpoint();else await runHostedBackfill();
-  }catch{console.error('Season backfill stopped safely. Retain the committed quota reservation and normalized checkpoint; review workflow stage and coverage before resuming.');process.exitCode=1;}
+  }catch(error){if(/^CHECKPOINT_[A-Z_]+$/.test(error.code||''))console.error(`Checkpoint failure category: ${error.code}`);console.error('Season backfill stopped safely. Retain the committed quota reservation and normalized checkpoint; review workflow stage and coverage before resuming.');process.exitCode=1;}
 }

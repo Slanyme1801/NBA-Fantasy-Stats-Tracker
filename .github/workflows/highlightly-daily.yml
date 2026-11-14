@@ -51,7 +51,7 @@ jobs:
           node tools/highlightly-actions.mjs reserve
           git add -- .github/highlightly-quota.json
           git commit -m 'Reserve daily Highlightly request budget'
-          git push origin HEAD:main
+          node tools/highlightly-git-push.mjs
       - name: Reconstruct private inputs on the fresh runner
         id: prepare
         if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
@@ -71,7 +71,7 @@ jobs:
           git add -- data/manifest.json data/manifest.previous.json data/releases/
           if git diff --cached --name-only | grep -Ev '^data/(manifest(\.previous)?\.json|releases/[a-z0-9.-]+\.json)$'; then exit 1; fi
           git diff --cached --quiet || git commit -m 'Publish verified Highlightly season progress'
-          git push origin HEAD:main
+          node tools/highlightly-git-push.mjs
           echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Select exact existing or refreshed commit for Pages
         if: always() && (steps.publish.outcome == 'success' || (github.event_name == 'workflow_dispatch' && inputs.validation_only))

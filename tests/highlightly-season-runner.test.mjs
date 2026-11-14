@@ -27,7 +27,7 @@ test('public inventory projection removes arbitrary fields at state/game/team le
 });
 test('Git checkpoint only stages allowlisted paths, validates index and commits before one push',()=>{
  const calls=[];persistGitCheckpoint([CHECKPOINT],{execute:(command,args)=>{calls.push([command,...args]);return {status:args.join(' ')==='diff --cached --quiet'?1:0,stdout:args.join(' ')==='diff --cached --name-only'?CHECKPOINT+'\n':''};}});
- assert.deepEqual(calls,[['git','add','--',CHECKPOINT],['git','diff','--cached','--quiet'],['git','diff','--cached','--name-only'],['git','commit','-m','Save verified Highlightly backfill progress'],['git','push','origin','HEAD:main']]);
+ assert.deepEqual(calls,[['git','add','--',CHECKPOINT],['git','diff','--cached','--quiet'],['git','diff','--cached','--name-only'],['git','commit','-m','Save verified Highlightly backfill progress'],['git','push','--porcelain','origin','HEAD:main']]);
  for(const paths of [[],['.local/private.json'],['data/manifest.json'],[CHECKPOINT,'--all']])assert.throws(()=>persistGitCheckpoint(paths,{execute:()=>{throw Error('Must not execute');}}),/Unapproved/);
  const denied=[];assert.throws(()=>persistGitCheckpoint([INVENTORY],{execute:(_,args)=>{denied.push(args);return {status:args.includes('--quiet')?1:0,stdout:'unexpected.txt\n'};}}),/Unexpected staged/);assert.equal(denied.some(args=>args[0]==='commit'),false);
 });
@@ -71,7 +71,7 @@ test('provider-primary checkpoint survives fresh worker and gains NBA mapping wi
  assert.equal(result.snapshot.games.find(g=>g.id===2).statsState,'available');assert.equal(result.snapshot.lines.find(l=>l.providerId===999).nbaId,9);await assert.rejects(fs.stat(PENDING),{code:'ENOENT'});
 }));
 test('normalized pending path is explicitly permitted for durable Git checkpoints',()=>{
- const calls=[];persistGitCheckpoint([PENDING],{execute:(_,args)=>{calls.push(args);return {status:args.includes('--quiet')?1:0,stdout:PENDING+'\n'};}});assert.deepEqual(calls[0],['add','--',PENDING]);assert.deepEqual(calls.at(-1),['push','origin','HEAD:main']);
+ const calls=[];persistGitCheckpoint([PENDING],{execute:(_,args)=>{calls.push(args);return {status:args.includes('--quiet')?1:0,stdout:PENDING+'\n'};}});assert.deepEqual(calls[0],['add','--',PENDING]);assert.deepEqual(calls.at(-1),['push','--porcelain','origin','HEAD:main']);
 });
 test('hosted execution cannot silently omit response archival even with an injected client',async()=>isolated(async()=>{
  await setup();const old=process.env.HIGHLIGHTLY_API_KEY;delete process.env.HIGHLIGHTLY_API_KEY;let calls=0;
