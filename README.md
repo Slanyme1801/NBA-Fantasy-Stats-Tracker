@@ -57,3 +57,7 @@ Résultats de validation et limites : [docs/VERIFICATION.md](docs/VERIFICATION.m
 ## Highlightly : publication sous attestation
 
 Le collecteur reste désactivé par défaut. La publication des statistiques normalisées exige une attestation explicite du propriétaire confirmant la permission du fournisseur pour le fichier public. Le site signale les échantillons partiels et leurs dates. Le runner quotidien traite désormais le retard de toute la saison, avec reprises durables ; une fenêtre de trois jours sert uniquement aux corrections récentes. Le secret reste dans GitHub Actions. Voir [la procédure et les limites](docs/DATA-OPERATIONS.md#publication-highlightly-autorisée-et-fréquence).
+
+## Autonomie et dépannage
+
+Voir [le guide sans ChatGPT](docs/AUTONOMY.md) : contrôles indépendants, réparation hors API, erreurs et limites.

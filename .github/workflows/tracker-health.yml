@@ -1,0 +1,63 @@
+name: Tracker independent health and offline publication repair
+on:
+  schedule:
+    - cron: '37 11,18 * * *'
+  workflow_dispatch:
+  workflow_run:
+    workflows: ['Backfill and refresh Highlightly season']
+    types: [completed]
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: highlightly-daily-publication
+  cancel-in-progress: false
+jobs:
+  check:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test and validate before any repair
+        id: verified
+        run: |
+          npm test
+          npm run validate
+      - name: Recover only a strictly newer complete validated checkpoint offline
+        run: |
+          node tools/tracker-recover-publication.mjs
+          npm run validate
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- data/manifest.json data/manifest.previous.json data/releases/
+          if git diff --cached --name-only | grep -Ev '^data/(manifest(\.previous)?\.json|releases/[a-z0-9.-]+\.json)$'; then exit 1; fi
+          if ! git diff --cached --quiet; then
+            git commit -m 'Repair publication from verified retained checkpoint without provider calls'
+            node tools/highlightly-git-push.mjs
+          fi
+      - name: Repair a missed Pages deployment only when published data differs
+        if: always() && steps.verified.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          node --input-type=module -e "import {checkLive} from './tools/tracker-health.mjs';import {readJSON} from './tools/files.mjs';await checkLive(await readJSON('data/manifest.json'));" && exit 0
+          gh api "repos/$REPOSITORY/pages" --jq 'select(.build_type == "legacy" and .source.branch == "main" and .source.path == "/") | .source.branch' | grep -qx main
+          gh api --method POST "repos/$REPOSITORY/pages/builds" --jq '.status'
+          for attempt in $(seq 1 20); do
+            sleep 15
+            node --input-type=module -e "import {checkLive} from './tools/tracker-health.mjs';import {readJSON} from './tools/files.mjs';await checkLive(await readJSON('data/manifest.json'));" && exit 0
+          done
+          echo 'Published data could not be verified after the Pages rebuild.'
+          exit 1
+      - name: Report freshness, coverage and live data integrity
+        if: always()
+        run: node tools/tracker-health.mjs --live

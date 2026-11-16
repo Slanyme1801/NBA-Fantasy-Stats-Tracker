@@ -186,3 +186,15 @@ export function tradeValue(left, right, replacement = 28.5) {
   const a=side(left),b=side(right);
   return {left:a,right:b,slots,sumDifference:b.sum-a.sum,averageDifference:b.average-a.average};
 }
+
+// Fresh download != fresh collection. Calendar-day heartbeat tolerates mornings
+// before the 16:00 UTC deadline and does not flag a night with no NBA games.
+export function collectionFreshness(snapshot,now=new Date()) {
+  const p=snapshot?.backfillProgress,deadline=new Date(now),today=deadline.toISOString().slice(0,10);
+  if(deadline.getUTCHours()<16)deadline.setUTCDate(deadline.getUTCDate()-1);
+  const expectedDay=deadline.toISOString().slice(0,10),day=p?.inventoryDayUTC;
+  const validDay=typeof day==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(day)&&Number.isFinite(Date.parse(day))&&new Date(day).toISOString().slice(0,10)===day;
+  const stale=!validDay||day<expectedDay||day>today;
+  const incomplete=snapshot?.connection!=='connected'||p?.inventoryComplete!==true||['pendingGames','sourceFailureGames','unmappedGames','unclassifiedGames'].some(k=>p?.[k]!==0)||snapshot?.games?.some(g=>g.type==='unknown'||(g.status==='finished'&&g.statsState!=='available')||g.refreshIssue);
+  return {state:stale?'stale':incomplete?'incomplete':'current',inventoryDay:validDay?day:null,expectedDay};
+}
