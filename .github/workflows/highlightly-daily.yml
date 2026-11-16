@@ -2,6 +2,9 @@ name: Backfill and refresh Highlightly season
 on:
   schedule:
     - cron: '17 9 * * *'
+    # Fallback opportunities only: the durable UTC reservation still permits
+    # at most one collection, including when the primary schedule starts late.
+    - cron: '47 10,12,14 * * *'
   workflow_dispatch:
     inputs:
       validation_only:
@@ -34,8 +37,12 @@ jobs:
           REPOSITORY: ${{ github.repository }}
         run: |
           gh api "repos/$REPOSITORY/pages" --jq 'select(.build_type == "legacy" and .source.branch == "main" and .source.path == "/") | .source.branch' | grep -qx main
-      - name: Check provider secret only for a data refresh
+      - name: Check whether the UTC budget is already reserved
+        id: budget
         if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        run: node tools/highlightly-actions.mjs eligibility
+      - name: Check provider secret only for a data refresh
+        if: (github.event_name != 'workflow_dispatch' || !inputs.validation_only) && steps.budget.outputs.allowed == 'true'
         env:
           HIGHLIGHTLY_API_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
         run: test -n "$HIGHLIGHTLY_API_KEY" || { echo 'Required Highlightly secret is missing.'; exit 1; }
@@ -44,7 +51,7 @@ jobs:
           npm test
           npm run validate
       - name: Commit full UTC budget reservation before any provider call
-        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        if: (github.event_name != 'workflow_dispatch' || !inputs.validation_only) && steps.budget.outputs.allowed == 'true'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
@@ -54,10 +61,10 @@ jobs:
           node tools/highlightly-git-push.mjs
       - name: Reconstruct private inputs on the fresh runner
         id: prepare
-        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        if: (github.event_name != 'workflow_dispatch' || !inputs.validation_only) && steps.budget.outputs.allowed == 'true'
         run: node tools/highlightly-actions.mjs prepare
       - name: Backfill missing season games and refresh recent corrections
-        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only
+        if: (github.event_name != 'workflow_dispatch' || !inputs.validation_only) && steps.budget.outputs.allowed == 'true'
         env:
           HIGHLIGHTLY_API_KEY: ${{ secrets.HIGHLIGHTLY_API_KEY }}
         run: node tools/highlightly-season-runner.mjs

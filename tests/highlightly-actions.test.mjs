@@ -1,6 +1,6 @@
 // Synthetic tests: never run hosted setup or access a real provider/private workspace.
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';
-import {reserveDailyBudget,runnerInputs,resumeSnapshot} from '../tools/highlightly-actions.mjs';import {migrateHighlightlySeason} from '../assets/core.mjs';import {fixture,now,player} from './fixtures.mjs';import {publicHighlightlySnapshot} from '../tools/highlightly-public.mjs';
+import {reserveDailyBudget,dailyBudgetEligibility,runnerInputs,resumeSnapshot} from '../tools/highlightly-actions.mjs';import {migrateHighlightlySeason} from '../assets/core.mjs';import {fixture,now,player} from './fixtures.mjs';import {publicHighlightlySnapshot} from '../tools/highlightly-public.mjs';
 const options={now:new Date('2026-11-20T09:00:00Z'),runId:'123'};
 const snapshot=()=>{const d=fixture();d.provider='Highlightly';d.scope={startDate:'2026-11-14',endDate:'2026-11-14',timeZone:'America/New_York',completeSeason:false};d.games.forEach(g=>g.provider='Highlightly');d.lines.forEach(l=>l.provider='Highlightly');return publicHighlightlySnapshot(d,{provider:'Highlightly',season:'2026-27',publicationAllowed:true,publicDatasetAllowed:true,approvedBy:'repository-owner',publicScope:'normalized-fantasy-stats',confirmedAt:now,source:'SYNTHETIC owner attestation'});};
 test('durable reservation blocks every second attempt on same UTC day including retry after failure',()=>{const r=reserveDailyBudget(null,options);assert.equal(r.reservedRequests,90);assert.throws(()=>reserveDailyBudget(r,options),/already reserved/);assert.throws(()=>reserveDailyBudget(r,{...options,runId:'124'}),/already reserved/);assert.equal(reserveDailyBudget(r,{...options,now:new Date('2026-11-21T09:00:00Z')}).dayUTC,'2026-11-21');});
@@ -10,7 +10,7 @@ test('workflow reserves and pushes budget before provider use; explicitly rebuil
 
 test('hosted run refuses last UTC hour so its forty-five-minute timeout cannot cross midnight',()=>{assert.throws(()=>reserveDailyBudget(null,{...options,now:new Date('2026-11-20T23:01:00Z')}),/before 23:00/);});
 test('commissioning reservation prevents refresh on November 10 and permits November 11',async()=>{const seeded=reserveDailyBudget(null,{now:new Date('2026-11-10T00:00:00Z'),runId:'0'});assert.throws(()=>reserveDailyBudget(seeded,{now:new Date('2026-11-10T10:00:00Z'),runId:'987'}),/already reserved/);assert.equal(reserveDailyBudget(seeded,{now:new Date('2026-11-11T09:00:00Z'),runId:'988'}).dayUTC,'2026-11-11');});
-test('validation-only dispatch defaults safe and skips all provider or publication mutation steps',async()=>{const s=await fs.readFile('.github/workflows/highlightly-daily.yml','utf8');assert.match(s,/validation_only:[\s\S]*?type: boolean\s+default: true/);for(const name of ['Check provider secret only for a data refresh','Commit full UTC budget reservation before any provider call','Reconstruct private inputs on the fresh runner','Backfill missing season games and refresh recent corrections'])assert.ok(s.includes(`- name: ${name}\n${name==='Reconstruct private inputs on the fresh runner'?'        id: prepare\n':''}        if: github.event_name != 'workflow_dispatch' || !inputs.validation_only`));assert.match(s,/EXPECTED_COMMIT: \$\{\{ steps.target.outputs.commit \}\}/);});
+test('validation-only dispatch defaults safe and skips all provider or publication mutation steps',async()=>{const s=await fs.readFile('.github/workflows/highlightly-daily.yml','utf8');assert.match(s,/validation_only:[\s\S]*?type: boolean\s+default: true/);for(const name of ['Check provider secret only for a data refresh','Commit full UTC budget reservation before any provider call','Reconstruct private inputs on the fresh runner','Backfill missing season games and refresh recent corrections'])assert.ok(s.includes(`- name: ${name}\n${name==='Reconstruct private inputs on the fresh runner'?'        id: prepare\n':''}        if: (github.event_name != 'workflow_dispatch' || !inputs.validation_only) && steps.budget.outputs.allowed == 'true'`));assert.match(s,/EXPECTED_COMMIT: \$\{\{ steps.target.outputs.commit \}\}/);});
 
 test('durable normalized checkpoint resumes without removing already verified public games',()=>{const current=snapshot(),next=structuredClone(current);assert.equal(resumeSnapshot(current,null),current);assert.equal(resumeSnapshot(current,next),next);next.games=[];next.lines=[];assert.throws(()=>resumeSnapshot(current,next),/remove/);});
 test('workflow publishes durable partial progress even when collection fails after prepare',async()=>{const s=await fs.readFile('.github/workflows/highlightly-daily.yml','utf8');assert.match(s,/name: Validate and push only normalized public files\n        if: always\(\) && steps.prepare.outcome == 'success'/);assert.match(s,/node tools\/highlightly-season-runner.mjs publish/);});
@@ -81,4 +81,24 @@ test('runner upgrades provider-only identities and all existing lines without re
  const result=runnerInputs(current,extra);assert.equal(result.candidate.players.length,current.players.length);assert.equal(result.candidate.players[0].playerKey,unknown.playerKey);assert.equal(result.candidate.lines.find(l=>l.providerId===101).nbaId,1);assert.deepEqual(result.candidate.lines[0].stats,current.lines[0].stats);assert.deepEqual(current,before);
  assert.equal(runnerInputs(current).identities.players.some(p=>p.providerId===101),false);
  const collision={...extra,players:[{...player(1),nbaId:2}]};assert.throws(()=>runnerInputs(current,collision),/collision/);
+});
+
+
+test('late fallback checks skip only a valid already-reserved day and never alter its reservation',()=>{
+ const r=reserveDailyBudget(null,options),before=structuredClone(r);
+ assert.deepEqual(dailyBudgetEligibility(null,options),{allowed:true,reason:'available'});
+ assert.deepEqual(dailyBudgetEligibility(r,{...options,runId:'456'}),{allowed:false,reason:'already-reserved'});
+ assert.deepEqual(r,before);
+ assert.deepEqual(dailyBudgetEligibility(r,{...options,now:new Date('2026-11-21T10:47:00Z')}),{allowed:true,reason:'available'});
+ for(const bad of [{...r,status:'completed'},{...r,reservedRequests:0},{...r,dayUTC:'2026-11-21'},{}])assert.throws(()=>dailyBudgetEligibility(bad,options));
+ assert.throws(()=>dailyBudgetEligibility(r,{...options,runId:'bad'}));
+ assert.throws(()=>dailyBudgetEligibility(r,{...options,now:new Date('2026-11-20T23:01:00Z')}));
+});
+test('fallback schedules are serialized and gate all network collection steps on strict eligibility',async()=>{
+ const s=await fs.readFile('.github/workflows/highlightly-daily.yml','utf8');
+ assert.match(s,/cron: '47 10,12,14 \* \* \*'/);
+ assert.match(s,/group: highlightly-daily-publication\s+cancel-in-progress: false/);
+ assert.ok(s.indexOf('run: node tools/highlightly-actions.mjs eligibility')<s.indexOf('Check provider secret only'));
+ const gates=[...s.matchAll(/steps.budget.outputs.allowed == 'true'/g)];assert.equal(gates.length,4);
+ assert.match(s,/if: always\(\) && steps.prepare.outcome == 'success'/);
 });

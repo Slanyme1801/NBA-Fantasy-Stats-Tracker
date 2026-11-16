@@ -266,3 +266,20 @@ provider data, alter the daily reservation or export a raw response. It
 refuses to change existing game/player lines and is a no-op once the game
 has been published. Only validated normalized releases and their checkpoint
 are eligible for a non-forced Git push.
+
+
+### Durcissement de la planification du 16 novembre 2026
+
+Le déclenchement principal reste à 09:17 UTC. Des vérifications de secours à
+10:47, 12:47 et 14:47 UTC donnent d'autres occasions de démarrer si GitHub
+omet ou retarde un événement. Elles ne garantissent ni l'heure ni l'exécution,
+comme le précise la [documentation GitHub](https://docs.github.com/en/actions/how-tos/troubleshoot-workflows).
+Tous les événements, y compris les dispatchs manuels, partagent le verrou de
+concurrence existant. Au checkout de main, une vérification strictement validée
+du budget ignore explicitement une journée déjà réservée, sans appel fournisseur
+et sans changer la réservation. Un état malformé ou futur reste un échec bloquant.
+La réservation/push avant réseau et la limite de 90 requêtes sont inchangées.
+Un skip ne signifie pas que le premier run a réussi : après une panne ayant
+réservé le jour, il faut inspecter les checkpoints, pas effacer la réservation.
+Les tests synthétiques ne consomment aucun quota. Seul un futur événement
+planifié effectivement exécuté pourra confirmer ce chemin automatique en production.

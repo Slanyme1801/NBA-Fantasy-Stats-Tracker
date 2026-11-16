@@ -11,16 +11,22 @@ export function reserveDailyBudget(previous,{now=new Date(),runId}){
   if(!/^\d+$/.test(String(runId)))throw new Error('Invalid workflow run ID');
   if(previous){
     if(previous.version!==1||previous.provider!=='Highlightly'||!/^\d{4}-\d{2}-\d{2}$/.test(previous.dayUTC)||!Number.isFinite(Date.parse(previous.dayUTC))||new Date(previous.dayUTC).toISOString().slice(0,10)!==previous.dayUTC||previous.dayUTC>today||previous.reservedRequests!==90||!/^\d+$/.test(String(previous.runId))||previous.status!=='reserved-before-network'||!Number.isFinite(Date.parse(previous.reservedAt))||new Date(previous.reservedAt).toISOString().slice(0,10)!==previous.dayUTC)throw new Error('Invalid or future durable quota reservation');
-    if(previous.dayUTC===today)throw new Error('Today is already reserved; no second Highlightly attempt permitted');
+    if(previous.dayUTC===today)throw Object.assign(new Error('Today is already reserved; no second Highlightly attempt permitted'),{code:'DAILY_BUDGET_RESERVED'});
   }
   return {version:1,provider:'Highlightly',dayUTC:today,reservedRequests:90,runId:String(runId),reservedAt:now.toISOString(),status:'reserved-before-network'};
+}
+// A late schedule is a deliberate no-op, not a failed collection. Reuse the
+// strict reservation validator so corrupt/future state still fails closed.
+export function dailyBudgetEligibility(previous,options){
+  try{reserveDailyBudget(previous,options);return {allowed:true,reason:'available'};}
+  catch(error){if(error.code==='DAILY_BUDGET_RESERVED')return {allowed:false,reason:'already-reserved'};throw error;}
 }
 export function runnerInputs(snapshot,verifiedIdentities=null){
   validateSeason(snapshot);
   if(snapshot.provider!=='Highlightly'||snapshot.publicationPolicy!=='authorized-public-normalized'||snapshot.publicationAuthorization?.scope!=='normalized-fantasy-stats')throw new Error('An authorized public Highlightly snapshot is required');
   const authorization={provider:'Highlightly',season:'2026-27',publicationAllowed:true,publicDatasetAllowed:true,approvedBy:'repository-owner',publicScope:'normalized-fantasy-stats',confirmedAt:snapshot.publicationAuthorization.confirmedAt,source:'Owner attestation recorded in the validated public snapshot'};
   // Carry only previously verified scheduling metadata, never infer activation from YAML presence.
-  if(snapshot.refreshSchedule?.configured===true&&snapshot.refreshSchedule?.verified===true)authorization.refreshSchedule={...snapshot.refreshSchedule,description:'Daily attempt at 09:17 UTC. Verified partial dataset only; GitHub Actions may run late or skip scheduled events.'};
+  if(snapshot.refreshSchedule?.configured===true&&snapshot.refreshSchedule?.verified===true)authorization.refreshSchedule={...snapshot.refreshSchedule,description:'Daily attempt at 09:17 UTC, with fallback checks at 10:47, 12:47 and 14:47 UTC; at most one reserved collection per UTC day. Verified partial dataset only; GitHub Actions may run late or skip scheduled events.'};
   const candidate=migrateHighlightlySeason(bootstrapPrivateSnapshot(snapshot,authorization));
   const players=[...candidate.players];
   if(verifiedIdentities!==null){
@@ -71,7 +77,16 @@ export async function prepareRunner({runId,now=new Date()}){
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
   try{
     if(process.env.GITHUB_ACTIONS!=='true')throw new Error('Hosted GitHub Actions execution required');
-    if(process.argv[2]==='reserve'){
+    if(process.argv[2]==='eligibility'){
+      const prior=await readJSON('.github/highlightly-quota.json').catch(e=>{if(e.code==='ENOENT')return null;throw e;});
+      const result=dailyBudgetEligibility(prior,{runId:process.env.GITHUB_RUN_ID});
+      if(!process.env.GITHUB_OUTPUT)throw new Error('GitHub step output required');
+      await fs.appendFile(process.env.GITHUB_OUTPUT,`allowed=${result.allowed}\n`);
+      if(!result.allowed){
+        console.log('UTC day already reserved: intentionally skipping this collection without provider calls.');
+        if(process.env.GITHUB_STEP_SUMMARY)await fs.appendFile(process.env.GITHUB_STEP_SUMMARY,'UTC day already reserved by an earlier run. This run intentionally makes no provider calls; this does not prove the earlier run succeeded.\n');
+      }
+    }else if(process.argv[2]==='reserve'){
       const prior=await readJSON('.github/highlightly-quota.json').catch(e=>{if(e.code==='ENOENT')return null;throw e;});
       await atomicJSON('.github/highlightly-quota.json',reserveDailyBudget(prior,{runId:process.env.GITHUB_RUN_ID}));
     }else if(process.argv[2]==='prepare')await prepareRunner({runId:process.env.GITHUB_RUN_ID});
