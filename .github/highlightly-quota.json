@@ -1,9 +1,9 @@
 {
   "version": 1,
   "provider": "Highlightly",
-  "dayUTC": "2026-11-16",
+  "dayUTC": "2026-11-17",
   "reservedRequests": 90,
-  "runId": "43856242174",
-  "reservedAt": "2026-11-16T11:17:03.198Z",
+  "runId": "44149826140",
+  "reservedAt": "2026-11-17T18:37:56.806Z",
   "status": "reserved-before-network"
 }
