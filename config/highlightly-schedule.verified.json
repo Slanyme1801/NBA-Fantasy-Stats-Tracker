@@ -1880,21 +1880,21 @@
     },
     {
       "dateET": "2026-11-17",
-      "timeET": "22:00",
+      "timeET": "23:00",
       "home": "LAL",
       "away": "CHA",
       "type": "regular",
-      "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=4",
-      "verifiedAt": "2026-11-10T21:43:29.194277Z"
+      "source": "https://www.nba.com/game/cha-vs-lal-0022600256/play-by-play",
+      "verifiedAt": "2026-11-18T18:35:00Z"
     },
     {
       "dateET": "2026-11-17",
-      "timeET": "23:00",
+      "timeET": "22:30",
       "home": "LAC",
       "away": "UTAH",
       "type": "regular",
-      "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=4",
-      "verifiedAt": "2026-11-10T21:43:29.194277Z"
+      "source": "https://www.nba.com/game/uta-vs-lac-0022600257/play-by-play",
+      "verifiedAt": "2026-11-18T18:35:00Z"
     },
     {
       "dateET": "2026-11-18",
