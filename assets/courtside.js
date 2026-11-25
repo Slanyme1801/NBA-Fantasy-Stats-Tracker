@@ -72,6 +72,7 @@ const spotlightAliases={
  'highlightly:111':['Giannis Antetokounmpo',203507],'highlightly:233':['Karl-Anthony Towns',1626157],
  'highlightly:113':['Bam Adebayo',1628389],'highlightly:222':['Joel Embiid',203954],
  'highlightly:84':['P.J. Washington',1629023],'highlightly:151':['Franz Wagner',1630532],
+ 'highlightly:75924692':['Kon Knueppel',1642851],
  'highlightly:76595312':['Dillon Mitchell',1641759],'highlightly:552':['Dillon Mitchell',1641759]
 };
 // Day-to-day imports can expose a pending provider key instead of the NBA
