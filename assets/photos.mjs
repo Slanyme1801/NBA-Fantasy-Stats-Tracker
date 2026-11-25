@@ -1,3 +1,4 @@
+import {withRequestTimeout} from './request-timeout.mjs';
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const safeUrl=value=>{try{const u=new URL(value);if(u.protocol==='http:'&&u.hostname==='creativecommons.org')u.protocol='https:';return u.protocol==='https:'?escape(u.href):'';}catch{return '';}};
 // An editorial source is provenance, not permission or a licence certification.
@@ -19,5 +20,5 @@ export function createPlayerPhotos(manifest={}){
  };
 }
 export async function loadPlayerPhotos(){
- try{const url=new URL('../data/player-photos.json',import.meta.url);url.searchParams.set('refresh',String(Date.now()));const r=await fetch(url,{cache:'no-store',signal:AbortSignal.timeout(5000)});if(!r.ok)return createPlayerPhotos();return createPlayerPhotos(await r.json());}catch{return createPlayerPhotos();}
+ try{const url=new URL('../data/player-photos.json',import.meta.url);url.searchParams.set('refresh',String(Date.now()));return await withRequestTimeout(8000,async signal=>{const r=await fetch(url,{cache:'no-store',signal});if(!r.ok)return createPlayerPhotos();return createPlayerPhotos(await r.json());});}catch{return createPlayerPhotos();}
 }

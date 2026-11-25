@@ -5,15 +5,18 @@ import {loadPlayerPhotos} from './photos.mjs';
 import {loadCurrent} from './loader.mjs';
 import {createSessionPersistence} from './session.mjs';
 import {createAppUpdates} from './updates.mjs';
+import {withRequestTimeout} from './request-timeout.mjs';
 window.AppUpdates=createAppUpdates();
 const script = src => new Promise((resolve,reject)=>{
   const element=document.createElement('script'); element.src=src; element.onload=resolve; element.onerror=reject; document.body.append(element);
 });
 try {
   const pendingPhotos=loadPlayerPhotos();
-  const response=await fetch(new URL('data/history-v1.json',document.baseURI));
-  if(!response.ok) throw new Error('Données historiques indisponibles');
-  const history=await response.json();
+  const history=await withRequestTimeout(10000,async signal=>{
+    const response=await fetch(new URL('data/history-v1.json',document.baseURI),{signal});
+    if(!response.ok) throw new Error('Données historiques indisponibles');
+    return response.json();
+  });
   if(history.players?.length!==1029 || history.rows?.length!==2867 || history.seasons?.length!==5) throw new Error('Échec de la validation des données historiques');
   window.__DATASET=history;
   window.FantasyCore=core;
@@ -33,7 +36,7 @@ try {
   await window.AppUpdates.ready();
 } catch(error) {
   const view=document.getElementById('view');
-  view.innerHTML='<div class="empty"><h2>Impossible de charger les données</h2><p>La première visite nécessite une connexion. Les données déjà mises en cache restent sur cet appareil.</p><button class="btn" onclick="location.reload()">Réessayer</button></div>';
+  view.innerHTML='<div class="empty"><h2>Impossible de charger les données</h2><p>La première visite nécessite une connexion. Les données déjà mises en cache restent sur cet appareil.</p><button class="btn" onclick="location.reload()">Réessayer</button> <a href="./reparer.html">Réparer l’affichage</a></div>';
   console.error(error);
 }
 

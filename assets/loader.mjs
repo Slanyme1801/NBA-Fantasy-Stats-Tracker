@@ -1,4 +1,5 @@
 import {emptySeason,validateSeason} from './core.mjs';
+import {withRequestTimeout} from './request-timeout.mjs';
 // Never overwrite schema-1 fallback data used by an older installed app.
 const CACHE = 'nbafs-verified-v3', LEGACY_CACHE = 'nbafs-verified-v2';
 export async function loadCurrent({fetcher=fetch,cacheStorage=globalThis.caches,base=document.baseURI,knownIds=[]}={}) {
@@ -6,13 +7,17 @@ export async function loadCurrent({fetcher=fetch,cacheStorage=globalThis.caches,
   let cache;
   try { cache=await cacheStorage?.open(CACHE); } catch {}
   try {
-    const manifestResponse=await fetcher(new URL('data/manifest.json',base),{cache:'no-store',signal:AbortSignal.timeout(8000)});
-    if(!manifestResponse.ok) throw new Error(`Manifest HTTP ${manifestResponse.status}`);
-    const manifest=await manifestResponse.json();
+    const manifest=await withRequestTimeout(8000,async signal=>{
+      const response=await fetcher(new URL('data/manifest.json',base),{cache:'no-store',signal});
+      if(!response.ok) throw new Error(`Manifest HTTP ${response.status}`);
+      return response.json();
+    });
     if(manifest.schemaVersion!==1 || !/^data\/releases\/[a-z0-9.-]+\.json$/.test(manifest.file) || !/^[a-f0-9]{64}$/.test(manifest.sha256)) throw new Error('Invalid data manifest');
-    const response=await fetcher(new URL(manifest.file,base),{cache:'no-store',signal:AbortSignal.timeout(8000)});
-    if(!response.ok) throw new Error(`Data HTTP ${response.status}`);
-    const bytes=await response.arrayBuffer();
+    const bytes=await withRequestTimeout(8000,async signal=>{
+      const response=await fetcher(new URL(manifest.file,base),{cache:'no-store',signal});
+      if(!response.ok) throw new Error(`Data HTTP ${response.status}`);
+      return response.arrayBuffer();
+    });
     const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
     if(hash!==manifest.sha256) throw new Error('Data checksum mismatch');
     const data=validateSeason(JSON.parse(new TextDecoder().decode(bytes)),knownIds);

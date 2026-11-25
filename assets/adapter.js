@@ -3,8 +3,23 @@
   const response=body=>({ok:true,json:async()=>body});
   const historicalIds=new Set(window.__DATASET.players.map(p=>p[0]));
   const parseId=id=>typeof id==='number'&&Number.isSafeInteger(id)&&id>0?id:typeof id==='string'&&/^[1-9]\d*$/.test(id)&&Number.isSafeInteger(Number(id))?Number(id):typeof id==='string'&&/^highlightly:[1-9]\d*$/.test(id)&&Number.isSafeInteger(Number(id.split(':')[1]))?id:null;
-  const canonical=id=>{const parsed=parseId(id);if(parsed===null)return null;const p=core.findPlayer(data,parsed);return p?core.playerIdFor(p):parsed;};
-  const matches=(row,id)=>{const p=core.findPlayer(data,id);return p?core.playerKeyFor(row)===core.playerKeyFor(p):typeof id==='number'&&row.nbaId===id;};
+  // These are lookup indexes over the verified release, not identity merges.
+  // Use the first exact match, as core.findPlayer does. In particular a pending
+  // provider identity still has its own key and its own lines.
+  const nbaPlayers=new Map(),providerPlayers=new Map(),byKey=new Map(),byNbaId=new Map();
+  const findPlayer=id=>(typeof id==='number'?nbaPlayers:providerPlayers).get(id)||null;
+  for(const p of data.players){
+    const key=core.playerKeyFor(p);
+    if(key&&!providerPlayers.has(key))providerPlayers.set(key,p);
+    if(Number.isSafeInteger(p.nbaId)&&!nbaPlayers.has(p.nbaId))nbaPlayers.set(p.nbaId,p);
+  }
+  const addLine=(index,key,row)=>{if(key==null)return;let lines=index.get(key);if(!lines)index.set(key,lines=[]);lines.push(row);};
+  for(const row of data.lines){addLine(byKey,core.playerKeyFor(row),row);addLine(byNbaId,row.nbaId,row);}
+  const canonical=id=>{const parsed=parseId(id);if(parsed===null)return null;const p=findPlayer(parsed);return p?core.playerIdFor(p):parsed;};
+  const matches=(row,id)=>{const p=findPlayer(id);return p?core.playerKeyFor(row)===core.playerKeyFor(p):typeof id==='number'&&row.nbaId===id;};
+  const linesFor=id=>{const p=findPlayer(id);return (p?byKey.get(core.playerKeyFor(p)):typeof id==='number'?byNbaId.get(id):null)||[];};
+  const games=new Map(data.games.map(g=>[g.id,g]));
+  const teamCodes=[...new Map(data.games.flatMap(g=>[g.home,g.away]).map(t=>[t.id,t.code]))];
   const html=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   window.PlayerIdentity={canonical,matches,html,inlineArg:id=>html(JSON.stringify(canonical(id))),path:id=>encodeURIComponent(String(canonical(id)))};
   const eligibility=id=>{const resolved=canonical(id);return typeof resolved==='number'?data.positions.entries.find(p=>p.nbaId===resolved):undefined;};
@@ -12,20 +27,19 @@
   const identityMetadata=person=>{
     const id=person.player_id,verifiedPosition=eligibility(id)?.positions.join('/')||null;
     const historicalPosition=person.position||null,historicalTeam=person.last_team||null;
-    const games=new Map(data.games.map(g=>[g.id,g]));
-    const latest=data.lines.filter(r=>matches(r,id)&&r.participation==='played'&&games.get(r.gameId)?.status==='finished'&&games.get(r.gameId)?.statsState==='available')
+    const latest=linesFor(id).filter(r=>r.participation==='played'&&games.get(r.gameId)?.status==='finished'&&games.get(r.gameId)?.statsState==='available')
       .sort((a,b)=>games.get(b.gameId).start.localeCompare(games.get(a.gameId).start)||b.gameId-a.gameId)[0];
     const game=latest?games.get(latest.gameId):null,team=game?(latest.teamId===game.home.id?game.home.code:game.away.code):null;
     const positionLabel=verifiedPosition?`ESPN ${core.SEASON}: ${verifiedPosition}`:historicalPosition?`Historical position: ${historicalPosition} · ESPN not imported`:'ESPN position not imported';
     const teamLabel=team?`Latest imported team: ${team} (${game.start.slice(0,10)} UTC)`:historicalTeam?`Historical team: ${historicalTeam}`:'Team not available';
-    const mapped=core.findPlayer(data,id),pending=mapped&&mapped.nbaId==null;
+    const mapped=findPlayer(id),pending=mapped&&mapped.nbaId==null;
     return {...person,player_key:mapped?core.playerKeyFor(mapped):null,identity_pending:!!pending,position:verifiedPosition,last_team:team||historicalTeam,historical_position:historicalPosition,historical_last_team:historicalTeam,team_as_of:game?.start||null,team_basis:team?'latest-verified-import':historicalTeam?'historical':'unavailable',identity_label:`${pending?'NBA identity link pending · ':''}${positionLabel} · ${teamLabel}`};
   };
   const weights=async()=> (await (await historical('/api/scoring')).json()).scoring;
   const seasonRow=(id,w)=>{
     const a=core.aggregate(data,id,{weights:w});
-    const teamIds=[...new Set(data.lines.filter(r=>matches(r,id)).map(r=>r.teamId))];
-    const teams=[...new Map(data.games.flatMap(g=>[g.home,g.away]).map(t=>[t.id,t.code])).entries()].filter(([id])=>teamIds.includes(id)).map(([,code])=>code);
+    const teamIds=new Set(linesFor(id).map(r=>r.teamId));
+    const teams=teamCodes.filter(([id])=>teamIds.has(id)).map(([,code])=>code);
     return {season:core.SEASON,played:a.gp>0,gp:a.gp,...a.averages,min:a.minutes,fpts_per_game:a.fptsPerGame,total_fpts:a.totalFpts,team:teams.join('/'),teams_label:teams.join('/'),team_count:teams.length,exact:true,note:data.connection==='not-connected'?'Not connected':'No complete regular-season games',aggregate:a};
   };
   window.AppApi=async function(path,options){
@@ -45,7 +59,7 @@
       let p;
       if(historicalIds.has(id))p=await (await historical('/api/player/'+id,options)).json();
       else {
-        const person=core.findPlayer(data,id);if(!person) return {ok:false,json:async()=>({detail:'Player not found'})};
+        const person=findPlayer(id);if(!person) return {ok:false,json:async()=>({detail:'Player not found'})};
         p={player_id:id,full_name:person.name,position:null,last_team:null,summary:{simple_avg:null,weighted_avg:null,total_fpts:null,total_gp:0,seasons_played:0,best_season:null},seasons:window.__DATASET.seasons.map(season=>({season,played:false,note:'No historical record'})),scoring:await weights()};
       }
       p.seasons.push(seasonRow(id,p.scoring));p.eligibility=eligibility(id);return response(identityMetadata(p));

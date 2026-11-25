@@ -74,8 +74,26 @@ const spotlightAliases={
  'highlightly:84':['P.J. Washington',1629023],'highlightly:151':['Franz Wagner',1630532],
  'highlightly:76595312':['Dillon Mitchell',1641759],'highlightly:552':['Dillon Mitchell',1641759]
 };
+// Day-to-day imports can expose a pending provider key instead of the NBA
+// key. Reuse approved artwork only when the official current registry and
+// historic list agree on one exact name, without changing any stat identity.
+function buildPortraitLinks(){
+ const historyNames=new Map(),currentNames=new Map(),pendingNames=new Map();
+ const record=(index,name,id)=>{const key=normalized(name);let ids=index.get(key);if(!ids)index.set(key,ids=new Set());ids.add(id);};
+ for(const [id,name] of window.__DATASET.players)record(historyNames,name,id);
+ for(const p of currentData.players)record(p.nbaId==null?pendingNames:currentNames,p.name,p.nbaId??C.playerKeyFor(p));
+ const entries=new Map();
+ for(const [name,keys] of pendingNames){
+   const h=historyNames.get(name),live=currentNames.get(name);
+   if(keys.size!==1||h?.size!==1||live?.size!==1)continue;
+   const [id]=h;
+   if(id!==1630166&&live.has(id)&&Object.hasOwn(portraitFraming,id))entries.set([...keys][0],[name,id]);
+ }
+ return entries;
+}
+const verifiedPortraitLinks=buildPortraitLinks();
 function spotlightArtId(r){
- const link=spotlightAliases[r.id];
+ const link=spotlightAliases[r.id]||verifiedPortraitLinks.get(r.id);
  return link&&normalized(r.name)===normalized(link[0])?link[1]:artId({player_id:r.id,full_name:r.name});
 }
 function framedSpotlightPortrait(r,team){
@@ -129,26 +147,54 @@ function applyView(){document.body.dataset.courtPage=activePage;document.querySe
 go=function(p){route(p,null);oldGo(p);applyView();if(!restoring&&ready)window.scrollTo(0,0);};
 openPlayer=async function(id,{fromSpotlight=false}={}){
  const key=canonicalPlayerId(id);if(key===null)return;
- const moving=(!restoring&&activePage==='home'&&String(key)!=='1630166'&&document.startViewTransition&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+ // A full-page compositor snapshot must never gate navigation on touch.
+ // Keep the individual edition intros: those animate after the page is open.
+ const desktopMotion=window.matchMedia('(min-width: 761px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches;
+ const moving=!restoring&&activePage==='home'&&String(key)!=='1630166'&&typeof document.startViewTransition==='function'&&desktopMotion;
  const hero=moving?box().querySelector('.cs-feature'):null;
  const matching=hero&&String(hero.querySelector('[data-player]')?.dataset.player)===String(key)&&(fromSpotlight||document.activeElement===hero.querySelector('[data-player]'));
  const from=matching?hero.querySelector('.cs-portrait-slot'):null;
  route('player',key);
- const update=async()=>{
-   await oldPlayer(key);
-   applyView();
-   const back=box().querySelector('.court-back');if(back)back.hidden=!history.state?.court?.back;
- };
+ const origin=routeGeneration;
+ let rendered;
+ const update=()=>rendered??=(async()=>{
+   if(origin!==routeGeneration)return;
+   const generation=origin+1;
+   try{
+     await oldPlayer(key);
+     if(generation!==routeGeneration)return;
+     applyView();
+     const back=box().querySelector('.court-back');if(back)back.hidden=!history.state?.court?.back;
+   }catch(error){
+     if(generation!==routeGeneration)return;
+     box().innerHTML='<section class="panel"><h2>Impossible d’ouvrir cette fiche</h2><button type="button" class="btn">Réessayer</button> <a href="./reparer.html">Réparer l’affichage</a></section>';
+     box().querySelector('button').onclick=()=>openPlayer(key);
+     box().prepend(backButton());
+     applyView();
+     console.error(error);
+   }
+ })();
  if(!from)return update();
  from.style.viewTransitionName='court-portrait';
- let target;
- const transition=document.startViewTransition(async()=>{
-   await update();
-   target=box().querySelector('.player-head .profile-portrait');
-   if(target)target.style.viewTransitionName='court-portrait';
- });
- transition.finished.catch(()=>{}).finally(()=>{from.style.viewTransitionName='';if(target)target.style.viewTransitionName='';});
- return transition.updateCallbackDone;
+ let target,transition;
+ const cleanup=()=>{from.style.viewTransitionName='';if(target)target.style.viewTransitionName='';};
+ try{
+   transition=document.startViewTransition(async()=>{
+     await update();
+     if(activePage!=='player'||String(CURRENT?.player_id)!==String(key))return;
+     target=box().querySelector('.player-head .profile-portrait');
+     if(target)target.style.viewTransitionName='court-portrait';
+   });
+   transition.ready.catch(()=>{});
+   transition.finished.then(cleanup,cleanup);
+   // Even a compositor that never invokes its callback cannot stall the route.
+   let timer;
+   const fallback=new Promise(resolve=>{timer=setTimeout(()=>{
+     try{transition.skipTransition();}catch{}
+     cleanup();resolve(update());
+   },250);});
+   return await Promise.race([transition.updateCallbackDone,fallback]).catch(update).finally(()=>clearTimeout(timer));
+ }catch{cleanup();return update();}
 };
 function openMatch(id){
  if(!games.has(id))return;
@@ -366,7 +412,7 @@ if(vv){
 window.Courtside={color:theme,artId:profileArt,home,board,profile,tradeUI,tradeVerdict,fallbackSearch,matchTeam,editorialLayout,editorialSlide,hasDirectRoute:()=>!!readRoute(),async initialRoute(){
  const direct=readRoute(), p=activePage==='player'?'player':activePage;
  const r=direct||{p,id:p==='player'?CURRENT?.player_id:null};
- history.scrollRestoration='manual';
+ try{history.scrollRestoration='manual';}catch{}
  try{history.replaceState({court:{...r,seq:++nextRoute,back:false}},'',href(r.p,r.id));}catch{}
  if(direct)await restoreRoute(r,false);
  ready=true;applyView();
