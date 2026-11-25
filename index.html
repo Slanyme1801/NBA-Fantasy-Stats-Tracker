@@ -17,6 +17,13 @@
 <link rel="stylesheet" href="./assets/dashboard.css">
 
 
+<link rel="stylesheet" href="./assets/courtside.css" id="court-theme-sheet">
+<link rel="preload" href="./assets/legacy.js" as="script">
+<link rel="preload" href="./assets/adapter.js" as="script">
+<link rel="preload" href="./assets/app.js" as="script">
+<link rel="preload" href="./assets/companion.js" as="script">
+<link rel="preload" href="./assets/dashboard.js" as="script">
+<link rel="preload" href="./assets/courtside.js" as="script">
 </head>
 <body>
 <header class="top">
@@ -25,7 +32,7 @@
     <input aria-label="Rechercher des joueurs NBA" id="navSearch" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="Rechercher un joueur NBA…" autocomplete="off">
     <div class="results" id="navResults" hidden></div>
   </div>
-  <nav>
+  <nav aria-label="Navigation principale">
     <button id="tab-home" onclick="go('home')">Accueil</button>
     <button id="tab-board" onclick="go('board')">Classements</button>
     <button id="tab-trades" onclick="go('trades')">Trades</button>

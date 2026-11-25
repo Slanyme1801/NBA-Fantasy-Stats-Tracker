@@ -3,16 +3,24 @@
   let selected='available',stopCarousel=()=>{};
   const labels={available:'Dernière soirée disponible','7':'7 derniers jours','14':'14 derniers jours','30':'30 derniers jours'};
   const periods=['available','7','14','30'];
-  const ranking=period=>window.FantasyDashboard.dashboardRanking(currentData,{period,weights:META.scoring});
+  // One immutable result per period and scoring snapshot; don't rerun the exact
+  // aggregation every time the owner returns to the home screen.
+  const quickRanks=new Map();
+  const ranking=period=>{
+    const day=new Date().toISOString().slice(0,10), guard=JSON.stringify([day,currentData.updatedAt,currentData.games.length,currentData.lines.length,currentData.players.length,META.scoring]);
+    if(quickRanks.guard!==guard){quickRanks.clear();quickRanks.guard=guard;}
+    if(!quickRanks.has(period))quickRanks.set(period,window.FantasyDashboard.dashboardRanking(currentData,{period,weights:META.scoring}));
+    return quickRanks.get(period);
+  };
   const rangeLabel=r=>r.range.start?`${r.range.start}${r.range.start===r.range.end?'':` au ${r.range.end}`} · ${r.range.timeZone}`:'Aucune soirée disponible';
   const originalHome=renderHome;
-  renderHome=function(){originalHome();el('view').querySelector('.hero').insertAdjacentHTML('afterend',`<section class="dashboard panel" aria-labelledby="dashboardTitle"><div class="section-title"><div><span class="eyebrow">LE RYTHME FANTASY</span><h2 id="dashboardTitle">Les performances à la une</h2></div><span class="badge">${esc(scoreLabel())}</span></div><p class="muted">Top 10 disponible · moyenne fantasy par match.</p><div class="dashboard-periods" role="group" aria-label="Période des performances">${periods.map(key=>[key,labels[key]]).map(([key,label])=>`<button type="button" class="btn ghost" data-period="${key}" aria-pressed="${selected===key}">${label}</button>`).join('')}</div><div id="dashboardBody"></div></section>`);document.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{selected=button.dataset.period;renderDashboard();});renderDashboard();};
+  renderHome=function(){originalHome();el('view').querySelector('.hero').insertAdjacentHTML('afterend',`<section class="dashboard panel" aria-labelledby="dashboardTitle"><div class="section-title"><div><span class="eyebrow">LE RYTHME FANTASY</span><h2 id="dashboardTitle">Les performances à la une</h2></div><span class="badge">${esc(scoreLabel())}</span></div><p class="muted">Top 10 disponible · moyenne fantasy par match.</p><div class="dashboard-periods" role="group" aria-label="Période des performances">${periods.map(key=>[key,labels[key]]).map(([key,label])=>`<button type="button" class="btn ghost" data-period="${key}" aria-pressed="${selected===key}">${label}</button>`).join('')}</div><div id="dashboardBody"></div></section>`);window.Courtside?.home();document.querySelectorAll('[data-period]').forEach(button=>button.onclick=()=>{selected=button.dataset.period;renderDashboard();});renderDashboard();};
   function renderDashboard(){
     stopCarousel();
     const result=ranking(selected),rows=result.rows.slice(0,10);
     document.querySelectorAll('[data-period]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.period===selected));
     el('dashboardBody').innerHTML=`<div class="dashboard-summary"><div><h3><button class="text-button" id="dashboardCategory">${esc(labels[selected])} →</button></h3><p class="small">${rangeLabel(result)}</p></div><button class="btn ghost" id="dashboardRankings">Voir ce classement →</button></div>${rows.length?`<section id="dashboardCarousel" class="dashboard-carousel" role="region" aria-roledescription="carrousel" aria-label="Meilleures performances"><div class="dashboard-carousel-heading"><span class="eyebrow">À LA UNE</span><span id="dashboardSlideCount"></span></div><div class="dashboard-slide-window"><div id="dashboardSlide"></div></div><div class="dashboard-carousel-controls"><button type="button" class="btn ghost" id="dashboardPrevious" aria-label="Joueur précédent">←</button><button type="button" class="btn ghost" id="dashboardNext" aria-label="Joueur suivant">→</button></div></section><h3 id="dashboardComplete">Top complet : ${rows.length}</h3><div class="dashboard-table-wrap"><table class="dashboard-table"><caption class="small">${esc(labels[selected])} · échantillon importé · FP / match</caption><thead><tr><th scope="col">#</th><th scope="col">Joueur</th><th scope="col">Équipe</th><th scope="col">MJ</th><th scope="col">FP / match</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><th scope="row"><button class="dashboard-player" data-player="${esc(r.id)}">${esc(r.name)}</button>${r.identityPending?'<small class="muted">Lien avec l’historique NBA en attente</small>':''}</th><td>${esc(r.teams.join(' / '))}</td><td>${r.gp}</td><td class="fpts">${fmt(r.fptsPerGame)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="empty">Aucune performance disponible sur cette période.</p>'}`;
-    if(rows.length)startCarousel(rows);
+    if(rows.length){window.Courtside?.editorialLayout(rows);startCarousel(rows);}
     el('dashboardRankings').onclick=()=>openDashboardRankings(selected);
     el('dashboardCategory').onclick=()=>openDashboardRankings(selected);
     el('dashboardBody').querySelectorAll('[data-player]').forEach(b=>b.onclick=()=>openPlayer(b.dataset.player));
@@ -20,17 +28,23 @@
   function startCarousel(rows){
     const root=el('dashboardCarousel'),slide=el('dashboardSlide');
     const motion=window.matchMedia?.('(prefers-reduced-motion: reduce)');
-    let index=0,paused=!!motion?.matches,hovered=false,focused=false,touching=false,timer=null;
+    let index=0,paused=!!motion?.matches,userPaused=false,hovered=false,focused=false,touching=false,timer=null;
     const clear=()=>{if(timer!==null)window.clearTimeout(timer);timer=null;};
-    const schedule=()=>{clear();if(!paused&&!hovered&&!focused&&!touching&&rows.length>1&&window.setTimeout)timer=window.setTimeout(()=>{if(!root.isConnected){clear();return;}if(!document.hidden)show(index+1);else schedule();},8000);};
+    const schedule=()=>{clear();if(!paused&&!userPaused&&!hovered&&!focused&&!touching&&rows.length>1&&window.setTimeout)timer=window.setTimeout(()=>{if(!root.isConnected){clear();return;}if(!document.hidden)show(index+1);else schedule();},8000);};
     function show(next){
       index=(next+rows.length)%rows.length;const r=rows[index];
-      slide.innerHTML=`<div class="dashboard-spotlight"><span class="dashboard-spotlight-rank">#${index+1}</span><div class="spotlight-portrait">${window.PlayerPhotos?.portrait(r.id,{className:'spotlight-photo'})||''}</div><div class="dashboard-spotlight-info"><button class="text-button dashboard-spotlight-name" data-player="${esc(r.id)}">${esc(r.name)}</button><p>${esc(r.teams.join(' / '))} · ${r.gp} MJ</p>${r.identityPending?'<small>Lien avec l’historique NBA en attente</small>':''}</div><div class="dashboard-spotlight-score"><strong>${fmt(r.fptsPerGame)}</strong><span>MOYENNE FANTASY / MATCH</span><small>sur la période sélectionnée</small></div></div><div class="dashboard-quick-actions"><button class="btn ghost" id="dashboardCompare">Comparer ce joueur</button><a href="#dashboardComplete" class="btn ghost">Voir le top complet ↓</a></div>${matchLine(r.latestMatch)}`;
-      slide.querySelector('[data-player]').onclick=()=>openPlayer(String(r.id));
+      slide.innerHTML=window.Courtside?.editorialSlide(r,index,selected,matchLine(r.latestMatch))??`<div class="dashboard-spotlight"><span class="dashboard-spotlight-rank">#${index+1}</span><div class="spotlight-portrait">${window.PlayerPhotos?.portrait(r.id,{className:'spotlight-photo'})||''}</div><div class="dashboard-spotlight-info"><button class="text-button dashboard-spotlight-name" data-player="${esc(r.id)}">${esc(r.name)}</button><p>${esc(r.teams.join(' / '))} · ${r.gp} MJ</p>${r.identityPending?'<small>Lien avec l’historique NBA en attente</small>':''}</div><div class="dashboard-spotlight-score"><strong>${fmt(r.fptsPerGame)}</strong><span>MOYENNE FANTASY / MATCH</span><small>sur la période sélectionnée</small></div></div><div class="dashboard-quick-actions"><button class="btn ghost" id="dashboardCompare">Comparer ce joueur</button><a href="#dashboardComplete" class="btn ghost">Voir le top complet ↓</a></div>${matchLine(r.latestMatch)}`;
+      window.Courtside?.color(slide.querySelector('.dashboard-spotlight'),window.Courtside.matchTeam(r)||r.teams.at(-1));
+      slide.querySelector('[data-player]').onclick=()=>openPlayer(String(r.id),{fromSpotlight:true});
       el('dashboardCompare').onclick=()=>{go('compare');addComparePlayer(r.id);window.scrollTo(0,0);};
       el('dashboardSlideCount').textContent=`${index+1} / ${rows.length}`;
 
       schedule();
+    }
+    if(window.Courtside){
+      const pause=document.createElement('button');pause.type='button';pause.className='btn ghost';pause.textContent='Pause';pause.setAttribute('aria-pressed','false');
+      pause.onclick=()=>{userPaused=!userPaused;pause.textContent=userPaused?'Reprendre':'Pause';pause.setAttribute('aria-pressed',String(userPaused));schedule();};
+      el('dashboardNext').parentElement.prepend(pause);
     }
     el('dashboardPrevious').onclick=()=>{show(index-1);};
     el('dashboardNext').onclick=()=>{show(index+1);};
@@ -72,7 +86,7 @@
     return `<div class="dashboard-match"><h4>Dernier match disponible dans cette période</h4><p>${esc(match.date.slice(0,10))} (UTC) · ${match.home?'à domicile contre':'à l’extérieur contre'} ${esc(match.opponent)} · statistiques de ce match, pas une moyenne</p><dl class="dashboard-statline">${cells.map(([label,value])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl></div>`;
   }
   const originalBoard=renderBoard,originalLoadBoard=loadBoard;
-  renderBoard=function(){originalBoard();el('fSeason').closest('label').insertAdjacentHTML('afterend',`<label>Période actuelle<select id="fDashboardPeriod"><option value="season">Échantillon importé complet</option>${periods.map(key=>[key,labels[key]]).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></label>`);el('fDashboardPeriod').onchange=()=>{el('fSeason').value=C.SEASON;setBoardPositions();loadBoard();};};
+  renderBoard=function(){originalBoard();el('fSeason').closest('label').insertAdjacentHTML('afterend',`<label>Période actuelle<select id="fDashboardPeriod"><option value="season">Échantillon importé complet</option>${periods.map(key=>[key,labels[key]]).map(([key,label])=>`<option value="${key}">${label}</option>`).join('')}</select></label>`);el('fDashboardPeriod').onchange=()=>{el('fSeason').value=C.SEASON;setBoardPositions();loadBoard();};window.Courtside?.board();};
   loadBoard=async function(){
     const period=el('fDashboardPeriod')?.value;
     const periodActive=!!period&&period!=='season'&&el('fSeason').value===C.SEASON;

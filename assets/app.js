@@ -30,10 +30,11 @@ function wireSearch(input, box, onSelect){
   const render = () => {
     box.innerHTML = items.length ? "" : "<div><span>Aucun joueur trouvé</span></div>";
     items.forEach((p,i) => {
-      const d = document.createElement("div");
-      if(i===sel) d.className = "sel";
+      const d = document.createElement("button"); d.type="button"; d.className="search-result";
+      if(i===sel) d.classList.add("sel");
       d.innerHTML = `<span>${safeText(p.full_name)}</span><small>${identityLabel(p)}</small>`;
-      d.onmousedown = e => { e.preventDefault(); close(); input.value=""; select(p); };
+      d.onpointerdown = e => e.preventDefault();
+      d.onclick = () => { close(); input.value=""; select(p); };
       box.appendChild(d);
     });
     box.hidden = false;
@@ -44,7 +45,7 @@ function wireSearch(input, box, onSelect){
     const q = input.value.trim();
     if(q.length < 2){ close(); return; }
     timer = setTimeout(async () => {
-      try { const found = (await api("/api/search?q=" + encodeURIComponent(q))).results; if(input.isConnected && input.value.trim()===q){ items=found; render(); } }
+      try { const found = (await api("/api/search?q=" + encodeURIComponent(q))).results; if(input.isConnected && input.value.trim()===q){ items=found.length?found:(window.Courtside?.fallbackSearch(q)||[]); render(); } }
       catch(e){ close(); }
     }, 120);
   });
@@ -83,7 +84,7 @@ function renderHome(){
     ${loaded ? "" : emptyState()}
     ${loaded ? metaFooter() : ""}`;
   const input = el("mainSearch");
-  if(input){ wireSearch(input, el("mainResults")); input.focus(); }
+  if(input){ wireSearch(input, el("mainResults")); if(!window.matchMedia?.("(max-width: 760px)")?.matches)input.focus({preventScroll:true}); }
 }
 
 function emptyState(){

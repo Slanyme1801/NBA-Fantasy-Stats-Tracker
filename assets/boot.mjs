@@ -10,6 +10,7 @@ const script = src => new Promise((resolve,reject)=>{
   const element=document.createElement('script'); element.src=src; element.onload=resolve; element.onerror=reject; document.body.append(element);
 });
 try {
+  const pendingPhotos=loadPlayerPhotos();
   const response=await fetch(new URL('data/history-v1.json',document.baseURI));
   if(!response.ok) throw new Error('Données historiques indisponibles');
   const history=await response.json();
@@ -24,9 +25,11 @@ try {
   await script('./assets/app.js');
   await script('./assets/companion.js');
   await script('./assets/dashboard.js');
-  window.PlayerPhotos=await loadPlayerPhotos();
+  await script('./assets/courtside.js');
+  window.PlayerPhotos=await pendingPhotos;
   await window.startApp();
   await createSessionPersistence().ready();
+  await window.Courtside.initialRoute();
   await window.AppUpdates.ready();
 } catch(error) {
   const view=document.getElementById('view');

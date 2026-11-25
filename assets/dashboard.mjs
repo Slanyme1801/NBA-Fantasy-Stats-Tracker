@@ -7,17 +7,27 @@ export function dashboardRanking(data,{period='7',asOf=new Date(),weights=DEFAUL
   const now=new Date(asOf),end=bounds(null,now).end;
   const eligible=data.games.filter(g=>g.season===SEASON&&g.league==='standard'&&g.type==='regular'&&g.status==='finished'&&new Date(g.start)<=now);
   // Include a more recent night even when its box scores are missing, rather than silently showing older leaders.
-  const nightGames=period==='available'?eligible.filter(g=>g.statsState==='available'&&data.lines.some(r=>r.gameId===g.id&&r.participation==='played')):eligible;
+  const playedGames=new Set(data.lines.filter(r=>r.participation==='played').map(r=>r.gameId));
+  const nightGames=period==='available'?eligible.filter(g=>g.statsState==='available'&&playedGames.has(g.id)):eligible;
   const night=nightGames.map(g=>nightDate(g.start)).sort().at(-1)||null;
   const nightPeriod=['night','available'].includes(period);
   const range=nightPeriod?{start:night,end:night,timeZone:'America/New_York'}:bounds(Number(period),now);
   const games=eligible.filter(g=>nightPeriod?nightDate(g.start)===night:new Date(g.start).toISOString().slice(0,10)>=range.start&&new Date(g.start).toISOString().slice(0,10)<=end);
   const gameMap=new Map(games.map(g=>[g.id,g]));
-  const sample={...data,games,lines:data.lines.filter(r=>gameMap.has(r.gameId))};
+  // This narrows the input to the lines that aggregate() would select.
+  // The same games, weights, provider ID, and underlying calculator are used.
+  const identity=r=>data.provider==='Highlightly'?r.providerId:r.nbaId;
+  const linesByIdentity=new Map();
+  for(const row of data.lines)if(gameMap.has(row.gameId)){
+    const id=identity(row);if(!linesByIdentity.has(id))linesByIdentity.set(id,[]);linesByIdentity.get(id).push(row);
+  }
   const positions=new Map(data.positions.entries.map(p=>[p.nbaId,p.positions]));
-  let rows=data.players.map(p=>{
-    const a=aggregate(sample,playerIdFor(p),{weights,asOf:now});
-    const playerLines=sample.lines.filter(r=>playerKeyFor(r)===playerKeyFor(p)&&r.participation==='played');
+  const sample={...data,games};
+  let rows=data.players.flatMap(p=>{
+    const lines=linesByIdentity.get(identity(p))??[];
+    const playerLines=lines.filter(r=>playerKeyFor(r)===playerKeyFor(p)&&r.participation==='played');
+    if(!lines.some(r=>r.participation==='played'))return [];
+    const a=aggregate({...sample,lines,players:[p]},playerIdFor(p),{weights,asOf:now});
     const teams=[...new Set(playerLines.map(r=>{const g=gameMap.get(r.gameId);return r.teamId===g.home.id?g.home.code:g.away.code;}))];
     const latestLine=[...playerLines].sort((a,b)=>new Date(gameMap.get(b.gameId).start)-new Date(gameMap.get(a.gameId).start))[0];
     const latestGame=latestLine?gameMap.get(latestLine.gameId):null;
