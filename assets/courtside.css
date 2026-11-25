@@ -506,10 +506,13 @@ body[data-profile-edition="goat"][data-lebron-city] #view .court-special-goat .c
 }
 body[data-profile-edition="goat"][data-lebron-city] #view .panel{border-top-color:var(--bron-trim)}
 .court-bron-logo{
- display:block;width:clamp(72px,12vw,155px);aspect-ratio:15/4;margin:0 0 18px;
- background:var(--bron-mark);mask:var(--court-bron-mark) center/contain no-repeat
+ display:block;width:clamp(72px,12vw,155px);max-width:100%;aspect-ratio:15/4;margin:0 0 18px;
+ --court-bron-mark:url("courtside/lebron-james-logo.png");
+ background-color:var(--bron-mark);
+ -webkit-mask:var(--court-bron-mark) center/contain no-repeat;
+ mask:var(--court-bron-mark) center/contain no-repeat
 }
-@media(max-width:760px){.court-bron-logo{margin-bottom:10px}}
+@media(max-width:760px){.court-bron-logo{width:clamp(96px,24vw,130px);margin-bottom:10px}}
 
 /* Short one-shot cues; no network payload, no continuous offscreen work. */
 .court-special .experience-caption{animation:court-caption-in .31s .11s ease-out both}
