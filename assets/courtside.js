@@ -57,9 +57,6 @@ function editorialLayout(rows){
  }
  const link=el('dashboardRankings');top.append(title,table,link);
  body.append(layout);layout.append(slider,top);
- const editions=document.createElement('nav');editions.className='cs-editions';editions.setAttribute('aria-label','Éditions joueur');
- editions.innerHTML='<b>Éditions joueur</b>'+[[1642270,'Clingan'],[2544,'LeBron'],[201142,'KD'],[203081,'Dame Time'],[1630166,'Voldemort']].map(([id,label])=>`<button type="button" class="text-button" data-cs-edition="${id}">${label}</button>`).join('');
- editions.querySelectorAll('button').forEach(b=>b.onclick=()=>openPlayer(b.dataset.csEdition));body.append(editions);
 }
 function matchTeam(r){const g=games.get(r.latestMatch?.gameId);return g?(r.latestMatch.home?g.home.code:g.away.code):null;}
 // NB: these links are only for the existing portrait asset. All match and trade

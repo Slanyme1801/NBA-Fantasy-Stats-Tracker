@@ -227,8 +227,6 @@ header.top nav button.active{border-bottom-color:var(--ink)}
 .cs-top .dashboard-table :is(td,th):nth-child(3){display:none}
 .cs-top .dashboard-player{font-weight:800;min-height:38px}
 .cs-top>.btn{border:0;border-block:1px solid var(--line);width:100%;font-size:.88rem;text-align:left}
-.cs-editions{display:flex;flex-wrap:wrap;margin:18px 0 0;padding:8px 0;border-top:1px solid var(--line);gap:0 16px;align-items:center}
-.cs-editions button{min-height:44px;font-size:.89rem;text-decoration:underline;text-underline-offset:3px}
 #view>.court-back{margin:15px 0 12px}
 .court-back,.court-profile-nav button,.court-match-switch button,.court-trade-dock button{border-radius:0}
 .player-head.ordinary-profile{display:grid;grid-template-columns:minmax(0,1fr) minmax(78px,38%);gap:0;padding:0;overflow:hidden;border-radius:0;border-top:8px solid var(--court-team,#293346);min-height:310px;background:color-mix(in srgb,var(--court-team,#293346) 11%,#fcfbf7);isolation:isolate}
