@@ -16913,9 +16913,208 @@
         110
       ],
       "refreshIssue": {
-        "code": "backfill-pending",
+        "code": "source-data-error",
         "attemptedAt": "2026-11-26T19:04:56.846Z",
-        "preservedPreviousBoxScore": false
+        "preservedPreviousBoxScore": false,
+        "sourceErrorCode": "counter-invalid",
+        "identityObservations": [
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 28,
+            "name": "Draymond Green",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 30,
+            "name": "Yaxel Lendeborg",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 36,
+            "name": "Charles Bassey",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 38,
+            "name": "De'Anthony Melton",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 32,
+            "name": "Brandin Podziemski",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 33,
+            "name": "Georges Niang",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 29,
+            "name": "Gui Santos",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 35,
+            "name": "Al Horford",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 37,
+            "name": "Gary Payton II",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 39,
+            "name": "Brandon Williams",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 41,
+            "name": "Will Richard",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 34,
+            "name": "Malevy Leons",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 43,
+            "providerId": 40,
+            "name": "LJ Cryer",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 315,
+            "name": "Domantas Sabonis",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 316,
+            "name": "De'Andre Hunter",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 446,
+            "name": "Keegan Murray",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 323,
+            "name": "Emanuel Sharp",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 319,
+            "name": "Darius Acuff Jr.",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 324,
+            "name": "Leaky Black",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 317,
+            "name": "Precious Achiuwa",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 320,
+            "name": "Alex Karaban",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 532,
+            "name": "Dylan Cardwell",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 321,
+            "name": "Malik Monk",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 322,
+            "name": "Nique Clifford",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 654,
+            "name": "Mason Plumlee",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 672,
+            "name": "Gabe Vincent",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 326,
+            "name": "Daeqwon Plowden",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          },
+          {
+            "gameId": 1589809,
+            "teamId": 32,
+            "providerId": 421,
+            "name": "Sean Pedulla",
+            "fetchedAt": "2026-11-26T19:04:56.846Z"
+          }
+        ]
       },
       "classification": {
         "source": "https://ak-static.cms.nba.com/wp-content/uploads/sites/46/2026/08/2026-27-NBA-Regular-Season-Schedule-By-Date.pdf#page=6",
@@ -194175,7 +194374,7 @@
     "regularGamesSeen": 270,
     "verifiedRegularBoxScores": 268,
     "verifiedBoxScores": 268,
-    "sourceFailureGames": 0,
+    "sourceFailureGames": 1,
     "unmappedGames": 0,
     "unclassifiedGames": 0,
     "pendingGames": 2,
