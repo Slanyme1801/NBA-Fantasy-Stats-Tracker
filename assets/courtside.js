@@ -193,7 +193,7 @@ function tradeAvatar(player){
  const clipId=shape?`trade-face-${id}`:'';
  // Thumbnails are decorative; the adjacent, clickable name is the label.
  const clip=shape?`<defs><clipPath id="${clipId}" clipPathUnits="userSpaceOnUse">${shape}</clipPath></defs>`:'';
- return `<span class="trade-avatar" aria-hidden="true">${fallback}<svg viewBox="${bounds.join(' ')}" preserveAspectRatio="xMidYMid meet" width="48" height="48" focusable="false">${clip}<image href="${esc(path)}" width="${w}" height="${h}" ${shape?'clip-path="url(#'+clipId+')"':''} onload="this.closest('svg').classList.add('trade-avatar-loaded')" onerror="this.closest('svg').remove()"></image></svg></span>`;
+ return `<span class="trade-avatar" aria-hidden="true">${fallback}<svg viewBox="${bounds.join(' ')}" preserveAspectRatio="xMidYMid meet" width="48" height="48" focusable="false">${clip}<image href="${esc(path)}" width="${w}" height="${h}" ${shape?'clip-path="url(#'+clipId+')"':''} onload="this.closest('svg')?.classList.add('trade-avatar-loaded')" onerror="this.closest('svg')?.remove()"></image></svg></span>`;
 }
 function editorialSlide(r,index,period,line){
  const team=matchTeam(r)||r.teams.at(-1)||'—';
