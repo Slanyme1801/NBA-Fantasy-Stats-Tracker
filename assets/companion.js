@@ -297,6 +297,12 @@ renderData=function(){previousData();el('view').querySelector('h2').insertAdjace
 const previousSave=saveScoring,previousReset=resetScoring;
 saveScoring=async function(){try{await previousSave();}catch(error){let message=el('scoringError');if(!message){message=document.createElement('p');message.id='scoringError';message.className='warn';el('view').append(message);}message.textContent=uiFr(error.message);}};
 resetScoring=async function(){await previousReset();comparePlayers={};for(const id of compareIds)comparePlayers[id]=await api(playerPath(id));};
+const beforeIdentityNotice=renderData;
+renderData=function(){
+  beforeIdentityNotice();
+  const issues=window.CurrentLoad.identityIssues??[];
+  if(issues.length)el('view').insertAdjacentHTML('beforeend',`<section class="panel"><h3>Rapprochements de fiches à vérifier</h3><ul>${issues.map(i=>`<li>${esc(i.name)} : ${i.reason==='overlap'?`deux lignes différentes pour le match ${esc(i.gameId)}, une seule retenue pour le calcul`:'identifiants reçus incompatibles, rapprochement non appliqué'}.</li>`).join('')}</ul></section>`);
+};
 const renderDataWithStatus=renderData;
 renderData=function(){renderDataWithStatus();
  if(window.PlayerPhotos)el('view').insertAdjacentHTML('beforeend',window.PlayerPhotos.credits());

@@ -3,6 +3,7 @@ import {rosterClubFor} from './rosters.mjs';
 import * as dashboard from './dashboard.mjs';
 import {loadPlayerPhotos} from './photos.mjs';
 import {loadCurrent} from './loader.mjs';
+import {reconcilePlayerAliases} from './player-aliases.mjs';
 import {createSessionPersistence} from './session.mjs';
 import {createAppUpdates} from './updates.mjs';
 import {withRequestTimeout} from './request-timeout.mjs';
@@ -22,7 +23,9 @@ try {
   window.FantasyCore=core;
   window.CurrentRoster={clubFor:player=>rosterClubFor(player,core.SEASON,window.CurrentLoad?.data?.players||[])};
   window.FantasyDashboard=dashboard;
-  window.CurrentLoad=await loadCurrent({knownIds:history.players.map(p=>p[0])});
+  const load=await loadCurrent({knownIds:history.players.map(p=>p[0])});
+  const {data,aliases,issues}=reconcilePlayerAliases(load.data);
+  window.CurrentLoad={...load,data,aliases,identityIssues:issues};
   await script('./assets/legacy.js');
   await script('./assets/adapter.js');
   await script('./assets/app.js');

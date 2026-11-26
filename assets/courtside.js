@@ -449,6 +449,7 @@ if(vv){
 window.Courtside={color:theme,artId:profileArt,home,board,profile,tradeUI,tradeVerdict,fallbackSearch,matchTeam,editorialLayout,editorialSlide,hasDirectRoute:()=>!!readRoute(),async initialRoute(){
  const direct=readRoute(), p=activePage==='player'?'player':activePage;
  const r=direct||{p,id:p==='player'?CURRENT?.player_id:null};
+ if(r.p==='player'&&window.CurrentLoad.aliases?.has(r.id))r.id=canonicalPlayerId(r.id);
  try{history.scrollRestoration='manual';}catch{}
  try{history.replaceState({court:{...r,seq:++nextRoute,back:false}},'',href(r.p,r.id));}catch{}
  if(direct)await restoreRoute(r,false);

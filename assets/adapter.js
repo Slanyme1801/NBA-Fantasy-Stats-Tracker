@@ -3,11 +3,11 @@
   const response=body=>({ok:true,json:async()=>body});
   const historicalIds=new Set(window.__DATASET.players.map(p=>p[0]));
   const parseId=id=>typeof id==='number'&&Number.isSafeInteger(id)&&id>0?id:typeof id==='string'&&/^[1-9]\d*$/.test(id)&&Number.isSafeInteger(Number(id))?Number(id):typeof id==='string'&&/^highlightly:[1-9]\d*$/.test(id)&&Number.isSafeInteger(Number(id.split(':')[1]))?id:null;
-  // These are lookup indexes over the verified release, not identity merges.
-  // Use the first exact match, as core.findPlayer does. In particular a pending
-  // provider identity still has its own key and its own lines.
+  // Index the effective dataset; aliases support links and saved selections
+  // created before reconciliation. Unverified keys remain separate.
   const nbaPlayers=new Map(),providerPlayers=new Map(),byKey=new Map(),byNbaId=new Map();
-  const findPlayer=id=>(typeof id==='number'?nbaPlayers:providerPlayers).get(id)||null;
+  const findPlayer=id=>typeof id==='number'?nbaPlayers.get(id)||null:
+    providerPlayers.get(id)||nbaPlayers.get(window.CurrentLoad.aliases?.get(id))||null;
   for(const p of data.players){
     const key=core.playerKeyFor(p);
     if(key&&!providerPlayers.has(key))providerPlayers.set(key,p);
