@@ -84,3 +84,19 @@ test('technical provenance is centralized on data page, absent from home and tra
  const html=a.node('view').innerHTML+a.node('viewh2').innerHTML;
  assert.match(html,/Lecture des chiffres/);assert.match(html,/Source récupérée/);assert.match(html,/Données normalisées/);assert.match(html,/lignes de joueur attendent une liaison/);assert.match(html,/Minutes|minutes/);assert.match(html,/Feuilles disponibles/);
 });
+
+test('trade visuals compare actual period averages, retain fantasy totals and handle missing stats',async()=>{
+ const data=sample();data.lines[1]={...line(1,2),nbaId:null,providerId:102,playerKey:'highlightly:102'};
+ const a=await app(data,{ui:true});
+ a.run("go('trades');tradeState.period='season';addTrade('left','highlightly:101');addTrade('right','highlightly:102')");
+ await a.run('updateTrades()');
+ const html=a.node('tradeSummary').innerHTML;
+ assert.match(html,/Côté A.*Côté B/s);
+ assert.match(html,/Stats face à face.*sans remplaçant fictif/s);
+ assert.match(html,/<p>Points<\/p>/);
+ assert.match(html,/Égalité à cette précision/);
+ assert.equal(a.run("tradeStatTotal([{stats:{reb:0}}],'reb')"),0);
+ assert.equal(a.run("tradeStatTotal([{stats:{reb:3}},{stats:null}],'reb')"),null);
+ assert.match(a.run("tradeStatRow('Rebonds',3,null)"),/—/);
+ assert.doesNotMatch(a.run("tradeStatRow('Rebonds',3,null)"),/trade-meter-lanes/);
+});

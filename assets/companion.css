@@ -21,3 +21,50 @@ details{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}summar
 .app-update-notice{position:fixed;z-index:1000;bottom:16px;left:16px;right:16px;max-width:720px;margin:auto;padding:16px;background:#fff;color:#122745;border:1px solid #17408b;border-radius:12px;box-shadow:0 6px 30px #0008;display:flex;gap:16px;align-items:center;justify-content:space-between}
 .app-update-notice[hidden]{display:none}
 @media(max-width:600px){.app-update-notice{align-items:stretch;flex-direction:column;gap:8px}}
+
+/* Show every selected player together on a phone, without horizontal panning. */
+.compare-mobile{display:none}
+@media(max-width:760px){
+ .compare-selection .chips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+ .compare-selection .chips>.dim{grid-column:1/-1}
+ .compare-selection .chip{line-height:1.15;padding:3px 5px 3px 7px;min-height:44px;gap:4px;font-size:12px}
+ .compare-selection .chip i{flex:0 0 7px;width:7px;height:7px}
+ .compare-selection .chip button{flex:none;margin-left:auto;min-height:36px;min-width:24px}
+ .compare-selection .compare-search-full{display:none}
+ #compareBody .compare-desktop{display:none}
+ #compareBody .compare-mobile{display:block}
+ .compare-mobile-periods{min-inline-size:0;border:0;padding:0;margin:10px 0 0}
+ .compare-mobile-periods legend{font-size:12px;font-weight:650;color:var(--ink-dim);padding:0;margin:0 0 5px}
+ .compare-window-input{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%)}
+ .compare-window-labels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+ .compare-window-labels label{display:grid;place-items:center;min-height:44px;padding:3px 2px;text-align:center;font-size:clamp(11px,3.3vw,14px);font-weight:700;color:var(--ink);background:var(--panel);border:1px solid var(--line);cursor:pointer}
+ #compare-window-0:checked~.compare-window-labels [for=compare-window-0],
+ #compare-window-7:checked~.compare-window-labels [for=compare-window-7],
+ #compare-window-14:checked~.compare-window-labels [for=compare-window-14],
+ #compare-window-30:checked~.compare-window-labels [for=compare-window-30]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+ #compare-window-0:focus-visible~.compare-window-labels [for=compare-window-0],
+ #compare-window-7:focus-visible~.compare-window-labels [for=compare-window-7],
+ #compare-window-14:focus-visible~.compare-window-labels [for=compare-window-14],
+ #compare-window-30:focus-visible~.compare-window-labels [for=compare-window-30]{outline:2px solid var(--cyan);outline-offset:2px}
+ .compare-card-period{display:none}
+ #compare-window-0:checked~#compare-card-period-0,
+ #compare-window-7:checked~#compare-card-period-7,
+ #compare-window-14:checked~#compare-card-period-14,
+ #compare-window-30:checked~#compare-card-period-30{display:block}
+ .compare-card-date{font-size:12px;color:var(--ink-dim);margin:9px 0}
+ .compare-card-grid,.compare-history-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ .compare-card{background:var(--bg-2);border-top:3px solid var(--compare-player);padding:7px 8px;min-width:0}
+ .compare-card-name{display:block;min-height:44px;overflow-wrap:anywhere;font-size:clamp(12px,3.5vw,15px);line-height:1.16}
+ .compare-card>strong{display:block;color:var(--ink);font:700 clamp(26px,8vw,40px)/1 var(--court-display,sans-serif)}
+ .compare-card>span,.compare-card>p{display:block;font-size:12px;color:var(--ink-dim)}
+ .compare-card>p{margin:6px 0 0;padding-top:6px;border-top:1px solid var(--line)}
+ #compareBody .compare-season-chart svg text{font-size:17px}
+ #compareBody .compare-season-chart svg text:last-of-type{text-anchor:end}
+ .compare-mobile-history summary{min-height:44px;margin:0}
+ .compare-history-row{padding:8px 0;border-top:1px solid var(--line)}
+ .compare-history-row h4{font-size:13px;margin:0 0 5px}
+ .compare-history-grid{margin:0}
+ .compare-history-grid>div{background:var(--bg-2);border-left:2px solid var(--compare-player);padding:4px 7px}
+ .compare-history-grid dt{font-size:12px;color:var(--ink-dim);overflow-wrap:anywhere}
+ .compare-history-grid dd{font-size:16px;font-weight:700;margin:0}
+}

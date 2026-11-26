@@ -8,7 +8,12 @@ import {reconcilePlayerAliases} from '../assets/player-aliases.mjs';
 const bytes=readFileSync(new URL('../data/releases/2026-27-6b3521df5baa22da.json',import.meta.url));
 const history=JSON.parse(readFileSync(new URL('../data/history-v1.json',import.meta.url)));
 const ids=history.players.map(p=>p[0]), raw=validateSeason(JSON.parse(bytes),ids);
-const pairs=[[208,66483557,1630595],[377,76563422,1641705],[111,45495722,203507],[17,46686092,203999]];
+const firstFour=[[208,66483557,1630595],[377,76563422,1641705],[111,45495722,203507],[17,46686092,203999]];
+const docs=readFileSync(new URL('../docs/verified-player-aliases.md',import.meta.url),'utf8').split('## Whole-ranking verification')[1];
+const documented=[...docs.matchAll(/^\| [^|]+ \| (\d+) \| (\d+) → (\d+) \| \[Box score 00226\d{5}\]\(https:\/\/www\.nba\.com\/game\/[^ )]+\/box-score\) \|$/gm)]
+  .map(([,id,a,b])=>[+a,+b,+id]).sort((x,y)=>x[0]-y[0]);
+const pairs=[...firstFour,...documented];
+const byFrom=new Map(pairs.map(pair=>[pair[0],pair]));
 const asOf='2026-11-25T21:44:14Z';
 test('verified projection preserves raw data, all games and every original box counter',()=>{
   assert.equal(createHash('sha256').update(bytes).digest('hex'),'6b3521df5baa22da7faf4339d079a3cd77e390494dc8e03c1c9c5abd36d7979b');
@@ -16,18 +21,22 @@ test('verified projection preserves raw data, all games and every original box c
   assert.equal(data.games,raw.games);
   assert.equal(data.lines.length,raw.lines.length);
   assert.equal(data.positions,raw.positions);
-  assert.equal(data.players.length,raw.players.length-4);
+  assert.equal(documented.length,389);
+  assert.equal(byFrom.size,pairs.length);
+  assert.equal(new Set(pairs.map(([,to])=>to)).size,pairs.length,'no target receives multiple secondary keys');
+  assert.equal(new Set(pairs.map(([, ,id])=>id)).size,pairs.length);
+  assert.equal(data.players.length,raw.players.length-pairs.length);
   assert.deepEqual(issues,[]);
   assert.deepEqual([...aliases],pairs.map(([a,,id])=>[`highlightly:${a}`,id]));
   validateSeason(data,ids);
   for(const [i,l] of raw.lines.entries()){
-    const p=pairs.find(([key])=>key===l.providerId), actual=data.lines[i];
+    const p=byFrom.get(l.providerId), actual=data.lines[i];
     if(!p)assert.equal(actual,l);
     else assert.deepEqual(actual,{...l,providerId:p[1],nbaId:p[2],playerKey:`highlightly:${p[1]}`});
   }
   assert.deepEqual(raw,JSON.parse(bytes));
 });
-test('home, totals, custom weights and per-game series across four verified profiles',()=>{
+test('home, totals, custom weights and per-game series preserve the original four reconciliations',()=>{
   const {data}=reconcilePlayerAliases(raw);
   for(const period of ['7','14','30']){
     const {rows,boxedGames}=dashboardRanking(data,{period,asOf});
@@ -67,4 +76,19 @@ test('changed identity is left alone, without blocking the other players',()=>{
   assert.deepEqual(issues,[{name:'Cade Cunningham',reason:'identity'}]);
   assert.equal(aggregate(data,id,{days:14,asOf}).totalFpts,151);
   assert.equal(aggregate(data,203999,{days:30,asOf}).totalFpts,824);
+});
+
+test('whole ranking reconciles Jamal Murray and Jayson Tatum without touching Avdija',()=>{
+  const {data,aliases}=reconcilePlayerAliases(raw);
+  const play=(d,id)=>aggregate(d,id,{asOf});
+  for(const [alias,id,canonicalGP,currentGP] of [[18,1627750,12,16],[164,1628369,11,16]]){
+    assert.equal(aliases.get(`highlightly:${alias}`),id);
+    assert.equal(play(raw,id).gp,canonicalGP);
+    assert.equal(play(data,id).gp,currentGP);
+    const [a,b]=[play(raw,id),play(raw,`highlightly:${alias}`)];
+    assert.equal(play(data,id).totalFpts,a.totalFpts+b.totalFpts);
+  }
+  assert.equal(aliases.has('highlightly:275'),false);
+  assert.deepEqual(play(data,1630166),play(raw,1630166));
+  assert.deepEqual(play(data,'highlightly:275'),play(raw,'highlightly:275'));
 });

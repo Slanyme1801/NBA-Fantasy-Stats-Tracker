@@ -39,3 +39,21 @@ test('comparison uses current custom scoring and reports unavailable current dat
  assert.ok(a.render().includes(`${expected.fptsPerGame.toFixed(1)} <small>FP / match</small>`));
  a.context.window.CurrentLoad.data=null;assert.match(a.render(),/comparaisons historiques restent accessibles/);
 });
+test('mobile quick comparison exposes all four periods, all players, and real values without substituting nulls',()=>{
+ const a=setup();
+ const html=a.render();
+ for(const [key,days] of [[0,null],[7,7],[14,14],[30,30]]){
+  assert.match(html,new RegExp(`id="compare-window-${key}"[^>]+aria-controls="compare-card-period-${key}"`));
+  const panel=html.match(new RegExp(`<section class="compare-card-period" id="compare-card-period-${key}"[\\s\\S]+?</section>`))[0];
+  const expected=core.aggregate(a.data,'highlightly:101',{days,asOf:now});
+  assert.match(panel,/Alpha &lt;test&gt;/);
+  assert.match(panel,/Beta/);
+  assert.ok(panel.includes(`<strong class="num">${expected.fptsPerGame.toFixed(1)}</strong>`));
+  assert.ok(panel.includes(`${expected.gp} MJ · ${expected.minutes.toFixed(1)} min ≈`));
+  assert.ok(panel.includes('<strong class="num">—</strong>'));
+  assert.ok(panel.includes('Aucun match complet'));
+ }
+ assert.match(html,/id="compare-window-7"[^>]+checked/);
+ vm.runInContext('compareMobileWindow=30',a.context);
+ assert.match(a.render(),/id="compare-window-30"[^>]+checked/);
+});

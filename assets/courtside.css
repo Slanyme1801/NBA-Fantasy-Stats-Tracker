@@ -635,3 +635,62 @@ body[data-profile-motion="paused"] #view .court-v36 :is(.profile-identity,.profi
   animation:signature-sweep 2.25s .12s ease-out both!important
  }
 }
+
+/* Mobile home: the lead story arrives before the scoreboard, without changing
+   the desktop order, copy, portraits or ranking controls. */
+@media(max-width:760px){
+ #view .hero{padding:13px 0 10px;border-bottom-width:2px}
+ #view .hero .court-kicker{font-size:.66rem;margin-bottom:6px}
+ #view .hero h1{font-size:clamp(2.1rem,9vw,3.7rem);line-height:.92}
+ #view .hero p:not(.court-kicker){margin-top:7px;font-size:.86rem;line-height:1.36}
+ .dashboard>.dashboard-periods{margin-top:3px}
+ #dashboardBody>.dashboard-summary{margin-bottom:6px}
+ .cs-courtside>.court-scoreboard{padding-block:10px 0}
+ .court-scoreboard .court-section-head{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
+ .court-scoreboard .court-section-head label{display:flex;align-items:center;justify-content:flex-end;gap:8px;font-size:.75rem}
+ .court-scoreboard .court-section-head select{max-width:none;min-width:0;font-size:max(16px,1rem);margin:0}
+}
+@media(max-width:760px){
+ .dashboard .cs-feature-footer{order:0;padding:6px 0 0}
+}
+@media(max-width:360px){
+ body[data-court-page=home] header.top nav{grid-template-columns:1fr 1.2fr .8fr 1fr 1.1fr}
+ body[data-court-page=home] #tab-board{white-space:nowrap;overflow-wrap:normal}
+}
+
+/* A/B scorecard and head-only thumbnails. Keep the ordinary player pages intact. */
+.trade-player .trade-avatar{position:relative;flex:0 0 44px;width:44px;height:44px;overflow:hidden;border-radius:50%;background:#eeece3;display:grid;place-items:center;color:var(--ink);isolation:isolate}
+.trade-avatar-initials{font-size:.78rem;letter-spacing:.015em}
+.trade-avatar svg{position:absolute;width:100%;height:100%;inset:0;background:#eeece3;opacity:0}
+.trade-avatar .trade-avatar-loaded{opacity:1}
+.trade-player .text-button{overflow-wrap:anywhere}
+.trade-player>strong{text-align:right}
+#tradeSummary .side-a{--trade-side:#16448a}
+#tradeSummary .side-b{--trade-side:#a11936}
+.trade-result-main{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:9px}
+.trade-side-total{background:var(--panel);padding:10px 12px;border-top:3px solid var(--trade-side);min-width:0}
+.trade-result .trade-side-total h3{margin:0 0 6px;color:var(--trade-side)}
+.trade-result .trade-side-total p{margin:4px 0 7px;font-size:.79rem}
+.trade-side-total b{font-size:.84rem}
+.trade-result-units{font-size:.78rem;margin:8px 0 0}
+#tradeSummary .trade-difference{margin-top:11px}
+#tradeSummary .trade-verdict{display:block;color:var(--ink);font-size:1rem;margin-bottom:2px}
+.trade-stat-card h3{margin:0 0 5px}
+.trade-stat-card>p{margin:5px 0 10px}
+.trade-meter-legend,.trade-meter-values,.trade-meter-lanes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.trade-meter-legend b,.trade-meter-number{color:var(--trade-side)}
+.trade-meter-legend b:last-child,.trade-meter-number:last-child{text-align:right}
+.trade-meter-legend{font-size:.82rem;margin-bottom:6px}
+.trade-stat-row{padding:7px 0;border-top:1px solid var(--line)}
+.trade-stat-row>p{margin:0 0 2px;text-align:center;font-size:.78rem;font-weight:720;color:var(--ink)}
+.trade-meter-number{font-variant-numeric:tabular-nums;font-size:.95rem;font-weight:800}
+.trade-meter-lanes{margin-top:4px}
+.trade-meter-lane{height:5px;background:var(--line);position:relative}
+.trade-meter-lane i{position:absolute;inset:0 auto 0 var(--bar-left);width:var(--bar-width);background:var(--trade-side)}
+.trade-meter-lane i::before{content:"";position:absolute;top:0;bottom:0;left:calc(var(--zero) - var(--bar-left));width:1px;background:var(--ink)}
+.trade-stat-card details{margin-top:6px;padding-top:0}
+.trade-stat-card summary{min-height:44px}
+@media(max-width:760px){
+ .trade-player .trade-avatar{flex-basis:38px;width:38px;height:38px}
+ .trade-side-total{padding:8px 9px}
+}

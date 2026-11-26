@@ -284,12 +284,42 @@ function renderTrades(){
 }
 function addTrade(side,id){id=canonicalPlayerId(id);if(id===null||!['left','right'].includes(side))return;if(tradeState[side].length>=5||[...tradeState.left,...tradeState.right].includes(id))return;tradeState[side].push(id);updateTrades();}
 function removeTrade(side,id){id=canonicalPlayerId(id);if(!['left','right'].includes(side))return;tradeState[side]=tradeState[side].filter(x=>x!==id);updateTrades();}
-function metric(player,period){if(window.__DATASET.seasons.includes(period)){const row=player.seasons.find(s=>s.season===period);return {avg:row?.played?row.fpts_per_game:null,gp:row?.gp||0,extra:'moyenne historique'};}const a=C.aggregate(currentData,player.player_id,periodConfig(period));return {avg:a.fptsPerGame,gp:a.gp,extra:`${a.dnp} DNP · ${a.missing} manquants`};}
+function metric(player,period){
+  if(window.__DATASET.seasons.includes(period)){
+    const row=player.seasons.find(s=>s.season===period);
+    return {avg:row?.played?row.fpts_per_game:null,gp:row?.gp||0,extra:'moyenne historique',stats:row?.played?row:null};
+  }
+  const a=C.aggregate(currentData,player.player_id,periodConfig(period));
+  return {avg:a.fptsPerGame,gp:a.gp,extra:`${a.dnp} DNP · ${a.missing} manquants`,stats:a.gp?{...a.averages,min:a.minutes}:null};
+}
+const tradeStatKeys=[['pts','Points'],['reb','Rebonds'],['ast','Passes'],['fg3m','Tirs à 3 pts réussis'],['stl','Interceptions'],['blk','Contres'],['tov','Ballons perdus'],['min','Minutes']];
+function tradeStatTotal(metrics,key){
+  const values=metrics.map(m=>m.stats?.[key]);
+  return values.length&&values.every(Number.isFinite)?values.reduce((a,b)=>a+b,0):null;
+}
+function tradeStatRow(label,left,right,{digits=1}={}){
+  const available=[left,right].every(Number.isFinite);
+  const low=available?Math.min(0,left,right):0,high=available?Math.max(0,left,right):0;
+  const scale=high-low, pos=v=>scale?100*(v-low)/scale:0;
+  const numbers=[left,right].map((v,i)=>`<span class="trade-meter-number ${i?'side-b':'side-a'}">${Number.isFinite(v)?fmt(v,digits):'—'}</span>`).join('');
+  const lanes=available&&scale?[left,right].map((v,i)=>`<span class="trade-meter-lane ${i?'side-b':'side-a'}"><i style="--zero:${pos(0).toFixed(3)}%;--bar-left:${Math.min(pos(0),pos(v)).toFixed(3)}%;--bar-width:${Math.abs(pos(v)-pos(0)).toFixed(3)}%"></i></span>`).join(''):'';
+  return `<div class="trade-stat-row"><p>${esc(label)}</p><div class="trade-meter-values">${numbers}</div>${lanes?`<div class="trade-meter-lanes" aria-hidden="true">${lanes}</div>`:''}</div>`;
+}
+function tradeResultMarkup(result,metrics){
+  const total=(name,side)=>`<div class="trade-side-total ${name==='B'?'side-b':'side-a'}"><h3>Côté ${name}</h3><div class="result-number">${fmt(side.sum,2)}</div><p>${side.players} joueur${side.players===1?'':'s'}${side.added?` + ${side.added} remplaçant${side.added===1?'':'s'}`:''}</p><b>${fmt(side.average,2)} FPTS par place</b></div>`;
+  const difference=Number(result.sumDifference.toFixed(2));
+  const resultLabel=difference===0?'Égalité à cette précision':`Avantage côté ${difference>0?'B':'A'}`;
+  const rows=tradeStatKeys.map(([key,label])=>tradeStatRow(key==='min'&&currentData.minutesPrecision==='rounded-whole-minute'&&!window.__DATASET.seasons.includes(tradeState.period)?'Minutes ≈':label,tradeStatTotal(metrics.left,key),tradeStatTotal(metrics.right,key)));
+  return `<section class="panel trade-result"><span class="eyebrow">RÉSULTAT FANTASY · ${scoreLabel()}</span><div class="trade-result-main">${total('A',result.left)}${total('B',result.right)}</div><p class="trade-result-units">${result.slots} place${result.slots===1?'':'s'} par côté · somme des moyennes fantasy</p><div class="trade-difference"><strong class="trade-verdict">${resultLabel}</strong><div>B − A : <b>${sign(result.sumDifference)}</b> FPTS <span>· ${sign(result.averageDifference)} par place</span></div></div></section>
+<section class="panel trade-stat-card" aria-label="Statistiques comparées"><h3>Stats face à face</h3><p class="small muted">Sommes des moyennes par match des joueurs sélectionnés, sans remplaçant fictif.</p><div class="trade-meter-legend"><b class="side-a">Côté A</b><b class="side-b">Côté B</b></div>${rows.slice(0,3).join('')}<details><summary>Plus de statistiques</summary>${rows.slice(3).join('')}</details></section>`;
+}
 async function updateTrades(){
   const request=++tradeRequest,profiles=await Promise.all([...tradeState.left,...tradeState.right].map(id=>api(playerPath(id))));if(request!==tradeRequest||activePage!=='trades')return;
-  const players=new Map(profiles.map(p=>[p.player_id,p])),values={left:[],right:[]},slots=Math.max(tradeState.left.length,tradeState.right.length);el('tradePeriodNote').textContent=periodLabel(tradeState.period);
-  for(const side of ['left','right'])el('tradePlayers-'+side).innerHTML=tradeState[side].map(id=>{const p=players.get(id),m=metric(p,tradeState.period);values[side].push(m.avg);return `<article class="trade-player"><div><button class="text-button" onclick="openPlayer(${playerArg(id)})">${esc(p.full_name)}</button><span class="small muted">${m.gp} GP · ${m.extra}</span></div><strong>${m.avg===null?'—':fmt(m.avg)} <small>Moy.</small></strong><button class="remove" aria-label="Retirer ${esc(p.full_name)} du côté ${side==='left'?'A':'B'}" onclick="removeTrade('${side}',${playerArg(id)})">×</button></article>`;}).join('')+(tradeState[side].length?'':'<p class="muted">Ajoutez des joueurs de ce côté.</p>')+(tradeState.left.length&&tradeState.right.length?Array.from({length:slots-tradeState[side].length},()=>`<article class="trade-player replacement"><div><b>Joueur libre hypothétique</b><span class="small muted">Une place dans l’effectif · hypothèse</span></div><strong>${fmt(tradeState.replacement)} <small>Moy.</small></strong></article>`).join(''):'');
-  try{const result=C.tradeValue(values.left,values.right,tradeState.replacement);el('tradeSummary').innerHTML=result?`<section class="panel trade-result"><span class="eyebrow">${result.slots} PLACES ÉQUIVALENTES DANS L’EFFECTIF · ${scoreLabel()}</span><div class="trade-grid">${[['A',result.left],['B',result.right]].map(([name,s])=>`<div><h3>Côté ${name}</h3><div class="result-number">${fmt(s.sum,2)}</div><p>Somme des moyennes · ${s.players} joueur${s.players===1?'':'s'}${s.added?` + ${s.added} remplaçant hypothétique`:''}</p><b>${fmt(s.average,2)} moyenne par place</b></div>`).join('')}</div><div class="trade-difference">B − A: <b>${sign(result.sumDifference)}</b> somme des moyennes <span>· <b>${sign(result.averageDifference)}</b> par place</span></div></section>`:`<div class="empty">${!values.left.length||!values.right.length?'Ajoutez au moins un joueur de chaque côté pour comparer.':'Un joueur sélectionné n’a aucun échantillon complet sur cette période. Le trade ne peut pas être calculé ; indisponible ne signifie pas zéro.'}</div>`;}catch(error){el('tradeSummary').innerHTML=`<p class="empty warn">${esc(uiFr(error.message))}</p>`;}
+  const players=new Map(profiles.map(p=>[p.player_id,p])),values={left:[],right:[]},metrics={left:[],right:[]},slots=Math.max(tradeState.left.length,tradeState.right.length);el('tradePeriodNote').textContent=periodLabel(tradeState.period);
+  for(const side of ['left','right'])el('tradePlayers-'+side).innerHTML=tradeState[side].map(id=>{const p=players.get(id),m=metric(p,tradeState.period);values[side].push(m.avg);metrics[side].push(m);return `<article class="trade-player">${window.Courtside?.tradeAvatar?.(p)||''}<div><button class="text-button" onclick="openPlayer(${playerArg(id)})">${esc(p.full_name)}</button><span class="small muted">${m.gp} GP · ${m.extra}</span></div><strong>${m.avg===null?'—':fmt(m.avg)} <small>Moy.</small></strong><button class="remove" aria-label="Retirer ${esc(p.full_name)} du côté ${side==='left'?'A':'B'}" onclick="removeTrade('${side}',${playerArg(id)})">×</button></article>`;}).join('')+(tradeState[side].length?'':'<p class="muted">Ajoutez des joueurs de ce côté.</p>')+(tradeState.left.length&&tradeState.right.length?Array.from({length:slots-tradeState[side].length},()=>`<article class="trade-player replacement"><div><b>Joueur libre hypothétique</b><span class="small muted">Une place dans l’effectif · hypothèse</span></div><strong>${fmt(tradeState.replacement)} <small>Moy.</small></strong></article>`).join(''):'');
+  const statsOpen=el('tradeSummary').querySelector?.('.trade-stat-card details')?.open;
+  try{const result=C.tradeValue(values.left,values.right,tradeState.replacement);el('tradeSummary').innerHTML=result?tradeResultMarkup(result,metrics):`<div class="empty">${!values.left.length||!values.right.length?'Ajoutez au moins un joueur de chaque côté pour comparer.':'Un joueur sélectionné n’a aucun échantillon complet sur cette période. Le trade ne peut pas être calculé ; indisponible ne signifie pas zéro.'}</div>`;}catch(error){el('tradeSummary').innerHTML=`<p class="empty warn">${esc(uiFr(error.message))}</p>`;}
+  if(statsOpen&&el('tradeSummary').querySelector?.('.trade-stat-card details'))el('tradeSummary').querySelector('.trade-stat-card details').open=true;
   window.Courtside?.tradeVerdict(profiles);
 }
 const previousData=renderData;

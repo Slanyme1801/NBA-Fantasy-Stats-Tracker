@@ -24,6 +24,7 @@ for(const g of seasonGames){const d=night(g);if(!counts.has(d))counts.set(d,[]);
 const nights=[...counts.keys()].sort().reverse();
 let scoreNight=nights[0], matchId=null, matchSide='away', nextRoute=0, restoring=false, ready=false;
 const snapshots=new Map();
+const compactHome=window.matchMedia?.('(max-width: 760px)');
 const theme=(node,t)=>{if(!node)return;const k=club(t),[bg,trim]=palette[k]||['#293346','#8090a9'];node.dataset.courtClub=palette[k]?k:'';node.style.setProperty('--court-team',bg);node.style.setProperty('--court-trim',trim);};
 const logo=t=>Object.hasOwn(palette,club(t))?`<img class="court-logo" width="25" height="25" src="assets/courtside/${club(t)}.svg" alt="" decoding="async">`:'';
 const nameFor=(g,t)=>t===g.away?'away':'home';
@@ -43,6 +44,16 @@ function home(){
  el('courtNight').onchange=e=>{scoreNight=e.target.value;scoreList();};
  scoreList();
 }
+// Preserve the same score picker and its scroll state when the ranking period
+// rerenders. Keep DOM/keyboard order in sync with the responsive visual order.
+function placeHomeScores({outside=false}={}){
+ const view=box(),scores=view?.querySelector('.court-scoreboard'),dashboard=view?.querySelector('.dashboard');
+ if(!scores||!dashboard)return;
+ const mobileTop=!outside&&compactHome?.matches?view.querySelector('.cs-top'):null;
+ if(mobileTop){if(mobileTop.previousElementSibling!==scores)mobileTop.before(scores);}
+ else if(dashboard.previousElementSibling!==scores)dashboard.before(scores);
+}
+compactHome?.addEventListener?.('change',()=>placeHomeScores());
 function editorialLayout(rows){
  const body=el('dashboardBody'), slider=el('dashboardCarousel'), table=body.querySelector('.dashboard-table-wrap'), title=el('dashboardComplete');
  const footer=document.createElement('div');footer.className='cs-feature-footer';
@@ -143,6 +154,46 @@ function framedSpotlightPortrait(r,team,slot='spotlight'){
  const ref=window.CourtPreviewAsset?.(path)??path;
  const label=face?`Portrait de ${r.name}, visage seul`:alt;
  return `<svg class="${slot==='profile'?'profile-photo ':''}cs-framed-portrait" viewBox="${bounds.join(' ')}" preserveAspectRatio="xMidYMax meet" role="img" aria-label="${esc(label)}">${clip}<image href="${esc(ref)}" width="${w}" height="${h}" ${clipId?'clip-path="url(#'+clipId+')"':''} onerror="this.closest('svg').setAttribute('hidden','');this.closest('svg').nextElementSibling.hidden=false"></image></svg><span class="cs-art-fallback" hidden>${fallback}</span>`;
+}
+// Small Trade-only crops for the chosen full-body editions. The original
+// images and the player/spotlight presentations stay unchanged.
+const tradeHeadBounds={
+  2544:[95,0,375,535],201142:[470,383,250,255],201935:[510,25,330,445],
+  203507:[450,118,276,325],201566:[610,30,170,225],203110:[270,0,343,470],
+  203081:[345,112,307,323],1626164:[215,450,230,246],1628369:[735,363,345,468],
+  201939:[400,0,310,447],203999:[455,155,213,243],203954:[680,0,296,330],
+  1628983:[465,0,199,213]
+};
+// Outlines in a 130-by-130 measurement grid relative to the crop above.
+const tradeHeadOutlines={
+  1626164:[[29,13],[43,3],[76,0],[95,8],[101,22],[104,41],[100,56],[99,82],[85,97],[64,102],[38,95],[29,80],[22,64],[29,49]],
+  1628369:[[24,25],[42,7],[74,1],[103,10],[116,24],[120,49],[118,74],[107,101],[91,119],[71,124],[51,114],[37,98],[28,76],[25,57]],
+  1628983:[[9,37],[16,20],[37,7],[64,2],[82,10],[91,28],[89,49],[91,72],[75,86],[55,93],[33,86],[20,70],[10,59]],
+  201142:[[35,31],[47,11],[69,1],[91,5],[104,18],[113,41],[116,63],[112,88],[114,105],[101,122],[78,129],[61,120],[54,99],[45,76],[37,57]],
+  201566:[[15,45],[22,26],[43,16],[72,10],[97,16],[111,28],[125,41],[127,67],[117,87],[101,93],[91,106],[74,109],[50,104],[29,91],[19,69]],
+  201935:[[7,31],[20,13],[46,4],[74,8],[93,18],[101,42],[100,68],[107,86],[101,99],[79,105],[58,104],[32,91],[17,78],[9,57]],
+  201939:[[18,25],[45,9],[70,4],[96,8],[113,20],[119,46],[117,68],[105,85],[88,104],[69,113],[48,107],[32,96],[24,81],[19,66],[12,52]],
+  203081:[[20,53],[28,26],[48,12],[74,9],[96,16],[109,26],[112,50],[114,69],[107,81],[110,96],[94,116],[71,128],[52,123],[36,111],[22,87],[18,69]],
+  203110:[[20,31],[32,10],[58,1],[88,5],[108,14],[113,33],[123,49],[126,65],[118,93],[104,111],[81,120],[58,109],[42,86],[31,75],[22,56]],
+  203507:[[21,35],[31,20],[52,12],[74,11],[92,13],[103,24],[106,43],[103,72],[97,89],[84,108],[69,122],[52,122],[38,109],[31,88],[25,74]],
+  203954:[[14,29],[23,11],[44,3],[70,0],[99,4],[113,14],[127,24],[123,40],[117,50],[121,71],[108,87],[103,106],[84,122],[63,127],[45,118],[37,104],[28,90],[28,71],[21,51]],
+  203999:[[7,45],[14,33],[27,24],[45,21],[61,27],[75,39],[80,58],[84,75],[77,92],[68,111],[53,121],[36,119],[23,108],[12,91],[7,74],[3,64]],
+  2544:[[27,39],[40,16],[58,5],[77,3],[95,10],[105,24],[113,43],[118,70],[111,98],[96,114],[74,124],[52,119],[33,103],[23,83],[19,66]]
+};
+function tradeAvatar(player){
+ const id=profileArt(player), frame=portraitFraming[id];
+ const initials=String(player.full_name||'').trim().split(/\s+/).slice(0,2).map(w=>Array.from(w)[0]||'').join('');
+ const fallback=`<b class="trade-avatar-initials">${esc(initials||'—')}</b>`;
+ if(!frame||!window.PlayerPhotos?.portrait(id))return `<span class="trade-avatar" aria-hidden="true">${fallback}</span>`;
+ const [path,,w,h,extent]=frame, mask=ordinaryFaceFrames[id];
+ const bounds=tradeHeadBounds[id]||(mask?mask.slice(0,4):extent);
+ const outline=tradeHeadOutlines[id];
+ const [x,y,bw,bh]=bounds;
+ const shape=outline?`<polygon points="${outline.map(([u,v])=>[x+u*bw/130,y+v*bh/130].join(',')).join(' ')}"></polygon>`:mask?`<path d="${mask[4]}"></path>`:'';
+ const clipId=shape?`trade-face-${id}`:'';
+ // Thumbnails are decorative; the adjacent, clickable name is the label.
+ const clip=shape?`<defs><clipPath id="${clipId}" clipPathUnits="userSpaceOnUse">${shape}</clipPath></defs>`:'';
+ return `<span class="trade-avatar" aria-hidden="true">${fallback}<svg viewBox="${bounds.join(' ')}" preserveAspectRatio="xMidYMid meet" width="48" height="48" focusable="false">${clip}<image href="${esc(path)}" width="${w}" height="${h}" ${shape?'clip-path="url(#'+clipId+')"':''} onload="this.closest('svg').classList.add('trade-avatar-loaded')" onerror="this.closest('svg').remove()"></image></svg></span>`;
 }
 function editorialSlide(r,index,period,line){
  const team=matchTeam(r)||r.teams.at(-1)||'—';
@@ -285,7 +336,7 @@ function tradeUI(){
 }
 function tradeVerdict(profiles){
  const dock=el('courtTradeDockText');if(!dock)return;
- const diff=el('tradeSummary')?.querySelector('.trade-difference strong,.trade-difference b');
+ const diff=el('tradeSummary')?.querySelector('.trade-difference b');
  dock.textContent=diff?`B − A : ${diff.textContent} FPTS`:'Écart indisponible';
  const old=el('courtTradeForm');if(old)old.remove();
  if(tradeState.left.length!==1||tradeState.right.length!==1||window.__DATASET.seasons.includes(tradeState.period))return;
@@ -446,7 +497,7 @@ if(vv){
  document.addEventListener('focusin',keyboard);
  document.addEventListener('focusout',()=>requestAnimationFrame(keyboard));
 }
-window.Courtside={color:theme,artId:profileArt,home,board,profile,tradeUI,tradeVerdict,fallbackSearch,matchTeam,editorialLayout,editorialSlide,hasDirectRoute:()=>!!readRoute(),async initialRoute(){
+window.Courtside={color:theme,artId:profileArt,home,placeHomeScores,board,profile,tradeUI,tradeVerdict,tradeAvatar,fallbackSearch,matchTeam,editorialLayout,editorialSlide,hasDirectRoute:()=>!!readRoute(),async initialRoute(){
  const direct=readRoute(), p=activePage==='player'?'player':activePage;
  const r=direct||{p,id:p==='player'?CURRENT?.player_id:null};
  if(r.p==='player'&&window.CurrentLoad.aliases?.has(r.id))r.id=canonicalPlayerId(r.id);

@@ -246,14 +246,15 @@ function chart(seasons){
 const COMPARE_COLORS = ["#c8102e", "#17408b", "#176c46", "#8148a1"];
 let compareIds = [];
 let comparePlayers = {}; // player_id -> payload cache
+let compareMobileWindow = 7;
 
 function renderCompare(){
   el("view").innerHTML = `
     <h2 style="letter-spacing:-.03em">Comparer les joueurs</h2>
     <p class="dim" style="margin-top:-6px">Sélectionnez 2 à 4 joueurs pour comparer leur forme récente et leurs saisons.</p>
-    <div class="panel">
+    <div class="panel compare-selection">
       <div class="chips" id="compareChips"></div>
-      <div class="searchbox" id="compareSearchWrap" style="max-width:420px;margin-top:${compareIds.length?'12px':'0'}">
+      <div class="searchbox${compareIds.length>=4?' compare-search-full':''}" id="compareSearchWrap" style="max-width:420px;margin-top:${compareIds.length?'12px':'0'}">
         <input id="compareSearch" placeholder="Ajouter un joueur…" autocomplete="off"
           ${compareIds.length>=4?'disabled':''}>
         <div class="results" id="compareResults" hidden></div>
@@ -298,7 +299,7 @@ async function loadCompareBody(){
   const players = compareIds.map(id => comparePlayers[id]);
   body.innerHTML = `
     ${compareCurrentTable(players)}
-    <div class="panel">
+    <div class="panel compare-season-chart">
       <h3>Points fantasy par match et par saison</h3>
       <div class="legend">${players.map((p,i) =>
         `<span><i style="background:${COMPARE_COLORS[i]}"></i>${safeText(p.full_name)}</span>`).join("")}</div>
@@ -306,7 +307,8 @@ async function loadCompareBody(){
     </div>
     <div class="panel">
       <h3>Saison par saison — FPTS/G</h3>
-      <div class="scroll">${compareTable(players)}</div>
+      <div class="scroll compare-desktop">${compareTable(players)}</div>
+      ${compareMobileHistory(players)}
     </div>`;
 }
 
@@ -315,18 +317,48 @@ async function loadCompareBody(){
 function compareCurrentTable(players,{asOf=new Date()}={}){
   const core=window.FantasyCore,data=window.CurrentLoad?.data;
   if(!core||!data)return `<section class="panel compare-current"><h3>Forme actuelle comparée</h3><p class="empty">Données actuelles indisponibles. Les comparaisons historiques restent accessibles ci-dessous.</p></section>`;
-  const periods=[{days:null,label:`${core.SEASON} · échantillon importé`},{days:7,label:'7 derniers jours'},{days:14,label:'14 derniers jours'},{days:30,label:'30 derniers jours'}];
+  const periods=[
+    {days:null,key:0,short:'Saison',label:`${core.SEASON} · échantillon importé`},
+    {days:7,key:7,short:'7 jours',label:'7 derniers jours'},
+    {days:14,key:14,short:'14 jours',label:'14 derniers jours'},
+    {days:30,key:30,short:'30 jours',label:'30 derniers jours'}
+  ].map(p=>{
+    const range=core.bounds(p.days,asOf);
+    return {...p,dates:range.start?`${range.start} au ${range.end} · UTC`:`Jusqu’au ${range.end} · UTC`,
+      values:players.map(player=>core.aggregate(data,player.player_id,{days:p.days,asOf,weights:META.scoring}))};
+  });
+  const approx=data.minutesPrecision==='rounded-whole-minute'?' ≈':'';
   const headers=players.map(p=>`<th scope="col"><button class="text-button" onclick="openPlayer(${playerArg(p.player_id)})">${safeText(p.full_name)}</button></th>`).join('');
-  const rows=periods.map(({days,label})=>{
-    const range=core.bounds(days,asOf);
-    const dates=range.start?`${range.start} au ${range.end} · UTC`:`Jusqu’au ${range.end} · UTC`;
-    const cells=players.map(p=>{
-      const a=core.aggregate(data,p.player_id,{days,asOf,weights:META.scoring});
-      return `<td>${a.gp?`<strong class="fpts num">${fmt(a.fptsPerGame)} <small>FP / match</small></strong><div class="small">${a.gp} MJ · ${fmt(a.minutes)} MIN / match${data.minutesPrecision==='rounded-whole-minute'?' ≈':''}</div>`:'<strong>—</strong><div class="small">0 match complet · moyenne et minutes indisponibles</div>'}</td>`;
-    }).join('');
+  const rows=periods.map(({label,dates,values})=>{
+    const cells=values.map(a=>`<td>${a.gp?`<strong class="fpts num">${fmt(a.fptsPerGame)} <small>FP / match</small></strong><div class="small">${a.gp} MJ · ${fmt(a.minutes)} MIN / match${approx}</div>`:'<strong>—</strong><div class="small">0 match complet · moyenne et minutes indisponibles</div>'}</td>`).join('');
     return `<tr><th scope="row">${label}<small style="display:block;font-weight:400">${dates}</small></th>${cells}</tr>`;
   }).join('');
-  return `<section class="panel compare-current"><h3>Forme actuelle comparée</h3><p class="small muted">Même période et même barème pour tous · matchs disponibles.</p><div class="scroll" tabindex="0" role="region" aria-label="Comparaison des moyennes, matchs joués et minutes par période"><table class="compare-periods"><caption class="small">Moyenne fantasy, matchs joués (MJ) et minutes par match (MIN)</caption><thead><tr><th scope="col">Période</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div></section>`;
+  const radios=periods.map(({key,short})=>`<input class="compare-window-input" type="radio" name="compare-window" id="compare-window-${key}" value="${key}" onchange="compareMobileWindow=Number(this.value)" ${key===compareMobileWindow?'checked':''} aria-controls="compare-card-period-${key}">`).join('');
+  const labels=periods.map(({key,short})=>`<label for="compare-window-${key}">${short}</label>`).join('');
+  const panels=periods.map(({key,label,dates,values})=>`<section class="compare-card-period" id="compare-card-period-${key}" aria-label="${label}">
+      <p class="compare-card-date">${dates}</p>
+      <div class="compare-card-grid">${players.map((p,i)=>{
+        const a=values[i];
+        return `<article class="compare-card" style="--compare-player:${COMPARE_COLORS[i]}">
+          <button type="button" class="text-button compare-card-name" onclick="openPlayer(${playerArg(p.player_id)})">${safeText(p.full_name)}</button>
+          <strong class="num">${a.gp?fmt(a.fptsPerGame):'—'}</strong><span>FP / match</span>
+          <p>${a.gp?`${a.gp} MJ · ${fmt(a.minutes)} min${approx}`:'Aucun match complet'}</p>
+        </article>`;
+      }).join('')}</div>
+    </section>`).join('');
+  return `<section class="panel compare-current"><h3>Forme actuelle comparée</h3><p class="small muted">Même période et même barème pour tous · matchs disponibles.</p>
+    <div class="scroll compare-desktop" tabindex="0" role="region" aria-label="Comparaison des moyennes, matchs joués et minutes par période"><table class="compare-periods"><caption class="small">Moyenne fantasy, matchs joués (MJ) et minutes par match (MIN)</caption><thead><tr><th scope="col">Période</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="compare-mobile"><fieldset class="compare-mobile-periods"><legend>Période comparée</legend>${radios}<div class="compare-window-labels">${labels}</div>${panels}</fieldset></div></section>`;
+}
+
+function compareMobileHistory(players){
+  const periods=[...SEASONS.map((s,i)=>[s,p=>p.seasons[i]?.played?fmt(p.seasons[i].fpts_per_game):'N/D']),
+    ['Moyenne simple sur 5 ans',p=>fmt(p.summary.simple_avg)],
+    ['FPTS/M pondérés sur 5 ans',p=>fmt(p.summary.weighted_avg)]];
+  return `<details class="compare-mobile compare-mobile-history"><summary>Voir tous les chiffres par saison</summary>
+    ${periods.map(([label,value])=>`<div class="compare-history-row"><h4>${label}</h4><dl class="compare-history-grid">
+      ${players.map((p,i)=>`<div style="--compare-player:${COMPARE_COLORS[i]}"><dt>${safeText(p.full_name)}</dt><dd class="num">${value(p)}</dd></div>`).join('')}
+    </dl></div>`).join('')}</details>`;
 }
 
 function compareChart(players){
