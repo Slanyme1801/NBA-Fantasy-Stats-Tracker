@@ -2,6 +2,7 @@
 import {SEASON,emptySeason,validateIdentityMap,validateSeason,migrateHighlightlySeason,playerKeyFor,validateProviderRegistry} from '../assets/core.mjs';
 import {PROVIDER,parseMatches,normalizeMatch,parseBoxScore,normalizeBoxScore,providerPlayers,localMatchDay,datesInRange} from './highlightly.mjs';
 import {makeCachedLoader,mergeHighlightly,validatePrivate} from './highlightly-private.mjs';
+import {isReviewedSacGsw} from './nba-official-sacgsw.mjs';
 import {verifiedSchedule} from './highlightly-schedule.mjs';
 import {emptyPending,publicPendingBoxes,pendingBody} from './highlightly-pending.mjs';
 import {checkOfficialParticipation} from './highlightly-participation-reference.mjs';
@@ -86,7 +87,7 @@ export async function runSeasonBackfill({client,cache,previous=null,identities,s
   });
   const cutoff=new Date(now()-correctionDays*86400000).toISOString().slice(0,10),attemptedToday=g=>oldGames.get(g.id)?.boxScoreCheckedAt?.slice(0,10)===dayUTC;
   const blockedSourceToday=g=>oldGames.get(g.id)?.refreshIssue?.code==='source-data-error'&&oldGames.get(g.id).refreshIssue.attemptedAt?.slice(0,10)===dayUTC;
-  const eligible=inventory.filter(g=>g.type!=='unknown');
+  const eligible=inventory.filter(g=>g.type!=='unknown'&&!isReviewedSacGsw(oldGames.get(g.id)));
   const corrections=eligible.filter(g=>oldGames.get(g.id)?.statsState==='available'&&localMatchDay(g)>=cutoff&&!attemptedToday(g)&&!blockedSourceToday(g)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id).slice(0,maxCorrectionGames);
   const backlog=eligible.filter(g=>(oldGames.get(g.id)?.statsState!=='available'||pending.games.some(entry=>entry.game.id===g.id)||['unmapped-players','source-data-error'].includes(oldGames.get(g.id)?.refreshIssue?.code))&&!blockedSourceToday(g)&&!corrections.some(c=>c.id===g.id)&&oldGames.get(g.id)?.refreshIssue?.code!=='source-data-error').sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id);
   const sourceRetries=eligible.filter(g=>oldGames.get(g.id)?.refreshIssue?.code==='source-data-error'&&!blockedSourceToday(g)).sort((a,b)=>a.start.localeCompare(b.start)||a.id-b.id).slice(0,maxSourceRetriesPerRun);

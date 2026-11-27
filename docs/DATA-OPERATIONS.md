@@ -283,3 +283,7 @@ Un skip ne signifie pas que le premier run a réussi : après une panne ayant
 réservé le jour, il faut inspecter les checkpoints, pas effacer la réservation.
 Les tests synthétiques ne consomment aucun quota. Seul un futur événement
 planifié effectivement exécuté pourra confirmer ce chemin automatique en production.
+
+### Reviewed NBA final box: Sacramento at Golden State (November 25, 2026 ET)
+
+Game `1589809` / NBA `0022600062` was restored from the [NBA official final scorer's report](https://statsdmz.nba.com/pdfs/20261125/20261125_SACGSW.pdf), after the provider's box score failed counter validation. The PDF SHA-256 is `5f3becdd0afc58238ff418bd21a580b67042697460e40371caeb880f286726bf`. The 21 played lines and six explicit DNPs were reconciled against the team columns and the 129–110 final, with existing player keys and the release's whole-minute precision. No inactive or unlisted player was inferred to have played. The public game records the official source; subsequent provider collection retains this reviewed sheet instead of attempting to replace it. The daily quota and the existing private checkpoint are not changed by this manual release. Normal runner setup selects the newer verified release over the older checkpoint.

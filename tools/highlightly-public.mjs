@@ -3,6 +3,7 @@ import {validateSeason,SEASON,migrateHighlightlySeason} from '../assets/core.mjs
 import {DOCUMENTED_PARTICIPATION_REVIEWS} from './highlightly-participation-reviews.mjs';
 import {COOPER_DEBUT_REFERENCE} from './highlightly-participation-reference.mjs';
 import {SOURCE_ERROR_CODES} from './highlightly-source-errors.mjs';
+import {isReviewedSacGsw} from './nba-official-sacgsw.mjs';
 import {PROVIDER,datesInRange} from './highlightly.mjs';
 const requireValue=(ok,message)=>{if(!ok)throw new Error(message);};
 const date=value=>typeof value==='string'&&/^\d{4}-\d\d-\d\dT.*(?:Z|[+-]\d\d:\d\d)$/.test(value)&&Number.isFinite(Date.parse(value));
@@ -29,7 +30,7 @@ export function publicHighlightlySnapshot(candidate,authorization){
     scope:{startDate:candidate.scope.startDate,endDate:candidate.scope.endDate,timeZone:'America/New_York',completeSeason:false,mayHaveGaps:true},coverage:intervals,minutesPrecision:'rounded-whole-minute',
     publicationAuthorization:{provider:PROVIDER,confirmedAt:authorization.confirmedAt,scope:'normalized-fantasy-stats',basis:'Owner attestation of provider permission'},
     players:candidate.players.map(p=>pick(p,['playerKey','nbaId','providerId','name','aliases','source','verifiedAt'])),
-    games:candidate.games.map(g=>({...pick(g,['id','season','league','start','status','type','statsState','provider','finalScores','boxScoreCheckedAt']),refreshIssue:publicRefreshIssue(g.refreshIssue),classification:g.classification?pick(g.classification,['source','verifiedAt']):null,home:pick(g.home,['id','code']),away:pick(g.away,['id','code'])})),
+    games:candidate.games.map(g=>({...pick(g,['id','season','league','start','status','type','statsState','provider','finalScores','boxScoreCheckedAt']),...(isReviewedSacGsw(g)?{boxScoreSource:g.boxScoreSource}:{}),refreshIssue:publicRefreshIssue(g.refreshIssue),classification:g.classification?pick(g.classification,['source','verifiedAt']):null,home:pick(g.home,['id','code']),away:pick(g.away,['id','code'])})),
     lines:candidate.lines.map(l=>({...pick(l,['gameId','playerKey','nbaId','providerId','teamId','participation','seconds','minutesPrecision','updatedAt','provider']),stats:l.stats?pick(l.stats,['pts','fgm','fga','fg3m','fg3a','ftm','fta','reb','ast','tov','stl','blk']):null,comment:null})),
     positions:{...pick(candidate.positions,['season','source','importedAt']),entries:candidate.positions.entries.map(p=>pick(p,['nbaId','espnId','positions','source','observedAt']))}};
   if(candidate.backfillProgress)result.backfillProgress=publicBackfillProgress(candidate.backfillProgress);
